@@ -4,10 +4,19 @@ on:
   push:
     branches: [master, main]
     paths:
+      - 'index.html'
+      - 'app.js'
+      - 'sw.js'
+      - 'manifest.webmanifest'
       - 'src/**'
-      - 'public/**'
+      - 'assets/**'
+      - 'styles/**'
+      - 'tailwind.config.js'
       - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/prepare-deploy.sh'
       - '.github/workflows/pages.yml'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
 
 permissions:
@@ -36,6 +45,8 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Run lint
+        run: npm run lint
       - name: Run tests
         run: npm test -- --runInBand
       - name: Prepare static bundle

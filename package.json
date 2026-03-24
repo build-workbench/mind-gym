@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "description": "Browser-based card-flip memory training game with multiple modes, adaptive difficulty, and PWA support",
-  "keywords": ["memory", "training", "card-match", "pwa", "n-back", "adaptive"],
+  "keywords": [
+    "memory",
+    "training",
+    "card-match",
+    "pwa",
+    "n-back",
+    "adaptive"
+  ],
   "author": "LessUp",
   "license": "MIT",
   "homepage": "https://lessup.github.io/mind-gym/",
@@ -13,12 +20,15 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "npx prettier --check '**/*.{js,json,md,html}'",
-    "format": "npx prettier --write '**/*.{js,json,md,html}'",
-    "prepare:deploy": "bash scripts/prepare-deploy.sh"
+    "build:css": "tailwindcss -c tailwind.config.js -i ./styles/app.css -o ./assets/app.css --minify",
+    "lint": "prettier --check '**/*.{js,json,md,html,css}'",
+    "format": "prettier --write '**/*.{js,json,md,html,css}'",
+    "prepare:deploy": "npm run build:css && bash scripts/prepare-deploy.sh"
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "prettier": "3.8.1",
+    "tailwindcss": "3.4.19"
   }
 }
