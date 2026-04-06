@@ -24,6 +24,7 @@ coverage/
 .netlify/
 .tmp/
 .cache/
+.claude/
 
 # OS
 .DS_Store

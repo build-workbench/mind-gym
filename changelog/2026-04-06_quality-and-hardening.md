@@ -20,6 +20,7 @@
   - `README.md` 改正 `deploy.yml` → `pages.yml` 徽章，并补充 `npm install` / `npm run build:css` 开发说明
   - `README.zh-CN.md` 修正 workflow 名称与 `master` / `main` 触发描述，并统一“无打包器但有样式/部署脚本”的口径
   - `docs/architecture.md` 同步当前模块拆分进展
+- 更新 `.gitignore`，忽略 `.claude/` 本地 Claude 配置与 worktree 临时目录，避免将本地会话产物误提交到仓库
 
 ## 影响范围
 
