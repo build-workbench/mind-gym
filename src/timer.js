@@ -5,17 +5,17 @@
     root.RememberTimer = factory();
   }
 })(typeof self !== 'undefined' ? self : this, function () {
+  const DEFAULT_TICK_MS = 250;
+
   function formatTime(s) {
-    const m = Math.floor(s / 60).toString().padStart(2, '0');
-    const r = (s % 60).toString().padStart(2, '0');
+    const safe = Math.max(0, Math.floor(Number(s) || 0));
+    const m = Math.floor(safe / 60).toString().padStart(2, '0');
+    const r = (safe % 60).toString().padStart(2, '0');
     return `${m}:${r}`;
   }
 
   function stopTimer(timerId) {
-    if (timerId) {
-      clearInterval(timerId);
-      return null;
-    }
+    if (timerId) clearInterval(timerId);
     return null;
   }
 
@@ -28,29 +28,44 @@
   }
 
   function startTimer(params) {
-    if (params.timerId) return { timerId: params.timerId, elapsed: params.elapsed, countdownLeft: params.countdownLeft };
+    if (params.timerId) {
+      return { timerId: params.timerId, elapsed: params.elapsed, countdownLeft: params.countdownLeft };
+    }
 
-    let elapsed = params.elapsed;
-    let countdownLeft = params.countdownLeft;
+    const now = typeof params.now === 'function' ? params.now : Date.now;
+    const baseElapsed = Math.max(0, Math.floor(Number(params.elapsed) || 0));
+    const baseCountdown = Math.max(0, Math.floor(Number(params.countdownLeft) || 0));
+    const isCountdown = !!params.isCountdownMode();
+    const tickMs = Math.max(50, Math.floor(Number(params.tickMs) || DEFAULT_TICK_MS));
+    const startedAt = now();
+    let lastElapsed = baseElapsed;
+    let lastCountdownLeft = baseCountdown;
+    let finished = false;
 
-    const id = setInterval(() => {
-      elapsed += 1;
+    const emit = () => {
+      const elapsedDelta = Math.max(0, Math.floor((now() - startedAt) / 1000));
+      const elapsed = baseElapsed + elapsedDelta;
+      const countdownLeft = isCountdown ? Math.max(0, baseCountdown - elapsedDelta) : baseCountdown;
+      const displayText = formatTime(isCountdown ? countdownLeft : elapsed);
 
-      if (params.isCountdownMode()) {
-        countdownLeft = Math.max(0, countdownLeft - 1);
-        params.onUpdate({ elapsed, countdownLeft, displayText: formatTime(countdownLeft) });
-        if (countdownLeft <= 0) {
-          clearInterval(id);
-          params.onStop();
-          params.onTimeUp();
-          return;
-        }
-      } else {
-        params.onUpdate({ elapsed, countdownLeft, displayText: formatTime(elapsed) });
+      if (elapsed !== lastElapsed || countdownLeft !== lastCountdownLeft) {
+        lastElapsed = elapsed;
+        lastCountdownLeft = countdownLeft;
+        params.onUpdate({ elapsed, countdownLeft, displayText });
       }
-    }, 1000);
 
-    return { timerId: id, elapsed, countdownLeft };
+      if (isCountdown && countdownLeft <= 0 && !finished) {
+        finished = true;
+        clearInterval(id);
+        params.onStop();
+        params.onTimeUp();
+      }
+    };
+
+    const id = setInterval(emit, tickMs);
+    emit();
+
+    return { timerId: id, elapsed: baseElapsed, countdownLeft: baseCountdown };
   }
 
   return {

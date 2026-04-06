@@ -1,7 +1,7 @@
 # Mind Gym
 
 [![CI](https://github.com/LessUp/mind-gym/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/mind-gym/actions/workflows/ci.yml)
-[![Deploy](https://github.com/LessUp/mind-gym/actions/workflows/deploy.yml/badge.svg)](https://github.com/LessUp/mind-gym/actions/workflows/deploy.yml)
+[![Pages](https://github.com/LessUp/mind-gym/actions/workflows/pages.yml/badge.svg)](https://github.com/LessUp/mind-gym/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=black)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-CDN-06B6D4?logo=tailwindcss&logoColor=white)
@@ -28,10 +28,13 @@ A browser-based card-flip memory training game combining modern memory training 
 ## Quick Start
 
 ```bash
-# No build step needed — static files only
+# Install dev dependencies if you want to run tests or build CSS
+npm install
 # Serve with any HTTP server:
 npx serve .
 # Or open index.html directly in a browser
+# If you change styles/app.css, rebuild assets/app.css first:
+npm run build:css
 ```
 
 ## Project Structure

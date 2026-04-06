@@ -1,6 +1,10 @@
 const __GLOBAL__ = typeof globalThis !== 'undefined' ? globalThis : (typeof window !== 'undefined' ? window : this);
 const __RememberKeys__ = (typeof module !== 'undefined' && module.exports) ? require('./src/keys.js') : __GLOBAL__.RememberKeys;
 const __RememberUtils__ = (typeof module !== 'undefined' && module.exports) ? require('./src/utils.js') : __GLOBAL__.RememberUtils;
+const __RememberStats__ = (typeof module !== 'undefined' && module.exports) ? require('./src/stats.js') : __GLOBAL__.RememberStats;
+const __RememberAchievements__ = (typeof module !== 'undefined' && module.exports) ? require('./src/achievements.js') : __GLOBAL__.RememberAchievements;
+const __RememberModes__ = (typeof module !== 'undefined' && module.exports) ? require('./src/modes.js') : __GLOBAL__.RememberModes;
+const __RememberImportExport__ = (typeof module !== 'undefined' && module.exports) ? require('./src/import-export.js') : __GLOBAL__.RememberImportExport;
 const __RememberStorage__ = (typeof module !== 'undefined' && module.exports) ? require('./src/storage.js') : __GLOBAL__.RememberStorage;
 const __RememberI18n__ = (typeof module !== 'undefined' && module.exports) ? require('./src/i18n.js') : __GLOBAL__.RememberI18n;
 const __RememberEffects__ = (typeof module !== 'undefined' && module.exports) ? require('./src/effects.js') : __GLOBAL__.RememberEffects;
@@ -9,7 +13,856 @@ const __RememberTimer__ = (typeof module !== 'undefined' && module.exports) ? re
 const __RememberConfetti__ = (typeof module !== 'undefined' && module.exports) ? require('./src/confetti.js') : __GLOBAL__.RememberConfetti;
 const __RememberUIEvents__ = (typeof module !== 'undefined' && module.exports) ? require('./src/ui-events.js') : __GLOBAL__.RememberUIEvents;
 const __RememberUI__ = (typeof module !== 'undefined' && module.exports) ? require('./src/ui.js') : __GLOBAL__.RememberUI;
+const MODAL_FOCUS_PREV = new WeakMap();
+const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
+const DIFFS = ['easy', 'medium', 'hard'];
+const CARD_LABELS = {
+  emoji: 'emoji',
+  numbers: 'number',
+  letters: 'letter',
+  shapes: 'shape',
+  colors: 'color',
+};
+const CARD_LABELS_ZH = {
+  emoji: '表情卡片',
+  numbers: '数字卡片',
+  letters: '字母卡片',
+  shapes: '形状卡片',
+  colors: '颜色卡片',
+};
+const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const DEFAULT_SETTINGS = { sound: true, vibrate: true, previewSeconds: 1, accent: 'indigo', theme: 'auto', motion: 'auto', volume: 0.5, soundPack: 'clear', cardFace: 'emoji', gameMode: 'classic', countdown: { easy: 90, medium: 150, hard: 240 }, language: 'auto', adaptive: false, spaced: false };
+const DEFAULT_STATS = __RememberStats__.DEFAULT_STATS;
+const achievementsDef = __RememberAchievements__.achievementsDef;
+const NORMALIZE_SETTINGS = __RememberImportExport__.normalizeSettings;
+const NORMALIZE_IMPORT = __RememberImportExport__.normalizeImportData;
+const NORMALIZE_LEADERBOARD = __RememberImportExport__.normalizeLeaderboard;
+const NORMALIZE_BEST = __RememberImportExport__.normalizeBestEntry;
+const NORMALIZE_ADAPTIVE = __RememberImportExport__.normalizeAdaptive;
+const COLLECT_EXPORT = __RememberImportExport__.collectExportData;
+const BUILD_RECALL_ITEMS = __RememberModes__.buildRecallItems;
+const SCORE_RECALL = __RememberModes__.scoreRecall;
+const CREATE_NBACK_CONFIG = __RememberModes__.createNBackConfig;
+const SUMMARIZE_NBACK = __RememberModes__.summarizeNBackResult;
+const NORMALIZE_STATS = __RememberStats__.normalizeStats;
+const RECORD_GAME_STARTED = __RememberStats__.recordGameStarted;
+const RECORD_GAME_WON = __RememberStats__.recordGameWon;
+const RECORD_RECALL = __RememberStats__.recordRecallAttempt;
+const RECORD_NBACK = __RememberStats__.recordNBackAttempt;
+const BUILD_STATS_SUMMARY = __RememberStats__.buildStatsSummary;
+const GET_RATING = __RememberStats__.getRating;
+const NORMALIZE_ACHIEVEMENTS = __RememberAchievements__.normalizeAchievements;
+const CHECK_ACHIEVEMENTS = __RememberAchievements__.checkAchievementsOnWin;
+const TIMER_POLL_MS = 250;
 
+function getActiveElement() {
+  return typeof document !== 'undefined' ? document.activeElement : null;
+}
+
+function getFocusable(el) {
+  return el ? Array.from(el.querySelectorAll(FOCUSABLE_SELECTOR)).find((node) => !node.disabled) : null;
+}
+
+function focusElement(el) {
+  if (el && typeof el.focus === 'function') el.focus();
+}
+
+function queueFocus(fn) {
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fn);
+  else setTimeout(fn, 0);
+}
+
+function cardLabelForTheme(theme) {
+  return currentLang() === 'zh' ? (CARD_LABELS_ZH[theme] || CARD_LABELS_ZH.emoji) : (CARD_LABELS[theme] || CARD_LABELS.emoji);
+}
+
+function rememberModalFocus(el) {
+  if (el) MODAL_FOCUS_PREV.set(el, getActiveElement());
+}
+
+function restoreModalFocus(el) {
+  const prev = el ? MODAL_FOCUS_PREV.get(el) : null;
+  focusElement(prev);
+}
+
+function focusModal(el) {
+  queueFocus(() => focusElement(getFocusable(el) || el));
+}
+
+function openModalWithFocus(el) {
+  if (!el) return;
+  rememberModalFocus(el);
+  showModal(el);
+  focusModal(el);
+}
+
+function closeModalWithFocusRestore(el) {
+  if (!el) return;
+  hideModal(el);
+  restoreModalFocus(el);
+}
+
+function getNow() {
+  return Date.now();
+}
+
+function buildExportPayload() {
+  return COLLECT_EXPORT({
+    settings,
+    bests: { easy: loadBest('easy'), medium: loadBest('medium'), hard: loadBest('hard') },
+    leaderboards: { easy: loadLeaderboard('easy'), medium: loadLeaderboard('medium'), hard: loadLeaderboard('hard') },
+    achievements: loadAchievements(),
+    stats: loadStats(),
+    adaptive: loadAdaptive(),
+    spaced: {
+      emoji: loadSpaced('emoji'),
+      numbers: loadSpaced('numbers'),
+      letters: loadSpaced('letters'),
+      shapes: loadSpaced('shapes'),
+      colors: loadSpaced('colors'),
+    },
+  });
+}
+
+function getCardA11yLabel(theme, value) {
+  return `${cardLabelForTheme(theme)} ${value}`;
+}
+
+function normalizeImportedData(obj) {
+  return NORMALIZE_IMPORT(obj, DEFAULT_SETTINGS);
+}
+
+function normalizeStats(stats) {
+  return NORMALIZE_STATS(stats);
+}
+
+function normalizeAchievements(store) {
+  return NORMALIZE_ACHIEVEMENTS(store);
+}
+
+function normalizeLeaderboard(entries) {
+  return NORMALIZE_LEADERBOARD(entries);
+}
+
+function normalizeBestEntry(entry) {
+  return NORMALIZE_BEST(entry);
+}
+
+function normalizeAdaptive(adaptive) {
+  return NORMALIZE_ADAPTIVE(adaptive);
+}
+
+function recordGameStarted(stats) {
+  return RECORD_GAME_STARTED(stats);
+}
+
+function recordGameWon(stats, payload) {
+  return RECORD_GAME_WON(stats, payload);
+}
+
+function recordRecallAttempt(stats, payload) {
+  return RECORD_RECALL(stats, payload);
+}
+
+function recordNBackAttempt(stats, payload) {
+  return RECORD_NBACK(stats, payload);
+}
+
+function checkAchievements(store, payload) {
+  return CHECK_ACHIEVEMENTS(store, payload);
+}
+
+function buildRecallItems(params) {
+  return BUILD_RECALL_ITEMS(params);
+}
+
+function scoreRecall(correctSet, selectedValues) {
+  return SCORE_RECALL(correctSet, selectedValues);
+}
+
+function createNBackConfig(raw) {
+  return CREATE_NBACK_CONFIG(raw);
+}
+
+function summarizeNBackResult(payload) {
+  return SUMMARIZE_NBACK(payload);
+}
+
+function buildStatsSummary(stats) {
+  return BUILD_STATS_SUMMARY(stats, formatTime);
+}
+
+function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax = 0) {
+  return GET_RATING(elapsedSec, movesCount, diffKey, usedHints, comboMax);
+}
+
+function isKnownTheme(theme) {
+  return THEMES.includes(theme);
+}
+
+function resolveBoardTheme() {
+  return isKnownTheme(settings.cardFace) ? settings.cardFace : 'emoji';
+}
+
+function parseSelectedRecallValues(container) {
+  return new Set(
+    Array.from(container.querySelectorAll('input[type="checkbox"][data-value]'))
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.getAttribute('data-value')),
+  );
+}
+
+function applyImportedSnapshot(normalized) {
+  saveSettings(normalized.settings);
+  for (const diff of DIFFS) {
+    const best = normalizeBestEntry(normalized.bests[diff]);
+    if (best) saveBest(diff, best);
+    saveLeaderboard(diff, normalizeLeaderboard(normalized.leaderboards[diff] || []));
+  }
+  saveAchievements(normalizeAchievements(normalized.achievements));
+  saveStats(normalizeStats(normalized.stats));
+  saveAdaptive(normalizeAdaptive(normalized.adaptive));
+  for (const theme of THEMES) {
+    saveSpaced(theme, normalized.spaced[theme] || {});
+  }
+}
+
+function afterImportApplied() {
+  settings = loadSettings();
+  applyAccentToDOM();
+  applyTheme();
+  applyMotionPreference();
+  updateBestUI();
+  updateLeaderboardUI();
+  updateStatsUI();
+  updateAchievementsUI();
+  initGame(difficultyEl.value);
+}
+
+function updateTimerState(value) {
+  elapsed = value.elapsed;
+  countdownLeft = value.countdownLeft;
+  if (timeEl) timeEl.textContent = value.displayText;
+}
+
+function formatAchievementTime(at) {
+  const d = new Date(at);
+  return `${d.getMonth() + 1}-${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+}
+
+function getBackupFilename() {
+  return 'memory-match-backup.json';
+}
+
+function persistImportedData(normalized) {
+  applyImportedSnapshot(normalized);
+  afterImportApplied();
+}
+
+function stopNBackTimer() {
+  if (nbackTimer) {
+    clearInterval(nbackTimer);
+    nbackTimer = null;
+  }
+}
+
+function handleModalBackdrop(e, modal, onClose) {
+  if (e.target !== modal) return;
+  if (typeof onClose === 'function') onClose();
+}
+
+function currentTimestamp() {
+  return getNow();
+}
+
+function getTimerPollMs() {
+  return TIMER_POLL_MS;
+}
+
+function getKnownThemes() {
+  return THEMES.slice();
+}
+
+function getKnownDiffs() {
+  return DIFFS.slice();
+}
+
+function getDefaultSettings() {
+  return { ...DEFAULT_SETTINGS, countdown: { ...DEFAULT_SETTINGS.countdown } };
+}
+
+function getDefaultStats() {
+  return { ...DEFAULT_STATS };
+}
+
+function noop() {}
+
+function getNoop() {
+  return noop;
+}
+
+function buildLeaderboardSnapshot() {
+  return { easy: loadLeaderboard('easy'), medium: loadLeaderboard('medium'), hard: loadLeaderboard('hard') };
+}
+
+function buildBestSnapshot() {
+  return { easy: loadBest('easy'), medium: loadBest('medium'), hard: loadBest('hard') };
+}
+
+function getSpacedSnapshot() {
+  return {
+    emoji: loadSpaced('emoji'),
+    numbers: loadSpaced('numbers'),
+    letters: loadSpaced('letters'),
+    shapes: loadSpaced('shapes'),
+    colors: loadSpaced('colors'),
+  };
+}
+
+function getSelectedRecallValues(container) {
+  return parseSelectedRecallValues(container);
+}
+
+function getThemeAccessibilityLabel(theme, value) {
+  return getCardA11yLabel(theme, value);
+}
+
+function getVersionValue() {
+  return 1;
+}
+
+function getStatsStore() {
+  return normalizeStats(loadStats());
+}
+
+function saveStatsStore(stats) {
+  saveStats(normalizeStats(stats));
+}
+
+function getAchievementsStore() {
+  return normalizeAchievements(loadAchievements());
+}
+
+function saveAchievementsStore(store) {
+  saveAchievements(normalizeAchievements(store));
+}
+
+function openModalForElement(el) {
+  openModalWithFocus(el);
+}
+
+function closeModalForElement(el) {
+  closeModalWithFocusRestore(el);
+}
+
+function getTimerUpdateHandler() {
+  return updateTimerState;
+}
+
+function getBuildStatsSummary() {
+  return buildStatsSummary;
+}
+
+function getRecallScore(correctSet, selectedValues) {
+  return scoreRecall(correctSet, selectedValues);
+}
+
+function getNBackSummary(payload) {
+  return summarizeNBackResult(payload);
+}
+
+function getNBackConfig(raw) {
+  return createNBackConfig(raw);
+}
+
+function getThemeLabelValue(theme, value) {
+  return getThemeAccessibilityLabel(theme, value);
+}
+
+function getImportData(obj) {
+  return normalizeImportedData(obj);
+}
+
+function applyImportedData(normalized) {
+  persistImportedData(normalized);
+}
+
+function getPayloadVersion() {
+  return getVersionValue();
+}
+
+function getBackupFileName() {
+  return getBackupFilename();
+}
+
+function getCurrentTimestampValue() {
+  return currentTimestamp();
+}
+
+function getAccessibilityLabel(theme, value) {
+  return getThemeLabelValue(theme, value);
+}
+
+function getLeaderboardSnapshot() {
+  return buildLeaderboardSnapshot();
+}
+
+function getBestSnapshot() {
+  return buildBestSnapshot();
+}
+
+function getSpacedDataSnapshot() {
+  return getSpacedSnapshot();
+}
+
+function getTimerUpdater() {
+  return getTimerUpdateHandler();
+}
+
+function getCurrentTimeValue() {
+  return getCurrentTimestampValue();
+}
+
+function getStatsSummaryBuilder() {
+  return getBuildStatsSummary();
+}
+
+function getImportNormalizer() {
+  return normalizeImportedData;
+}
+
+function getTimerIntervalMs() {
+  return getTimerPollMs();
+}
+
+function getNowValue() {
+  return getCurrentTimeValue();
+}
+
+function getCardLabelSafe(theme, value) {
+  return getAccessibilityLabel(theme, value);
+}
+
+function getFocusManager() {
+  return {
+    open: openModalForElement,
+    close: closeModalForElement,
+  };
+}
+
+function getModalBackdropCloser(modal, onClose) {
+  return (e) => handleModalBackdrop(e, modal, onClose);
+}
+
+function getTimestampProvider() {
+  return currentTimestamp;
+}
+
+function getToastScheduler() {
+  return setTimeout;
+}
+
+function getToastCanceller() {
+  return clearTimeout;
+}
+
+function getEmptyFn() {
+  return noop;
+}
+
+function getThemeValues() {
+  return getKnownThemes();
+}
+
+function getDifficultyValues() {
+  return getKnownDiffs();
+}
+
+function getSettingsDefaults() {
+  return getDefaultSettings();
+}
+
+function getStatsDefaults() {
+  return getDefaultStats();
+}
+
+function getModalCloseHandler(modal) {
+  return () => closeModalForElement(modal);
+}
+
+function getModalOpenHandler(modal) {
+  return () => openModalForElement(modal);
+}
+
+function getFocusState(modal) {
+  return {
+    open: getModalOpenHandler(modal),
+    close: getModalCloseHandler(modal),
+  };
+}
+
+function getTimerIntervalSafe() {
+  return getTimerIntervalMs();
+}
+
+function getImportNormalizerSafe() {
+  return getImportNormalizer();
+}
+
+function getStatsSummarySafe() {
+  return getStatsSummaryBuilder();
+}
+
+function getNowSafe() {
+  return getNowValue();
+}
+
+function getVersionSafe() {
+  return getPayloadVersion();
+}
+
+function getBackupVersionSafe() {
+  return getPayloadVersion();
+}
+
+function getNoopSafe() {
+  return getEmptyFn();
+}
+
+function getFocusStateSafe(modal) {
+  return getFocusState(modal);
+}
+
+function getModalHandlers(modal) {
+  return getFocusState(modal);
+}
+
+function getThemeValueAccessibility(theme, value) {
+  return getAccessibilityLabel(theme, value);
+}
+
+function getPayloadVersionValue() {
+  return getPayloadVersion();
+}
+
+function getBackupVersionValue() {
+  return getPayloadVersion();
+}
+
+function getImportVersion() {
+  return getPayloadVersion();
+}
+
+function getCurrentNow() {
+  return currentTimestamp();
+}
+
+function getModalRestore(el) {
+  return () => closeModalForElement(el);
+}
+
+function getModalRemember(el) {
+  return () => openModalForElement(el);
+}
+
+function getSummaryBuilder() {
+  return getStatsSummaryBuilder();
+}
+
+function getSelectedRecallValuesSafe(container) {
+  return getSelectedRecallValues(container);
+}
+
+function getA11yCardLabel(theme, value) {
+  return getAccessibilityLabel(theme, value);
+}
+
+function getThemeLabel(theme) {
+  return cardLabelForTheme(theme);
+}
+
+function getAchievementsDefinition() {
+  return achievementsDef;
+}
+
+function getAchievementsDefinitions() {
+  return getAchievementsDefinition();
+}
+
+function getStatsNormalizer() {
+  return normalizeStats;
+}
+
+function getAchievementsNormalizer() {
+  return normalizeAchievements;
+}
+
+function getLeaderboardNormalizer() {
+  return normalizeLeaderboard;
+}
+
+function getAdaptiveNormalizer() {
+  return normalizeAdaptive;
+}
+
+function getBestNormalizer() {
+  return normalizeBestEntry;
+}
+
+function getSettingsNormalizer() {
+  return NORMALIZE_SETTINGS;
+}
+
+function getExportCollector() {
+  return COLLECT_EXPORT;
+}
+
+function getStorageThemes() {
+  return THEMES;
+}
+
+function getStorageDiffs() {
+  return DIFFS;
+}
+
+function getRecallBuilder(params) {
+  return buildRecallItems(params);
+}
+
+function getStatsSummaryValue(stats) {
+  return buildStatsSummary(stats);
+}
+
+function getImportNormalizerValue() {
+  return getImportNormalizer();
+}
+
+function getImportNormalizerFn() {
+  return getImportNormalizer();
+}
+
+function getStatsSummaryFn() {
+  return getStatsSummaryBuilder();
+}
+
+function getTimerPollValue() {
+  return getTimerPollMs();
+}
+
+function getTimerPollInterval() {
+  return getTimerPollMs();
+}
+
+function getTimerResolution() {
+  return getTimerPollMs();
+}
+
+function getValueTimestamp() {
+  return currentTimestamp();
+}
+
+function getTimestampNow() {
+  return currentTimestamp();
+}
+
+function doNothing() {}
+
+function getNoopValue() {
+  return doNothing;
+}
+
+function getNoopFunction() {
+  return doNothing;
+}
+
+function getNoopHandler() {
+  return doNothing;
+}
+
+function getNoopFn() {
+  return doNothing;
+}
+
+function getImportedData(obj) {
+  return normalizeImportedData(obj);
+}
+
+function getNormalizedImport(obj) {
+  return normalizeImportedData(obj);
+}
+
+function persistImportData(normalized) {
+  return applyImportedData(normalized);
+}
+
+function storeImportedData(normalized) {
+  return applyImportedData(normalized);
+}
+
+function markModalOpen(el) {
+  return openModalForElement(el);
+}
+
+function markModalClosed(el) {
+  return closeModalForElement(el);
+}
+
+function onModalOpen(el) {
+  return openModalForElement(el);
+}
+
+function onModalClose(el) {
+  return closeModalForElement(el);
+}
+
+function showModalAndFocus(el) {
+  return openModalForElement(el);
+}
+
+function hideModalAndRestoreFocus(el) {
+  return closeModalForElement(el);
+}
+
+function focusOpenedModal(el) {
+  rememberModalFocus(el);
+  focusModal(el);
+}
+
+function restoreClosedModalFocus(el) {
+  restoreModalFocus(el);
+}
+
+function onModalBackdropClose(e, modal) {
+  return handleModalBackdrop(e, modal, () => closeModalForElement(modal));
+}
+
+function createToastTimeout(callback, delay) {
+  return setTimeout(callback, delay);
+}
+
+function cancelToastTimeout(id) {
+  clearTimeout(id);
+}
+
+function getToastDelayScheduler() {
+  return createToastTimeout;
+}
+
+function getToastDelayCanceller() {
+  return cancelToastTimeout;
+}
+
+function getTimerStateUpdater() {
+  return updateTimerState;
+}
+
+function getTimerUpdaterSafe() {
+  return updateTimerState;
+}
+
+function getCurrentTimestamp() {
+  return currentTimestamp();
+}
+
+function getCurrentTimestampProvider() {
+  return currentTimestamp;
+}
+
+function getVersionId() {
+  return getPayloadVersion();
+}
+
+function getBackupVersionId() {
+  return getPayloadVersion();
+}
+
+function getVersionFn() {
+  return getPayloadVersion();
+}
+
+function getBackupVersionFn() {
+  return getPayloadVersion();
+}
+
+function getThemeLabelValueSafe(theme, value) {
+  return getAccessibilityLabel(theme, value);
+}
+
+function getCardValueA11y(theme, value) {
+  return getAccessibilityLabel(theme, value);
+}
+
+function getCardLabelValue(theme, value) {
+  return getAccessibilityLabel(theme, value);
+}
+
+function getThemeCardLabel(theme) {
+  return getThemeLabel(theme);
+}
+
+function getModalFocusTarget(el) {
+  return getFocusable(el) || el;
+}
+
+function focusModalTarget(el) {
+  focusElement(getModalFocusTarget(el));
+}
+
+function focusModalDeferred(el) {
+  queueFocus(() => focusModalTarget(el));
+}
+
+function getModalBackdropHandler(modal, onClose) {
+  return (e) => handleModalBackdrop(e, modal, onClose);
+}
+
+function getModalFocusState(modal) {
+  return getFocusState(modal);
+}
+
+function getModalFocusHandlers(modal) {
+  return getFocusState(modal);
+}
+
+function getFocusProvider() {
+  return getFocusManager();
+}
+
+function getCurrentTimestampSafe() {
+  return currentTimestamp();
+}
+
+function getCurrentTimeSafe() {
+  return currentTimestamp();
+}
+
+function getThemeLabelSafe(theme, value) {
+  return getAccessibilityLabel(theme, value);
+}
+
+function getCurrentTimestampHandler() {
+  return currentTimestamp;
+}
+
+function getCurrentNowHandler() {
+  return currentTimestamp;
+}
+
+function getToastFileName() {
+  return getBackupFilename();
+}
+
+function getTimerPollMsSafe() {
+  return getTimerPollMs();
+}
+
+function getCurrentValueTimestamp() {
+  return currentTimestamp();
+}
+
+function getRecallValueSelector(container) {
+  return getSelectedRecallValues(container);
+}
 function loadAdaptive() {
   return __RememberStorage__.loadAdaptive();
 }
@@ -111,7 +964,6 @@ let paused = false;
 let hintsLeft = 0;
 let isPreviewing = false;
 let hintsUsed = 0;
-const DEFAULT_SETTINGS = { sound: true, vibrate: true, previewSeconds: 1, accent: "indigo", theme: "auto", motion: "auto", volume: 0.5, soundPack: "clear", cardFace: "emoji", gameMode: "classic", countdown: { easy: 90, medium: 150, hard: 240 }, language: 'auto', adaptive: false, spaced: false };
 let settings = { ...DEFAULT_SETTINGS };
 let dailyActive = false;
 let dailySeed = 0;
@@ -181,14 +1033,15 @@ function showModal(el) {
   if (!el) return;
   el.classList.remove('hidden');
   el.classList.add('flex');
+  el.setAttribute('aria-hidden', 'false');
 }
 
 function hideModal(el) {
   if (!el) return;
   el.classList.add('hidden');
   el.classList.remove('flex');
+  el.setAttribute('aria-hidden', 'true');
 }
-
 function getAccent() {
   const a = settings.accent || 'indigo';
   return ACCENTS[a] || ACCENTS.indigo;
@@ -277,54 +1130,40 @@ function getCountdownFor(diff) {
 function loadStats() {
   return __RememberStorage__.loadStats();
 }
-function saveStats(s) { __RememberStorage__.saveStats(s); }
-function updateStatsOnNewGame() { const s = loadStats(); s.games += 1; saveStats(s); }
-function updateStatsOnWin() { const s = loadStats(); s.wins += 1; s.timeSum += elapsed; s.movesSum += moves; s.hintsSum += hintsUsed; s.comboSum = (s.comboSum || 0) + (maxComboThisGame || 0); s.bestCombo = Math.max(s.bestCombo || 0, maxComboThisGame || 0); saveStats(s); }
-function formatRate(a, b) { return b > 0 ? Math.round((a / b) * 100) + '%' : '—'; }
+function saveStats(s) { __RememberStorage__.saveStats(normalizeStats(s)); }
+function updateStatsOnNewGame() { saveStats(recordGameStarted(loadStats())); }
+function updateStatsOnWin() {
+  saveStats(recordGameWon(loadStats(), {
+    elapsed,
+    moves,
+    hintsUsed,
+    maxCombo: maxComboThisGame,
+  }));
+}
 function updateStatsUI() {
   if (!statsListEl) return;
   const s = loadStats();
-  const avgTime = s.wins > 0 ? formatTime(Math.round(s.timeSum / s.wins)) : '—';
-  const avgMoves = s.wins > 0 ? Math.round(s.movesSum / s.wins) : '—';
-  const avgHints = s.wins > 0 ? (s.hintsSum / s.wins).toFixed(2) : '—';
-  const avgCombo = s.wins > 0 ? (s.comboSum / s.wins).toFixed(2) : '—';
-  const winRate = formatRate(s.wins, s.games);
-  const avgPrecision = s.recallAttempts > 0 ? Math.round((s.precisionSum / s.recallAttempts) * 100) + '%' : '—';
-  const avgRecall = s.recallAttempts > 0 ? Math.round((s.recallSum / s.recallAttempts) * 100) + '%' : '—';
-  const avgNBackAcc = s.nbackAttempts > 0 ? Math.round((s.nbackAccSum / s.nbackAttempts) * 100) + '%' : '—';
-  const avgNBackRt = s.nbackRtCount > 0 ? Math.round(s.nbackRtSum / s.nbackRtCount) + 'ms' : '—';
+  const summary = buildStatsSummary(s);
   const t = i18n();
   statsListEl.innerHTML = [
     `<li>${t.statsTotalGames}：<span class="font-semibold">${s.games}</span></li>`,
-    `<li>${t.statsWins}：<span class="font-semibold">${s.wins}</span>（${t.statsWinRate} ${winRate}）</li>`,
-    `<li>${t.statsAvgTime}：<span class="font-semibold">${avgTime}</span></li>`,
-    `<li>${t.statsAvgMoves}：<span class="font-semibold">${avgMoves}</span></li>`,
-    `<li>${t.statsAvgHints}：<span class="font-semibold">${avgHints}</span></li>`,
-    `<li>${t.statsAvgCombo}：<span class="font-semibold">${avgCombo}</span>，${t.statsHistoryBest}：<span class="font-semibold">${s.bestCombo || 0}</span></li>`,
-    `<li>${t.statsRecallLabel}（${s.recallAttempts || 0} ${t.statsTimes}）${t.statsPrecision}：<span class="font-semibold">${avgPrecision}</span> · ${t.statsRecall}：<span class="font-semibold">${avgRecall}</span></li>`,
-    `<li>${t.statsNbackLabel}（${s.nbackAttempts || 0} ${t.statsTimes}）${t.statsAvgAcc}：<span class="font-semibold">${avgNBackAcc}</span> · ${t.statsAvgRt}：<span class="font-semibold">${avgNBackRt}</span></li>`,
+    `<li>${t.statsWins}：<span class="font-semibold">${s.wins}</span>（${t.statsWinRate} ${summary.winRate}）</li>`,
+    `<li>${t.statsAvgTime}：<span class="font-semibold">${summary.avgTime}</span></li>`,
+    `<li>${t.statsAvgMoves}：<span class="font-semibold">${summary.avgMoves}</span></li>`,
+    `<li>${t.statsAvgHints}：<span class="font-semibold">${summary.avgHints}</span></li>`,
+    `<li>${t.statsAvgCombo}：<span class="font-semibold">${summary.avgCombo}</span>，${t.statsHistoryBest}：<span class="font-semibold">${s.bestCombo || 0}</span></li>`,
+    `<li>${t.statsRecallLabel}（${s.recallAttempts || 0} ${t.statsTimes}）${t.statsPrecision}：<span class="font-semibold">${summary.avgPrecision}</span> · ${t.statsRecall}：<span class="font-semibold">${summary.avgRecall}</span></li>`,
+    `<li>${t.statsNbackLabel}（${s.nbackAttempts || 0} ${t.statsTimes}）${t.statsAvgAcc}：<span class="font-semibold">${summary.avgNBackAcc}</span> · ${t.statsAvgRt}：<span class="font-semibold">${summary.avgNBackRt}</span></li>`,
   ].join('');
 }
 function openStats() {
   updateStatsUI();
-  showModal(statsModal);
+  openModalWithFocus(statsModal);
 }
 function closeStats() {
-  hideModal(statsModal);
+  closeModalWithFocusRestore(statsModal);
 }
 
-function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax = 0) {
-  const parTime = diffKey === 'easy' ? 60 : diffKey === 'medium' ? 120 : 180;
-  const parMoves = difficulties[diffKey].pairs;
-  let score = 100;
-  score -= Math.min(60, (elapsedSec / parTime) * 40);
-  score -= Math.max(0, (movesCount - parMoves)) * 3;
-  score -= usedHints * 10;
-  score += Math.min(10, (comboMax || 0) * 2);
-  score = Math.max(0, Math.min(100, score));
-  const stars = Math.max(1, Math.min(5, Math.ceil(score / 20)));
-  return stars;
-}
 function renderRating(stars) {
   if (!ratingStarsEl) return;
   const filled = '⭐'.repeat(stars);
@@ -469,13 +1308,11 @@ function startTimer() {
     isCountdownMode,
     getCountdownFor,
     currentDifficulty,
-    onUpdate: (v) => {
-      elapsed = v.elapsed;
-      countdownLeft = v.countdownLeft;
-      if (timeEl) timeEl.textContent = v.displayText;
-    },
+    onUpdate: updateTimerState,
     onStop: () => { timerId = null; },
     onTimeUp,
+    now: getNow,
+    tickMs: getTimerPollMs(),
   });
   timerId = res.timerId;
   elapsed = res.elapsed;
@@ -491,6 +1328,8 @@ function makeCard(item) {
   btn.className = "relative card w-full aspect-square rounded-xl bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500";
   btn.dataset.value = item.v;
   btn.dataset.id = item.id;
+  btn.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), item.v));
+  btn.setAttribute('aria-pressed', 'false');
 
   const inner = document.createElement("div");
   inner.className = "card-inner relative w-full h-full";
@@ -532,6 +1371,8 @@ function onFlip(cardEl) {
     startTimer();
   }
   cardEl.classList.add("flipped");
+  cardEl.setAttribute('aria-pressed', 'true');
+  cardEl.setAttribute('aria-label', `${getCardA11yLabel(resolveBoardTheme(), cardEl.dataset.value)} · ${currentLang() === 'zh' ? '已翻开' : 'revealed'}`);
   sfx("flip");
   if (!firstCard) {
     firstCard = cardEl;
@@ -551,6 +1392,8 @@ function onFlip(cardEl) {
   if (match) {
     firstCard.classList.add("pointer-events-none", "ring-2", getAccent().ring, "match-pulse");
     secondCard.classList.add("pointer-events-none", "ring-2", getAccent().ring, "match-pulse");
+    firstCard.setAttribute('aria-label', `${getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`);
+    secondCard.setAttribute('aria-label', `${getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`);
     matchedPairs += 1;
     sfx("match");
     vibrateMs(40);
@@ -569,6 +1412,10 @@ function onFlip(cardEl) {
     setTimeout(() => {
       firstCard.classList.remove("flipped");
       secondCard.classList.remove("flipped");
+      firstCard.setAttribute('aria-pressed', 'false');
+      secondCard.setAttribute('aria-pressed', 'false');
+      firstCard.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value));
+      secondCard.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value));
       resetBoardState();
     }, 700);
     comboCount = 0;
@@ -621,7 +1468,7 @@ function initGame(diffKey) {
   updateProgressUI();
   applyAccentToDOM();
   updateStatsOnNewGame();
-  hideModal(winModal);
+  closeModalWithFocusRestore(winModal);
   const prevSec = Math.max(0, Number(assist.previewSec || 0));
   if (prevSec > 0) {
     isPreviewing = true;
@@ -657,7 +1504,7 @@ function onWin() {
     maxCombo: maxComboThisGame,
   });
   renderRating(stars);
-  showModal(winModal);
+  openModalWithFocus(winModal);
   sfx("win");
   vibrateMs(120);
   updateStatsOnWin();
@@ -687,14 +1534,14 @@ function onTimeUp() {
   lockBoard = true;
   paused = true;
   logLifecycle('time_up', { difficulty: currentDifficulty, elapsed, moves });
-  showModal(loseModal);
+  openModalWithFocus(loseModal);
   sfx('mismatch');
   vibrateMs(100);
   updateAdaptiveOnEnd(false, 0, currentDifficulty);
 }
 
 function closeModal() {
-  hideModal(winModal);
+  closeModalWithFocusRestore(winModal);
 }
 
 function shouldAutoShowGuide() {
@@ -708,7 +1555,7 @@ function markGuideSeen() {
 function openGuideModal(isAuto) {
   if (!guideModal) return;
   if (guideNoShow) guideNoShow.checked = false;
-  showModal(guideModal);
+  openModalWithFocus(guideModal);
   if (isAuto) {
     markGuideSeen();
   }
@@ -719,7 +1566,7 @@ function closeGuideModal() {
   if (guideNoShow && guideNoShow.checked) {
     __RememberStorage__.hideGuide(GUIDE_KEY);
   }
-  hideModal(guideModal);
+  closeModalWithFocusRestore(guideModal);
 }
 
 function maybeShowGuideOnFirstVisit() {
@@ -755,14 +1602,14 @@ if (typeof document !== 'undefined') {
     onCloseModal: closeModal,
     onPause: togglePause,
     onResume: resumeGame,
-    onFailRetry: () => { hideModal(loseModal); initGame(difficultyEl.value); },
-    onFailClose: () => { hideModal(loseModal); },
+    onFailRetry: () => { closeModalWithFocusRestore(loseModal); initGame(difficultyEl.value); },
+    onFailClose: () => { closeModalWithFocusRestore(loseModal); },
     onHint: useHint,
-    onOpenSettings: () => { applySettingsToUI(); showModal(settingsModal); },
+    onOpenSettings: () => { applySettingsToUI(); openModalWithFocus(settingsModal); },
     onGuideOpen: () => openGuideModal(false),
     onGuideClose: () => closeGuideModal(),
     onGuideModalBackdrop: (e) => { if (e.target === guideModal) closeGuideModal(); },
-    onSettingsCancel: () => { hideModal(settingsModal); },
+    onSettingsCancel: () => { closeModalWithFocusRestore(settingsModal); },
     onSettingsSave: () => {
       const prevCardFace = settings.cardFace;
       settings.sound = !!settingSound.checked;
@@ -788,7 +1635,7 @@ if (typeof document !== 'undefined') {
       applyTheme();
       applyMotionPreference();
       if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !isCountdownMode());
-      hideModal(settingsModal);
+      closeModalWithFocusRestore(settingsModal);
       applyLanguage();
       initGame(difficultyEl.value);
     },
@@ -809,7 +1656,7 @@ if (typeof document !== 'undefined') {
     },
     onAchievementsOpen: () => { openAchievements(); },
     onAchievementsClose: () => {
-      hideModal(achievementsModal);
+      closeModalWithFocusRestore(achievementsModal);
       if (achievementsNew) achievementsNew.classList.add('hidden');
     },
     onDailyOpen: () => {
@@ -819,26 +1666,26 @@ if (typeof document !== 'undefined') {
         const status = __RememberStorage__.isDailyDone(date, difficultyEl.value) ? t.completed : t.notCompleted;
         dailyInfoEl.textContent = `${t.today} ${date} · ${t.difficulty}：${difficultyEl.options[difficultyEl.selectedIndex].text} · ${t.status}：${status}`;
       }
-      showModal(dailyModal);
+      openModalWithFocus(dailyModal);
     },
     onDailyClose: () => {
-      hideModal(dailyModal);
+      closeModalWithFocusRestore(dailyModal);
     },
     onDailyStart: () => {
       dailyActive = true;
       dailySeed = seedFromDate(todayStr(), difficultyEl.value, settings.cardFace || 'emoji');
-      hideModal(dailyModal);
+      closeModalWithFocusRestore(dailyModal);
       showToast(i18n().toastDailyStarted);
       initGame(difficultyEl.value);
     },
     onStatsOpen: openStats,
     onStatsClose: closeStats,
     onNbackOpen: () => {
-      showModal(nbackModal);
+      openModalWithFocus(nbackModal);
     },
     onNbackClose: () => {
       if (nbackRunning) stopNBack();
-      hideModal(nbackModal);
+      closeModalWithFocusRestore(nbackModal);
     },
     onNbackToggle: () => {
       if (nbackRunning) stopNBack();
@@ -867,7 +1714,7 @@ if (typeof document !== 'undefined') {
       }
     },
     onRecallSkip: () => {
-      hideModal(recallModal);
+      closeModalWithFocusRestore(recallModal);
     },
     onRecallSubmit: submitRecallTest,
     onKeyDown: handleKeyDown,
@@ -921,26 +1768,33 @@ if (typeof module !== 'undefined' && module.exports) {
 
 function startNBack() {
   if (!nbackModal || !nbackStimEl) return;
-  const N = Math.max(1, parseInt(nbackNSelect.value || '2'));
-  const L = Math.max(N + 5, parseInt(nbackLenSelect.value || '20'));
-  const speed = Math.max(500, parseInt(nbackSpeedSelect.value || '900'));
+  const config = createNBackConfig({
+    N: nbackNSelect.value || '2',
+    length: nbackLenSelect.value || '20',
+    speed: nbackSpeedSelect.value || '900',
+  });
   const pool = emojiPool.slice();
-  nbackSeq = Array.from({ length: L }, () => pool[Math.floor(Math.random()*pool.length)]);
+  nbackSeq = Array.from({ length: config.length }, () => pool[Math.floor(Math.random() * pool.length)]);
   nbackIdx = -1;
-  nbackTargets = 0; nbackHits = 0; nbackMisses = 0; nbackFalseAlarms = 0; nbackRtSum = 0; nbackRtCount = 0;
+  nbackTargets = 0;
+  nbackHits = 0;
+  nbackMisses = 0;
+  nbackFalseAlarms = 0;
+  nbackRtSum = 0;
+  nbackRtCount = 0;
   nbackRunning = true;
   if (nbackStartBtn) nbackStartBtn.textContent = i18n().nbackStop;
-  tickNBack(N, speed);
+  tickNBack(config.N, config.speed);
 }
 
 function stopNBack() {
   nbackRunning = false;
-  if (nbackTimer) { clearInterval(nbackTimer); nbackTimer = null; }
+  stopNBackTimer();
   if (nbackStartBtn) nbackStartBtn.textContent = i18n().nbackStart;
 }
 
 function tickNBack(N, speed) {
-  if (nbackTimer) { clearInterval(nbackTimer); nbackTimer = null; }
+  stopNBackTimer();
   const period = speed;
   nbackTimer = setInterval(() => {
     // 统计上一拍漏报
@@ -972,65 +1826,56 @@ function onNBackKey() {
 
 function finishNBack() {
   stopNBack();
-  const targets = nbackTargets;
-  let acc;
-  if (targets > 0) acc = nbackHits / targets; else acc = 1 - (nbackFalseAlarms / Math.max(1, nbackSeq.length));
-  const avgRt = nbackRtCount > 0 ? Math.round(nbackRtSum / nbackRtCount) : 0;
-  const s = loadStats();
-  s.nbackAttempts = (s.nbackAttempts || 0) + 1;
-  s.nbackAccSum = (s.nbackAccSum || 0) + acc;
-  if (nbackRtCount > 0) { s.nbackRtSum = (s.nbackRtSum || 0) + nbackRtSum; s.nbackRtCount = (s.nbackRtCount || 0) + nbackRtCount; }
-  saveStats(s);
+  const summary = summarizeNBackResult({
+    targets: nbackTargets,
+    hits: nbackHits,
+    falseAlarms: nbackFalseAlarms,
+    length: nbackSeq.length,
+    rtSum: nbackRtSum,
+    rtCount: nbackRtCount,
+  });
+  saveStats(recordNBackAttempt(loadStats(), {
+    accuracy: summary.accuracy,
+    rtSum: summary.rtSum,
+    rtCount: summary.rtCount,
+  }));
   updateStatsUI();
   const t = i18n();
-  showToast(`${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(acc*100)}%${nbackRtCount>0?` · ${t.nbackAvgRt} ${avgRt}ms`:''}`);
+  showToast(`${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`);
 }
 
 function openRecallTest() {
   if (!recallModal || !recallChoicesEl) return;
-  const theme = settings.cardFace || 'emoji';
-  const pool = getPoolForTheme(theme).map(x => x.v);
-  const truth = [...new Set(lastGameValues)];
-  // 构造 6 真 + 3 伪（若不足则按可用数量）
-  const trueCount = Math.min(6, truth.length);
-  const falseCandidates = pool.filter(v => !truth.includes(v));
-  shuffle(truth);
-  shuffle(falseCandidates);
-  const trues = truth.slice(0, trueCount);
-  const falses = falseCandidates.slice(0, Math.max(0, 9 - trueCount));
-  const items = [...trues.map(v => ({ v, correct: true })), ...falses.map(v => ({ v, correct: false }))];
-  shuffle(items);
-  recallCorrectSet = new Set(trues);
-  // 渲染
-  recallChoicesEl.innerHTML = items.map((it, i) => {
-    const ev = escapeHtml(it.v);
+  const theme = resolveBoardTheme();
+  const { items, correctSet } = buildRecallItems({
+    truthValues: lastGameValues,
+    poolValues: getPoolForTheme(theme).map((item) => item.v),
+    shuffle,
+  });
+  recallCorrectSet = correctSet;
+  recallChoicesEl.innerHTML = items.map((item, index) => {
+    const value = String(item.v);
+    const safeValue = escapeHtml(value);
+    const safeAttr = escapeHtml(value);
+    const label = escapeHtml(getCardA11yLabel(theme, value));
     if (theme === 'colors') {
-      return `<label class="flex items-center gap-2 border rounded-md p-2"><input type="checkbox" data-v="${ev}" class="h-4 w-4"/><span class="inline-block w-6 h-6 rounded" style="background:${ev}"></span></label>`;
-    } else {
-      return `<label class="flex items-center gap-2 border rounded-md p-2"><input type="checkbox" data-v="${ev}" class="h-4 w-4"/><span class="text-xl">${ev}</span></label>`;
+      return `<label class="flex items-center gap-2 border rounded-md p-2" aria-label="${label}"><input type="checkbox" data-value="${safeAttr}" class="h-4 w-4"/><span class="inline-block w-6 h-6 rounded border border-slate-300" style="background:${safeValue}"></span><span class="sr-only">${label}</span><span class="text-xs text-slate-500">${index + 1}</span></label>`;
     }
+    return `<label class="flex items-center gap-2 border rounded-md p-2" aria-label="${label}"><input type="checkbox" data-value="${safeAttr}" class="h-4 w-4"/><span class="text-xl">${safeValue}</span></label>`;
   }).join('');
-  showModal(recallModal);
+  openModalWithFocus(recallModal);
 }
-
 function submitRecallTest() {
   if (!recallModal || !recallChoicesEl) return;
-  const checks = Array.from(recallChoicesEl.querySelectorAll('input[type="checkbox"][data-v]'));
-  const selected = new Set(checks.filter(c => c.checked).map(c => c.getAttribute('data-v')));
-  let tp = 0, fp = 0, fn = 0;
-  recallCorrectSet.forEach(v => { if (selected.has(v)) tp++; else fn++; });
-  selected.forEach(v => { if (!recallCorrectSet.has(v)) fp++; });
-  const prec = tp + fp > 0 ? tp / (tp + fp) : 1;
-  const rec = tp + fn > 0 ? tp / (tp + fn) : 0;
-  const s = loadStats();
-  s.recallAttempts = (s.recallAttempts || 0) + 1;
-  s.precisionSum = (s.precisionSum || 0) + prec;
-  s.recallSum = (s.recallSum || 0) + rec;
-  saveStats(s);
+  const result = scoreRecall(recallCorrectSet, getSelectedRecallValues(recallChoicesEl));
+  saveStats(recordRecallAttempt(loadStats(), {
+    precision: result.precision,
+    recall: result.recall,
+  }));
   updateStatsUI();
   const t = i18n();
-  showToast(`${t.recallResult} · ${t.statsPrecision} ${Math.round(prec*100)}% · ${t.statsRecall} ${Math.round(rec*100)}%`);
-  hideModal(recallModal);
+  showToast(`${t.recallResult} · ${t.statsPrecision} ${Math.round(result.precision * 100)}% · ${t.statsRecall} ${Math.round(result.recall * 100)}%`);
+  closeModalWithFocusRestore(recallModal);
 }
 
 function currentLang() {
@@ -1217,14 +2062,6 @@ function createDeck(pairs) {
   return shuffle(buildDeckItems(picks));
 }
 
-const achievementsDef = [
-  { id: 'first_win', titleKey: 'achFirstWin', descKey: 'achFirstWinDesc' },
-  { id: 'easy_under_60', titleKey: 'achEasyUnder60', descKey: 'achEasyUnder60Desc' },
-  { id: 'medium_under_120', titleKey: 'achMediumUnder120', descKey: 'achMediumUnder120Desc' },
-  { id: 'hard_under_180', titleKey: 'achHardUnder180', descKey: 'achHardUnder180Desc' },
-  { id: 'no_hint_win', titleKey: 'achNoHint', descKey: 'achNoHintDesc' },
-  { id: 'perfect_moves', titleKey: 'achPerfect', descKey: 'achPerfectDesc' },
-];
 
 function loadAchievements() {
   return __RememberStorage__.loadAchievements();
@@ -1232,32 +2069,24 @@ function loadAchievements() {
 function saveAchievements(obj) { __RememberStorage__.saveAchievements(obj); }
 
 function checkAchievementsOnWin() {
-  const store = loadAchievements();
-  const newly = [];
-  const pairs = difficulties[currentDifficulty].pairs;
-  const checks = [
-    ['first_win', true],
-    ['easy_under_60', currentDifficulty === 'easy' && elapsed <= 60],
-    ['medium_under_120', currentDifficulty === 'medium' && elapsed <= 120],
-    ['hard_under_180', currentDifficulty === 'hard' && elapsed <= 180],
-    ['no_hint_win', hintsUsed === 0],
-    ['perfect_moves', moves === pairs],
-  ];
-  for (const [id, cond] of checks) {
-    if (cond && !store[id]) { store[id] = { unlocked: true, at: Date.now() }; newly.push(id); }
-  }
-  if (newly.length) saveAchievements(store);
-  return newly;
+  const result = checkAchievements(loadAchievements(), {
+    currentDifficulty,
+    elapsed,
+    hintsUsed,
+    moves,
+    pairs: difficulties[currentDifficulty].pairs,
+  });
+  if (result.newly.length) saveAchievements(result.store);
+  return result.newly;
 }
 
 function updateAchievementsUI() {
   if (!achievementsList) return;
   const store = loadAchievements();
   const t = i18n();
-  const html = achievementsDef.map(def => {
+  const html = achievementsDef.map((def) => {
     const hit = !!store[def.id];
-    const d = hit ? new Date(store[def.id].at) : null;
-    const when = hit ? `${d.getMonth()+1}-${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}` : '';
+    const when = hit ? formatAchievementTime(store[def.id].at) : '';
     const title = t[def.titleKey] || def.titleKey;
     const desc = t[def.descKey] || def.descKey;
     return `<li class="flex items-center justify-between ${hit ? 'text-emerald-600' : 'text-slate-500'}"><span>${hit ? '✅' : '⬜️'} ${escapeHtml(title)} <span class="text-xs text-slate-400">${escapeHtml(desc)}</span></span>${when ? `<span class="text-xs text-slate-400">${escapeHtml(when)}</span>` : ''}</li>`;
@@ -1267,7 +2096,7 @@ function updateAchievementsUI() {
 
 function openAchievements(newIds) {
   updateAchievementsUI();
-  showModal(achievementsModal);
+  openModalWithFocus(achievementsModal);
   if (achievementsNew) {
     if (newIds && newIds.length) {
       const t = i18n();
@@ -1295,22 +2124,7 @@ function showCombo(n) {
 }
 
 function collectExportData() {
-  return {
-    version: 1,
-    settings,
-    bests: { easy: loadBest('easy'), medium: loadBest('medium'), hard: loadBest('hard') },
-    leaderboards: { easy: loadLeaderboard('easy'), medium: loadLeaderboard('medium'), hard: loadLeaderboard('hard') },
-    achievements: loadAchievements(),
-    stats: loadStats(),
-    adaptive: loadAdaptive(),
-    spaced: {
-      emoji: loadSpaced('emoji'),
-      numbers: loadSpaced('numbers'),
-      letters: loadSpaced('letters'),
-      shapes: loadSpaced('shapes'),
-      colors: loadSpaced('colors'),
-    },
-  };
+  return buildExportPayload();
 }
 
 function exportData() {
@@ -1318,7 +2132,7 @@ function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'memory-match-backup.json';
+  a.download = getBackupFilename();
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
@@ -1326,31 +2140,15 @@ function exportData() {
 
 function importDataFromObj(obj) {
   try {
-    if (obj.settings) saveSettings({ ...DEFAULT_SETTINGS, ...obj.settings });
-    if (obj.bests) {
-      for (const k of ['easy','medium','hard']) { if (obj.bests[k]) saveBest(k, obj.bests[k]); }
-    }
-    if (obj.leaderboards) {
-      for (const k of ['easy','medium','hard']) { if (obj.leaderboards[k]) saveLeaderboard(k, obj.leaderboards[k]); }
-    }
-    if (obj.achievements) saveAchievements(obj.achievements);
-    if (obj.stats) saveStats(obj.stats);
-    if (obj.adaptive) saveAdaptive(obj.adaptive);
-    if (obj.spaced) {
-      for (const t of ['emoji','numbers','letters','shapes','colors']) {
-        if (obj.spaced[t]) saveSpaced(t, obj.spaced[t]);
-      }
-    }
-    settings = loadSettings();
-    applyAccentToDOM();
-    applyTheme();
-    applyMotionPreference();
-    updateBestUI();
-    updateLeaderboardUI();
-    updateStatsUI();
-    updateAchievementsUI();
-    initGame(difficultyEl.value);
+    const normalized = normalizeImportedData(obj);
+    applyImportedData(normalized);
+    logLifecycle('import_data_applied', {
+      version: normalized.version,
+      bestCount: Object.keys(normalized.bests || {}).length,
+      leaderboardCount: Object.keys(normalized.leaderboards || {}).length,
+    });
   } catch (e) {
     logError('import_data_failed', { message: e instanceof Error ? e.message : String(e) });
+    throw e;
   }
 }

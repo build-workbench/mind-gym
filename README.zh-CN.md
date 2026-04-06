@@ -51,7 +51,7 @@ npx serve .
 - **存储**：`localStorage` 用于设置、统计、成就、间隔复现数据等
 - **测试**：Jest 29 + jsdom
 - **CI**：GitHub Actions（Node 20 / 22 矩阵）
-- **构建**：无构建流程，专注纯前端
+- **构建**：无打包器；仅在样式编译与部署准备时使用 `build:css` / `prepare:deploy`
 
 ## 📊 项目结构
 
@@ -78,7 +78,7 @@ mind-gym/
 │   └── prepare-deploy.sh   # 部署打包脚本（→ dist/）
 ├── .github/workflows/
 │   ├── ci.yml              # CI：测试 + 部署包验证
-│   ├── deploy.yml          # GitHub Pages 自动部署
+│   ├── pages.yml           # GitHub Pages 自动部署
 │   └── pr-title.yml        # Semantic PR 标题校验
 ├── assets/
 │   └── icon.svg            # PWA 图标
@@ -142,7 +142,7 @@ mind-gym/
   npm test
   ```
 - GitHub Actions 会在 Node.js 20 与 22 上并行运行测试，并验证部署包可被正确产出（`npm run prepare:deploy`）。
-- 推送到 `main` 将自动触发 Pages 部署流程，生成的静态资源位于 `dist/` 目录。
+- 推送到 `master` / `main` 将自动触发 Pages 部署流程，生成的静态资源位于 `dist/` 目录。
 
 ### 部署与打包
 
