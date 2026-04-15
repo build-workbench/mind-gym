@@ -2,55 +2,260 @@
 
 ## 项目形态
 
-- 纯静态前端（无后端、无打包器；样式编译与部署准备通过脚本完成）
-- 单页应用（SPA），以 `index.html + app.js` 驱动
-- 数据持久化使用 `localStorage`
-- PWA：`sw.js` 负责离线缓存，`manifest.webmanifest` 提供安装元信息
+| 特性           | 说明                               |
+| -------------- | ---------------------------------- |
+| **部署方式**   | 纯静态前端，无需后端               |
+| **构建工具**   | 无打包器；仅 Tailwind CLI 编译 CSS |
+| **框架**       | 无框架，原生 JavaScript (ES2022)   |
+| **数据持久化** | localStorage                       |
+| **PWA**        | Service Worker + Web App Manifest  |
 
-## 关键文件职责
+## 系统架构图
 
-- **`index.html`**
-  - UI 结构：顶部工具栏、卡牌网格、多个模态框（设置/统计/成就/每日挑战/回忆测验/N-back/指南）
-  - Tailwind CSS 通过 CDN 注入
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         index.html                               │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                      UI Layer                            │    │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │    │
+│  │  │ Toolbar  │ │  Grid    │ │ Modals   │ │ Toasts   │   │    │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                              │                                   │
+│                              ▼                                   │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                    app.js (Orchestrator)                 │    │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐       │    │
+│  │  │ State       │ │ Game Loop   │ │ Mode Logic  │       │    │
+│  │  │ Management  │ │ (flip/match)│ │ (nback/etc) │       │    │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘       │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                              │                                   │
+│                              ▼                                   │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                     src/ Modules                         │    │
+│  │  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐│    │
+│  │  │storage │ │ stats  │ │ modes  │ │  i18n  │ │effects ││    │
+│  │  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘│    │
+│  │  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐│    │
+│  │  │ timer  │ │ pools  │ │confetti│ │  ui    │ │ keys   ││    │
+│  │  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘│    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                              │                                   │
+│                              ▼                                   │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                    localStorage                          │    │
+│  │  settings | stats | achievements | best | leaderboard   │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-- **`app.js`**
-  - 游戏主流程：开局、翻牌、配对判定、胜负结算
-  - 多训练模式：经典/限时/每日挑战/回忆测验/N-back
-  - 自适应辅助：根据评分动态调整预览秒数与提示次数
-  - 间隔复现：易错卡面权重机制（后续可升级 SM-2/Leitner）
-  - 统计/成就/排行榜
-  - 导入/导出备份
-  - 国际化（zh/en/auto）
+## 模块职责
 
-- **`sw.js`**
-  - 预缓存核心静态资源
-  - 对 Tailwind CDN 做运行时缓存（离线样式兜底）
+### 核心模块
 
-- **`manifest.webmanifest`**
-  - PWA 名称、主题色、启动范围、图标
+| 模块             | 文件                  | 职责                                  |
+| ---------------- | --------------------- | ------------------------------------- |
+| **Orchestrator** | `app.js`              | 游戏主循环、状态机、模式调度、UI 协调 |
+| **Storage**      | `src/storage.js`      | localStorage CRUD，数据规范化         |
+| **Stats**        | `src/stats.js`        | 统计数据累计与计算                    |
+| **Modes**        | `src/modes.js`        | N-back、回忆测验纯逻辑                |
+| **Achievements** | `src/achievements.js` | 成就定义与解锁检查                    |
 
-## 运行时数据流（高层）
+### 支撑模块
 
-- `DOMContentLoaded`
-  - 绑定 DOM 元素引用
-  - 读取 `settings` / `stats` / `achievements` 等
-  - 应用主题/动效偏好/语言
-  - 注册 Service Worker
-  - 调用 `initGame()` 进入可玩状态
+| 模块              | 文件                   | 职责                      |
+| ----------------- | ---------------------- | ------------------------- |
+| **Keys**          | `src/keys.js`          | localStorage 键名常量     |
+| **Utils**         | `src/utils.js`         | 洗牌、种子随机、HTML 转义 |
+| **I18n**          | `src/i18n.js`          | 国际化词典与语言检测      |
+| **Effects**       | `src/effects.js`       | 音效（Web Audio）与震动   |
+| **Pools**         | `src/pools.js`         | 卡面素材池                |
+| **Timer**         | `src/timer.js`         | 正计时/倒计时管理         |
+| **Confetti**      | `src/confetti.js`      | 胜利粒子动画              |
+| **UI**            | `src/ui.js`            | DOM 元素绑定              |
+| **UI Events**     | `src/ui-events.js`     | 事件监听注册              |
+| **Import/Export** | `src/import-export.js` | 备份数据规范化            |
 
-- 游戏进行中
-  - `onFlip()` 管理两张翻牌的状态机
-  - 成功配对：累积连击、更新进度条、锁定卡片
-  - 失败翻牌：延时翻回，继续下一轮
+## 数据流
 
-- 结算
-  - `onWin()`：记录最佳/排行榜/统计/自适应/间隔复现；打开回忆测验
-  - `onTimeUp()`：限时模式判负
+### 初始化流程
 
-## 架构改进方向（规划）
+```
+DOMContentLoaded
+    │
+    ├── bind DOM elements (ui.js)
+    │
+    ├── load settings (storage.js)
+    │
+    ├── apply theme/accent/motion
+    │
+    ├── apply language (i18n.js)
+    │
+    ├── register Service Worker
+    │
+    └── initGame(difficulty)
+            │
+            ├── createDeck()
+            │
+            ├── render cards to grid
+            │
+            └── reset state (moves, timer, hints)
+```
 
-在保持“纯静态、无构建”前提下，建议分阶段拆分 `app.js`：
+### 游戏进行中
 
-- 第 1 阶段：按职责在文件内分区（状态/存储/UI/模式）并抽出纯函数，提升可测性；当前已拆出 stats / achievements / modes / import-export 模块
-- 第 2 阶段：迁移到原生 ES Modules（多个 `.js` 文件），由 `index.html` 以 `type="module"` 加载
-- 第 3 阶段：为复杂模式（如 SM-2、双任务干扰、交错训练）引入独立模块与数据版本迁移
+```
+onFlip(card)
+    │
+    ├── check lock/pause conditions
+    │
+    ├── flip card (animation)
+    │
+    ├── if firstCard:
+    │       └── store and return
+    │
+    ├── if secondCard:
+    │       │
+    │       ├── match?
+    │       │       ├── lock cards
+    │       │       ├── update combo
+    │       │       ├── check win
+    │       │       └── update progress
+    │       │
+    │       └── no match?
+    │               ├── flip back after delay
+    │               └── reset combo
+    │
+    └── reset board state
+```
+
+### 结算流程
+
+```
+onWin()
+    │
+    ├── stop timer
+    │
+    ├── update best score
+    │
+    ├── update leaderboard
+    │
+    ├── update stats
+    │
+    ├── update adaptive rating
+    │
+    ├── apply spaced reinforcement
+    │
+    ├── check achievements
+    │
+    ├── show win modal
+    │
+    ├── run confetti animation
+    │
+    └── open recall test
+
+onTimeUp()
+    │
+    ├── lock board
+    │
+    ├── show lose modal
+    │
+    └── update adaptive rating
+```
+
+## 状态管理
+
+### 游戏状态变量 (app.js)
+
+```javascript
+// 游戏进度
+let firstCard = null; // 第一张翻开的牌
+let secondCard = null; // 第二张翻开的牌
+let lockBoard = false; // 是否锁定棋盘
+let moves = 0; // 步数
+let matchedPairs = 0; // 已配对数
+let started = false; // 游戏是否开始
+
+// 计时
+let elapsed = 0; // 已用时间（秒）
+let countdownLeft = 0; // 倒计时剩余
+let timerId = null; // 定时器 ID
+
+// 难度与设置
+let currentDifficulty = 'easy';
+let settings = { ...DEFAULT_SETTINGS };
+
+// 特殊状态
+let paused = false;
+let isPreviewing = false;
+let timeUp = false;
+let hintsLeft = 0;
+let hintsUsed = 0;
+
+// 连击系统
+let comboCount = 0;
+let maxComboThisGame = 0;
+let lastMatchAt = 0;
+
+// 回忆测验
+let seenCountMap = new Map();
+let lastGameValues = [];
+let recallCorrectSet = new Set();
+
+// N-back 模式
+let nbackRunning = false;
+let nbackTimer = null;
+let nbackSeq = [];
+let nbackIdx = 0;
+// ... 更多 N-back 状态
+
+// 每日挑战
+let dailyActive = false;
+let dailySeed = 0;
+```
+
+## 架构改进方向
+
+当前 `app.js` 仍然较大（~2500 行），可按以下方向继续优化：
+
+### 第一阶段：模块内分区 ✅
+
+- [x] 抽出 `stats.js`、`achievements.js`、`modes.js`、`import-export.js`
+- [x] 纯函数可独立测试
+
+### 第二阶段：ES Modules 迁移
+
+- [ ] 将 UMD 模块改为 ES Modules
+- [ ] `index.html` 使用 `type="module"` 加载
+- [ ] 支持 tree-shaking（如需打包）
+
+### 第三阶段：复杂模式独立化
+
+- [ ] N-back 模式独立为 `src/nback.js`
+- [ ] 回忆测验独立为 `src/recall.js`
+- [ ] 每日挑战独立为 `src/daily.js`
+- [ ] 自适应系统独立为 `src/adaptive.js`
+
+## 扩展指南
+
+### 添加新训练模式
+
+1. 在 `src/modes.js` 中添加模式逻辑
+2. 在 `app.js` 中添加模式状态和 UI 控制
+3. 在 `src/i18n.js` 中添加文案
+4. 在 `index.html` 中添加模态框（如需要）
+5. 编写单元测试
+
+### 添加新卡面主题
+
+1. 在 `src/pools.js` 中添加素材池
+2. 在 `src/i18n.js` 中添加卡面标签
+3. 在 `src/import-export.js` 中更新 `VALID_THEMES`
+4. 更新文档
+
+### 添加新成就
+
+1. 在 `src/achievements.js` 的 `achievementsDef` 中添加定义
+2. 在 `src/i18n.js` 中添加 `titleKey` 和 `descKey` 对应的文案
+3. 在 `checkAchievementsOnWin` 中添加检查逻辑
