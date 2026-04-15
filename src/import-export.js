@@ -39,7 +39,9 @@
   function normalizeSettings(raw, defaults) {
     const source = isPlainObject(raw) ? raw : {};
     const fallback = isPlainObject(defaults) ? defaults : {};
-    const countdownDefaults = isPlainObject(fallback.countdown) ? fallback.countdown : { easy: 90, medium: 150, hard: 240 };
+    const countdownDefaults = isPlainObject(fallback.countdown)
+      ? fallback.countdown
+      : { easy: 90, medium: 150, hard: 240 };
     return {
       sound: source.sound === undefined ? !!fallback.sound : !!source.sound,
       vibrate: source.vibrate === undefined ? !!fallback.vibrate : !!source.vibrate,
@@ -88,7 +90,7 @@
     return raw
       .map(normalizeLeaderboardEntry)
       .filter(Boolean)
-      .sort((a, b) => (a.time - b.time) || (a.moves - b.moves) || (a.at - b.at))
+      .sort((a, b) => a.time - b.time || a.moves - b.moves || a.at - b.at)
       .slice(0, 3);
   }
 

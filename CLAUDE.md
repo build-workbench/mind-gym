@@ -13,6 +13,7 @@ npm run prepare:deploy    # build:css + copy files to dist/
 ```
 
 Run a single test file:
+
 ```bash
 npx jest __tests__/helpers.test.js
 ```
@@ -32,18 +33,18 @@ Each `src/` module exposes a global (e.g. `window.Storage`, `window.I18n`). `app
 
 ### Key files
 
-| File | Role |
-|------|------|
-| `app.js` | Game loop, state machine, all mode logic (~1356 lines) |
-| `src/storage.js` | localStorage CRUD — settings, scores, stats, achievements |
-| `src/i18n.js` | zh/en dictionary; auto-detects browser language |
-| `src/ui.js` | DOM element bindings (single source of truth for element refs) |
-| `src/ui-events.js` | Event listener registration |
-| `src/pools.js` | Card face asset pools (emoji, numbers, letters, shapes, colors) |
-| `src/timer.js` | Countdown and elapsed-time management |
-| `src/effects.js` | Web Audio API sound effects and Vibration API |
-| `src/confetti.js` | Canvas 2D victory animation |
-| `sw.js` | Service Worker: cache-first for assets, network-first for navigation |
+| File               | Role                                                                 |
+| ------------------ | -------------------------------------------------------------------- |
+| `app.js`           | Game loop, state machine, all mode logic (~1356 lines)               |
+| `src/storage.js`   | localStorage CRUD — settings, scores, stats, achievements            |
+| `src/i18n.js`      | zh/en dictionary; auto-detects browser language                      |
+| `src/ui.js`        | DOM element bindings (single source of truth for element refs)       |
+| `src/ui-events.js` | Event listener registration                                          |
+| `src/pools.js`     | Card face asset pools (emoji, numbers, letters, shapes, colors)      |
+| `src/timer.js`     | Countdown and elapsed-time management                                |
+| `src/effects.js`   | Web Audio API sound effects and Vibration API                        |
+| `src/confetti.js`  | Canvas 2D victory animation                                          |
+| `sw.js`            | Service Worker: cache-first for assets, network-first for navigation |
 
 ### Game modes
 
@@ -56,6 +57,7 @@ Each `src/` module exposes a global (e.g. `window.Storage`, `window.I18n`). `app
 ### localStorage key conventions
 
 All keys prefixed `memory_match_`:
+
 - `_settings`, `_best_<difficulty>`, `_lb_<difficulty>`, `_achievements`, `_stats`
 - `_adaptive` (rating 600–1600), `_spaced_<theme>` (weighted card pool)
 - `_daily_<YYYY-MM-DD>_<difficulty>`

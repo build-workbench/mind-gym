@@ -33,7 +33,8 @@
 
   function scoreRecall(correctSet, selectedValues) {
     const truth = correctSet instanceof Set ? correctSet : new Set();
-    const selected = selectedValues instanceof Set ? selectedValues : new Set(Array.isArray(selectedValues) ? selectedValues : []);
+    const selected =
+      selectedValues instanceof Set ? selectedValues : new Set(Array.isArray(selectedValues) ? selectedValues : []);
     let tp = 0;
     let fp = 0;
     let fn = 0;
@@ -70,7 +71,7 @@
     const length = Math.max(1, Number(data.length) || 1);
     const rtSum = Math.max(0, Number(data.rtSum) || 0);
     const rtCount = Math.max(0, Number(data.rtCount) || 0);
-    const accuracy = targets > 0 ? hits / targets : 1 - (falseAlarms / length);
+    const accuracy = targets > 0 ? hits / targets : 1 - falseAlarms / length;
     return {
       accuracy: Math.max(0, Math.min(1, accuracy)),
       avgRt: rtCount > 0 ? Math.round(rtSum / rtCount) : 0,

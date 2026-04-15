@@ -1,18 +1,31 @@
-const __GLOBAL__ = typeof globalThis !== 'undefined' ? globalThis : (typeof window !== 'undefined' ? window : this);
-const __RememberKeys__ = (typeof module !== 'undefined' && module.exports) ? require('./src/keys.js') : __GLOBAL__.RememberKeys;
-const __RememberUtils__ = (typeof module !== 'undefined' && module.exports) ? require('./src/utils.js') : __GLOBAL__.RememberUtils;
-const __RememberStats__ = (typeof module !== 'undefined' && module.exports) ? require('./src/stats.js') : __GLOBAL__.RememberStats;
-const __RememberAchievements__ = (typeof module !== 'undefined' && module.exports) ? require('./src/achievements.js') : __GLOBAL__.RememberAchievements;
-const __RememberModes__ = (typeof module !== 'undefined' && module.exports) ? require('./src/modes.js') : __GLOBAL__.RememberModes;
-const __RememberImportExport__ = (typeof module !== 'undefined' && module.exports) ? require('./src/import-export.js') : __GLOBAL__.RememberImportExport;
-const __RememberStorage__ = (typeof module !== 'undefined' && module.exports) ? require('./src/storage.js') : __GLOBAL__.RememberStorage;
-const __RememberI18n__ = (typeof module !== 'undefined' && module.exports) ? require('./src/i18n.js') : __GLOBAL__.RememberI18n;
-const __RememberEffects__ = (typeof module !== 'undefined' && module.exports) ? require('./src/effects.js') : __GLOBAL__.RememberEffects;
-const __RememberPools__ = (typeof module !== 'undefined' && module.exports) ? require('./src/pools.js') : __GLOBAL__.RememberPools;
-const __RememberTimer__ = (typeof module !== 'undefined' && module.exports) ? require('./src/timer.js') : __GLOBAL__.RememberTimer;
-const __RememberConfetti__ = (typeof module !== 'undefined' && module.exports) ? require('./src/confetti.js') : __GLOBAL__.RememberConfetti;
-const __RememberUIEvents__ = (typeof module !== 'undefined' && module.exports) ? require('./src/ui-events.js') : __GLOBAL__.RememberUIEvents;
-const __RememberUI__ = (typeof module !== 'undefined' && module.exports) ? require('./src/ui.js') : __GLOBAL__.RememberUI;
+const __GLOBAL__ = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this;
+const __RememberKeys__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/keys.js') : __GLOBAL__.RememberKeys;
+const __RememberUtils__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/utils.js') : __GLOBAL__.RememberUtils;
+const __RememberStats__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/stats.js') : __GLOBAL__.RememberStats;
+const __RememberAchievements__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/achievements.js') : __GLOBAL__.RememberAchievements;
+const __RememberModes__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/modes.js') : __GLOBAL__.RememberModes;
+const __RememberImportExport__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/import-export.js') : __GLOBAL__.RememberImportExport;
+const __RememberStorage__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/storage.js') : __GLOBAL__.RememberStorage;
+const __RememberI18n__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/i18n.js') : __GLOBAL__.RememberI18n;
+const __RememberEffects__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/effects.js') : __GLOBAL__.RememberEffects;
+const __RememberPools__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/pools.js') : __GLOBAL__.RememberPools;
+const __RememberTimer__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/timer.js') : __GLOBAL__.RememberTimer;
+const __RememberConfetti__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/confetti.js') : __GLOBAL__.RememberConfetti;
+const __RememberUIEvents__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/ui-events.js') : __GLOBAL__.RememberUIEvents;
+const __RememberUI__ = typeof module !== 'undefined' && module.exports ? require('./src/ui.js') : __GLOBAL__.RememberUI;
 const MODAL_FOCUS_PREV = new WeakMap();
 const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
 const DIFFS = ['easy', 'medium', 'hard'];
@@ -31,7 +44,22 @@ const CARD_LABELS_ZH = {
   colors: '颜色卡片',
 };
 const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-const DEFAULT_SETTINGS = { sound: true, vibrate: true, previewSeconds: 1, accent: 'indigo', theme: 'auto', motion: 'auto', volume: 0.5, soundPack: 'clear', cardFace: 'emoji', gameMode: 'classic', countdown: { easy: 90, medium: 150, hard: 240 }, language: 'auto', adaptive: false, spaced: false };
+const DEFAULT_SETTINGS = {
+  sound: true,
+  vibrate: true,
+  previewSeconds: 1,
+  accent: 'indigo',
+  theme: 'auto',
+  motion: 'auto',
+  volume: 0.5,
+  soundPack: 'clear',
+  cardFace: 'emoji',
+  gameMode: 'classic',
+  countdown: { easy: 90, medium: 150, hard: 240 },
+  language: 'auto',
+  adaptive: false,
+  spaced: false,
+};
 const DEFAULT_STATS = __RememberStats__.DEFAULT_STATS;
 const achievementsDef = __RememberAchievements__.achievementsDef;
 const NORMALIZE_SETTINGS = __RememberImportExport__.normalizeSettings;
@@ -73,7 +101,9 @@ function queueFocus(fn) {
 }
 
 function cardLabelForTheme(theme) {
-  return currentLang() === 'zh' ? (CARD_LABELS_ZH[theme] || CARD_LABELS_ZH.emoji) : (CARD_LABELS[theme] || CARD_LABELS.emoji);
+  return currentLang() === 'zh'
+    ? CARD_LABELS_ZH[theme] || CARD_LABELS_ZH.emoji
+    : CARD_LABELS[theme] || CARD_LABELS.emoji;
 }
 
 function rememberModalFocus(el) {
@@ -869,18 +899,29 @@ function loadAdaptive() {
 
 function getAdaptiveAssist(diff) {
   const baseHints = HINT_LIMITS[diff] || 0;
-  const r = (loadAdaptive().rating || 1000);
+  const r = loadAdaptive().rating || 1000;
   let preview = Number(settings.previewSeconds ?? 0);
   let hint = baseHints;
   if (!settings.adaptive) return { previewSec: preview, hintLimit: hint };
-  if (r < 940) { preview = Math.max(preview, 2); hint = Math.min(5, baseHints + 1); }
-  else if (r < 1040) { preview = Math.max(preview, 1); }
-  else if (r < 1140) { preview = Math.min(preview, 1); }
-  else { preview = 0; hint = Math.max(0, baseHints - 1); }
+  if (r < 940) {
+    preview = Math.max(preview, 2);
+    hint = Math.min(5, baseHints + 1);
+  } else if (r < 1040) {
+    preview = Math.max(preview, 1);
+  } else if (r < 1140) {
+    preview = Math.min(preview, 1);
+  } else {
+    preview = 0;
+    hint = Math.max(0, baseHints - 1);
+  }
   return { previewSec: preview, hintLimit: hint };
 }
-function saveAdaptive(a) { __RememberStorage__.saveAdaptive(a); }
-function expectedStarsFor(diff) { return diff === 'easy' ? 4 : diff === 'medium' ? 3.5 : 3; }
+function saveAdaptive(a) {
+  __RememberStorage__.saveAdaptive(a);
+}
+function expectedStarsFor(diff) {
+  return diff === 'easy' ? 4 : diff === 'medium' ? 3.5 : 3;
+}
 function updateAdaptiveOnEnd(win, stars, diff) {
   if (!settings.adaptive) return;
   const a = loadAdaptive();
@@ -900,8 +941,12 @@ function decideDifficulty() {
   return 'hard';
 }
 
-function loadSpaced(theme) { return __RememberStorage__.loadSpaced(theme); }
-function saveSpaced(theme, data) { __RememberStorage__.saveSpaced(theme, data); }
+function loadSpaced(theme) {
+  return __RememberStorage__.loadSpaced(theme);
+}
+function saveSpaced(theme, data) {
+  __RememberStorage__.saveSpaced(theme, data);
+}
 
 function applySpacedAfterWin(theme) {
   if (!settings.spaced) return;
@@ -921,12 +966,16 @@ function pickWithSpaced(theme, pool, pairs) {
   copy.sort((a, b) => (weights[b.v] || 0) - (weights[a.v] || 0));
   const topN = Math.min(Math.floor(pairs * 0.4), copy.length);
   const picksTop = copy.slice(0, topN);
-  const rest = pool.filter(x => !picksTop.some(y => y.v === x.v));
+  const rest = pool.filter((x) => !picksTop.some((y) => y.v === x.v));
   shuffle(rest);
   const picks = [...picksTop, ...rest.slice(0, pairs - picksTop.length)];
   return picks;
 }
-const difficulties = { easy: { rows: 4, cols: 4, pairs: 8 }, medium: { rows: 4, cols: 5, pairs: 10 }, hard: { rows: 6, cols: 6, pairs: 18 } };
+const difficulties = {
+  easy: { rows: 4, cols: 4, pairs: 8 },
+  medium: { rows: 4, cols: 5, pairs: 10 },
+  hard: { rows: 6, cols: 6, pairs: 18 },
+};
 const emojiPool = __RememberPools__ && __RememberPools__.emojiPool ? __RememberPools__.emojiPool : [];
 
 let gridEl, movesEl, timeEl, bestEl, difficultyEl, newGameBtn, winModal, winStatsEl, playAgainBtn, closeModalBtn;
@@ -946,7 +995,15 @@ let recallModal, recallChoicesEl, recallSkipBtn, recallSubmitBtn;
 let dailyModal, dailyBtn, dailyCloseBtn, dailyStartBtn, dailyInfoEl;
 let loseModal, failRetryBtn, failCloseBtn;
 let statsModal, statsBtn, statsClose, statsListEl, resetDataBtn;
-let guideBtn, guideModal, guideCloseBtn, guideNoShow, guideBasicsList, guideAdvancedList, guideShortcutsList, guideNoShowLabel, guideOpenHintEl;
+let guideBtn,
+  guideModal,
+  guideCloseBtn,
+  guideNoShow,
+  guideBasicsList,
+  guideAdvancedList,
+  guideShortcutsList,
+  guideNoShowLabel,
+  guideOpenHintEl;
 let firstCard = null;
 let secondCard = null;
 let lockBoard = false;
@@ -957,7 +1014,7 @@ let countdownLeft = 0;
 let timeUp = false;
 let timerId = null;
 let started = false;
-let currentDifficulty = "easy";
+let currentDifficulty = 'easy';
 const HINT_LIMITS = { easy: 3, medium: 2, hard: 1 };
 const GUIDE_KEY = 'memory_match_onboarding_v1';
 let paused = false;
@@ -991,7 +1048,7 @@ function formatTime(s) {
   return __RememberTimer__.formatTime(s);
 }
 
-function beep(f, dur, type = "sine", vol = 0.05) {
+function beep(f, dur, type = 'sine', vol = 0.05) {
   __RememberEffects__.beep(f, dur, type, vol);
 }
 
@@ -1004,8 +1061,18 @@ function vibrateMs(ms) {
 }
 
 const ACCENTS = {
-  indigo: { frontBg: 'bg-indigo-100', frontText: 'text-indigo-700', progressBg: 'bg-indigo-500', ring: 'ring-indigo-400' },
-  emerald: { frontBg: 'bg-emerald-100', frontText: 'text-emerald-700', progressBg: 'bg-emerald-500', ring: 'ring-emerald-400' },
+  indigo: {
+    frontBg: 'bg-indigo-100',
+    frontText: 'text-indigo-700',
+    progressBg: 'bg-indigo-500',
+    ring: 'ring-indigo-400',
+  },
+  emerald: {
+    frontBg: 'bg-emerald-100',
+    frontText: 'text-emerald-700',
+    progressBg: 'bg-emerald-500',
+    ring: 'ring-emerald-400',
+  },
   rose: { frontBg: 'bg-rose-100', frontText: 'text-rose-700', progressBg: 'bg-rose-500', ring: 'ring-rose-400' },
 };
 
@@ -1048,13 +1115,11 @@ function getAccent() {
 }
 
 function removeClasses(el, list) {
-  list.forEach(c => el.classList.remove(c));
+  list.forEach((c) => el.classList.remove(c));
 }
 
 function applyAccentToDOM() {
-  const allProgress = [
-    ACCENTS.indigo.progressBg, ACCENTS.emerald.progressBg, ACCENTS.rose.progressBg
-  ];
+  const allProgress = [ACCENTS.indigo.progressBg, ACCENTS.emerald.progressBg, ACCENTS.rose.progressBg];
   if (progressBarEl) {
     removeClasses(progressBarEl, allProgress);
     progressBarEl.classList.add(getAccent().progressBg);
@@ -1062,11 +1127,11 @@ function applyAccentToDOM() {
   const allFrontBg = [ACCENTS.indigo.frontBg, ACCENTS.emerald.frontBg, ACCENTS.rose.frontBg];
   const allFrontText = [ACCENTS.indigo.frontText, ACCENTS.emerald.frontText, ACCENTS.rose.frontText];
   const allRings = [ACCENTS.indigo.ring, ACCENTS.emerald.ring, ACCENTS.rose.ring];
-  document.querySelectorAll('.card-front').forEach(el => {
+  document.querySelectorAll('.card-front').forEach((el) => {
     removeClasses(el, [...allFrontBg, ...allFrontText]);
     el.classList.add(getAccent().frontBg, getAccent().frontText);
   });
-  document.querySelectorAll('.card.pointer-events-none').forEach(el => {
+  document.querySelectorAll('.card.pointer-events-none').forEach((el) => {
     removeClasses(el, allRings);
     el.classList.add(getAccent().ring);
   });
@@ -1106,8 +1171,12 @@ function runConfetti(duration = 1400) {
   __RememberConfetti__.runConfetti(confettiCanvas, isReducedMotion, duration);
 }
 
-function adaptiveKey() { return __RememberKeys__.adaptiveKey(); }
-function todayStr() { return __RememberKeys__.todayStr(); }
+function adaptiveKey() {
+  return __RememberKeys__.adaptiveKey();
+}
+function todayStr() {
+  return __RememberKeys__.todayStr();
+}
 
 function seedFromDate(dateStr, diff, theme) {
   // Simple hash: sum char codes with multipliers
@@ -1120,7 +1189,9 @@ function seededShuffle(arr, rng) {
   return __RememberUtils__.seededShuffle(arr, rng);
 }
 
-function isCountdownMode() { return (settings.gameMode || 'classic') === 'countdown'; }
+function isCountdownMode() {
+  return (settings.gameMode || 'classic') === 'countdown';
+}
 function getCountdownFor(diff) {
   const c = settings.countdown || DEFAULT_SETTINGS.countdown;
   const n = Math.max(10, Math.min(999, parseInt((c && c[diff]) || DEFAULT_SETTINGS.countdown[diff])));
@@ -1130,15 +1201,21 @@ function getCountdownFor(diff) {
 function loadStats() {
   return __RememberStorage__.loadStats();
 }
-function saveStats(s) { __RememberStorage__.saveStats(normalizeStats(s)); }
-function updateStatsOnNewGame() { saveStats(recordGameStarted(loadStats())); }
+function saveStats(s) {
+  __RememberStorage__.saveStats(normalizeStats(s));
+}
+function updateStatsOnNewGame() {
+  saveStats(recordGameStarted(loadStats()));
+}
 function updateStatsOnWin() {
-  saveStats(recordGameWon(loadStats(), {
-    elapsed,
-    moves,
-    hintsUsed,
-    maxCombo: maxComboThisGame,
-  }));
+  saveStats(
+    recordGameWon(loadStats(), {
+      elapsed,
+      moves,
+      hintsUsed,
+      maxCombo: maxComboThisGame,
+    }),
+  );
 }
 function updateStatsUI() {
   if (!statsListEl) return;
@@ -1193,9 +1270,18 @@ function applySettingsToUI() {
   if (settingSoundPack) settingSoundPack.value = String(settings.soundPack || 'clear');
   if (settingCardFace) settingCardFace.value = String(settings.cardFace || 'emoji');
   if (settingGameMode) settingGameMode.value = String(settings.gameMode || 'classic');
-  if (settingCountdownEasy) settingCountdownEasy.value = String((settings.countdown && settings.countdown.easy) || DEFAULT_SETTINGS.countdown.easy);
-  if (settingCountdownMedium) settingCountdownMedium.value = String((settings.countdown && settings.countdown.medium) || DEFAULT_SETTINGS.countdown.medium);
-  if (settingCountdownHard) settingCountdownHard.value = String((settings.countdown && settings.countdown.hard) || DEFAULT_SETTINGS.countdown.hard);
+  if (settingCountdownEasy)
+    settingCountdownEasy.value = String(
+      (settings.countdown && settings.countdown.easy) || DEFAULT_SETTINGS.countdown.easy,
+    );
+  if (settingCountdownMedium)
+    settingCountdownMedium.value = String(
+      (settings.countdown && settings.countdown.medium) || DEFAULT_SETTINGS.countdown.medium,
+    );
+  if (settingCountdownHard)
+    settingCountdownHard.value = String(
+      (settings.countdown && settings.countdown.hard) || DEFAULT_SETTINGS.countdown.hard,
+    );
   if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !isCountdownMode());
   if (settingLanguage) settingLanguage.value = String(settings.language || 'auto');
   if (settingAdaptive) settingAdaptive.checked = !!settings.adaptive;
@@ -1218,11 +1304,13 @@ function updateLeaderboardUI() {
     leaderboardList.innerHTML = `<li class="text-slate-500">${t.leaderboardEmpty}</li>`;
     return;
   }
-  const html = list.map((e, i) => {
-    const d = new Date(e.at || Date.now());
-    const dateStr = `${d.getMonth() + 1}-${d.getDate()} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
-    return `<li>${i + 1}. ${formatTime(e.time)} · ${e.moves} ${t.stepsFmt} <span class="text-slate-400">• ${dateStr}</span></li>`;
-  }).join("");
+  const html = list
+    .map((e, i) => {
+      const d = new Date(e.at || Date.now());
+      const dateStr = `${d.getMonth() + 1}-${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+      return `<li>${i + 1}. ${formatTime(e.time)} · ${e.moves} ${t.stepsFmt} <span class="text-slate-400">• ${dateStr}</span></li>`;
+    })
+    .join('');
   leaderboardList.innerHTML = html;
 }
 
@@ -1236,14 +1324,20 @@ function updateControlsUI() {
   const t = i18n();
   if (pauseBtn) pauseBtn.textContent = paused ? t.resume : t.pause;
   if (pauseOverlay) {
-    if (paused) { pauseOverlay.classList.remove("hidden"); pauseOverlay.classList.add("flex"); }
-    else { pauseOverlay.classList.add("hidden"); pauseOverlay.classList.remove("flex"); }
+    if (paused) {
+      pauseOverlay.classList.remove('hidden');
+      pauseOverlay.classList.add('flex');
+    } else {
+      pauseOverlay.classList.add('hidden');
+      pauseOverlay.classList.remove('flex');
+    }
   }
   updateHintUI();
 }
 
 function togglePause() {
-  if (paused) resumeGame(); else pauseGame();
+  if (paused) resumeGame();
+  else pauseGame();
 }
 
 function pauseGame() {
@@ -1277,7 +1371,7 @@ function saveBest(k, data) {
 function updateBestUI() {
   const b = loadBest(currentDifficulty);
   if (!b) {
-    bestEl.textContent = "—";
+    bestEl.textContent = '—';
   } else {
     const t = i18n();
     bestEl.textContent = `${formatTime(b.time)} · ${b.moves}${t.bestSteps}`;
@@ -1309,7 +1403,9 @@ function startTimer() {
     getCountdownFor,
     currentDifficulty,
     onUpdate: updateTimerState,
-    onStop: () => { timerId = null; },
+    onStop: () => {
+      timerId = null;
+    },
     onTimeUp,
     now: getNow,
     tickMs: getTimerPollMs(),
@@ -1324,23 +1420,24 @@ function setGridColumns(cols) {
 }
 
 function makeCard(item) {
-  const btn = document.createElement("button");
-  btn.className = "relative card w-full aspect-square rounded-xl bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500";
+  const btn = document.createElement('button');
+  btn.className =
+    'relative card w-full aspect-square rounded-xl bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500';
   btn.dataset.value = item.v;
   btn.dataset.id = item.id;
   btn.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), item.v));
   btn.setAttribute('aria-pressed', 'false');
 
-  const inner = document.createElement("div");
-  inner.className = "card-inner relative w-full h-full";
+  const inner = document.createElement('div');
+  inner.className = 'card-inner relative w-full h-full';
 
-  const front = document.createElement("div");
+  const front = document.createElement('div');
   const ac = getAccent();
   front.className = `card-face card-front rounded-xl ${ac.frontBg} ${ac.frontText} text-2xl sm:text-3xl`;
-  front.textContent = "?";
+  front.textContent = '?';
 
-  const back = document.createElement("div");
-  back.className = "card-face card-back rounded-xl bg-white text-3xl sm:text-4xl";
+  const back = document.createElement('div');
+  back.className = 'card-face card-back rounded-xl bg-white text-3xl sm:text-4xl';
   if (item.type === 'color') {
     back.style.backgroundColor = item.color;
     back.textContent = '';
@@ -1352,7 +1449,7 @@ function makeCard(item) {
   inner.appendChild(back);
   btn.appendChild(inner);
 
-  btn.addEventListener("click", () => onFlip(btn));
+  btn.addEventListener('click', () => onFlip(btn));
   return btn;
 }
 
@@ -1365,15 +1462,18 @@ function resetBoardState() {
 function onFlip(cardEl) {
   if (paused || isPreviewing) return;
   if (lockBoard) return;
-  if (cardEl.classList.contains("flipped")) return;
+  if (cardEl.classList.contains('flipped')) return;
   if (!started) {
     started = true;
     startTimer();
   }
-  cardEl.classList.add("flipped");
+  cardEl.classList.add('flipped');
   cardEl.setAttribute('aria-pressed', 'true');
-  cardEl.setAttribute('aria-label', `${getCardA11yLabel(resolveBoardTheme(), cardEl.dataset.value)} · ${currentLang() === 'zh' ? '已翻开' : 'revealed'}`);
-  sfx("flip");
+  cardEl.setAttribute(
+    'aria-label',
+    `${getCardA11yLabel(resolveBoardTheme(), cardEl.dataset.value)} · ${currentLang() === 'zh' ? '已翻开' : 'revealed'}`,
+  );
+  sfx('flip');
   if (!firstCard) {
     firstCard = cardEl;
     return;
@@ -1390,28 +1490,39 @@ function onFlip(cardEl) {
   seenCountMap.set(v2, (seenCountMap.get(v2) || 0) + 1);
   const match = v1 === v2;
   if (match) {
-    firstCard.classList.add("pointer-events-none", "ring-2", getAccent().ring, "match-pulse");
-    secondCard.classList.add("pointer-events-none", "ring-2", getAccent().ring, "match-pulse");
-    firstCard.setAttribute('aria-label', `${getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`);
-    secondCard.setAttribute('aria-label', `${getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`);
+    firstCard.classList.add('pointer-events-none', 'ring-2', getAccent().ring, 'match-pulse');
+    secondCard.classList.add('pointer-events-none', 'ring-2', getAccent().ring, 'match-pulse');
+    firstCard.setAttribute(
+      'aria-label',
+      `${getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`,
+    );
+    secondCard.setAttribute(
+      'aria-label',
+      `${getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`,
+    );
     matchedPairs += 1;
-    sfx("match");
+    sfx('match');
     vibrateMs(40);
     // combo logic
     const now = performance.now();
-    if (now - lastMatchAt <= 5000) comboCount += 1; else comboCount = 1;
+    if (now - lastMatchAt <= 5000) comboCount += 1;
+    else comboCount = 1;
     lastMatchAt = now;
-    if (comboCount >= 2) { maxComboThisGame = Math.max(maxComboThisGame, comboCount); showCombo(comboCount); if (settings.sound) beep(1400, 0.08, 'sine', Math.max(0.03, (settings.volume || 0.5) * 0.08)); }
+    if (comboCount >= 2) {
+      maxComboThisGame = Math.max(maxComboThisGame, comboCount);
+      showCombo(comboCount);
+      if (settings.sound) beep(1400, 0.08, 'sine', Math.max(0.03, (settings.volume || 0.5) * 0.08));
+    }
     resetBoardState();
     const need = difficulties[currentDifficulty].pairs;
     updateProgressUI();
     if (matchedPairs === need) onWin();
   } else {
-    sfx("mismatch");
+    sfx('mismatch');
     vibrateMs(20);
     setTimeout(() => {
-      firstCard.classList.remove("flipped");
-      secondCard.classList.remove("flipped");
+      firstCard.classList.remove('flipped');
+      secondCard.classList.remove('flipped');
       firstCard.setAttribute('aria-pressed', 'false');
       secondCard.setAttribute('aria-pressed', 'false');
       firstCard.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value));
@@ -1423,13 +1534,15 @@ function onFlip(cardEl) {
 }
 
 function clearGrid() {
-  gridEl.innerHTML = "";
+  gridEl.innerHTML = '';
 }
 
 function initGame(diffKey) {
   if (settings.adaptive) {
     const d = decideDifficulty();
-    if (difficultyEl && difficultyEl.value !== d) { difficultyEl.value = d; }
+    if (difficultyEl && difficultyEl.value !== d) {
+      difficultyEl.value = d;
+    }
     currentDifficulty = d;
   } else {
     currentDifficulty = diffKey;
@@ -1438,14 +1551,18 @@ function initGame(diffKey) {
   clearGrid();
   setGridColumns(cfg.cols);
   const deck = createDeck(cfg.pairs);
-  deck.forEach((item, idx) => { const el = makeCard(item); el.dataset.index = String(idx); gridEl.appendChild(el); });
-  lastGameValues = Array.from(new Set(deck.map(d => d.v)));
+  deck.forEach((item, idx) => {
+    const el = makeCard(item);
+    el.dataset.index = String(idx);
+    gridEl.appendChild(el);
+  });
+  lastGameValues = Array.from(new Set(deck.map((d) => d.v)));
   moves = 0;
   matchedPairs = 0;
   started = false;
   resetBoardState();
   resetTimer();
-  movesEl.textContent = "0";
+  movesEl.textContent = '0';
   updateBestUI();
   const assist = getAdaptiveAssist(currentDifficulty);
   logLifecycle('init_game', {
@@ -1474,9 +1591,9 @@ function initGame(diffKey) {
     isPreviewing = true;
     lockBoard = true;
     const cards = Array.from(gridEl.querySelectorAll('.card'));
-    cards.forEach(c => c.classList.add('flipped'));
+    cards.forEach((c) => c.classList.add('flipped'));
     setTimeout(() => {
-      cards.forEach(c => c.classList.remove('flipped'));
+      cards.forEach((c) => c.classList.remove('flipped'));
       isPreviewing = false;
       lockBoard = false;
       updateControlsUI();
@@ -1489,7 +1606,9 @@ function onWin() {
   const prev = loadBest(currentDifficulty);
   const curr = { time: elapsed, moves };
   let better = false;
-  if (!prev) better = true; else if (curr.time < prev.time) better = true; else if (curr.time === prev.time && curr.moves < prev.moves) better = true;
+  if (!prev) better = true;
+  else if (curr.time < prev.time) better = true;
+  else if (curr.time === prev.time && curr.moves < prev.moves) better = true;
   if (better) saveBest(currentDifficulty, curr);
   updateBestUI();
   const t = i18n();
@@ -1505,14 +1624,18 @@ function onWin() {
   });
   renderRating(stars);
   openModalWithFocus(winModal);
-  sfx("win");
+  sfx('win');
   vibrateMs(120);
   updateStatsOnWin();
-  updateAdaptiveOnEnd(true, getRating(elapsed, moves, currentDifficulty, hintsUsed, maxComboThisGame), currentDifficulty);
+  updateAdaptiveOnEnd(
+    true,
+    getRating(elapsed, moves, currentDifficulty, hintsUsed, maxComboThisGame),
+    currentDifficulty,
+  );
   applySpacedAfterWin(settings.cardFace || 'emoji');
   const arr = loadLeaderboard(currentDifficulty);
   const updated = [...arr, { time: elapsed, moves, at: Date.now() }]
-    .sort((a, b) => (a.time - b.time) || (a.moves - b.moves))
+    .sort((a, b) => a.time - b.time || a.moves - b.moves)
     .slice(0, 3);
   saveLeaderboard(currentDifficulty, updated);
   updateLeaderboardUI();
@@ -1574,174 +1697,298 @@ function maybeShowGuideOnFirstVisit() {
 }
 
 if (typeof document !== 'undefined') {
-  document.addEventListener("DOMContentLoaded", () => {
-  const ui = __RememberUI__.bind(document);
-  ({
-    gridEl, movesEl, timeEl, bestEl, difficultyEl, newGameBtn, winModal, winStatsEl, playAgainBtn, closeModalBtn,
-    ratingStarsEl, comboToastEl, loseModal, failRetryBtn, failCloseBtn,
-    pauseBtn, hintBtn, hintLeftEl, settingsBtn, pauseOverlay, resumeBtn,
-    settingsModal, settingSound, settingVibrate, settingPreview, settingAccent, settingCardFace,
-    settingTheme, settingMotion, settingVolume, settingVolumeValue, settingSoundPack,
-    settingLanguage, settingAdaptive, settingSpaced,
-    settingGameMode, settingCountdownEasy, settingCountdownMedium, settingCountdownHard, countdownConfigEl,
-    settingsCancel, settingsSave,
-    shareBtn, leaderboardList, pairsLeftEl, progressBarEl, confettiCanvas,
-    dailyModal, dailyBtn, dailyCloseBtn, dailyStartBtn, dailyInfoEl,
-    achievementsModal, achievementsBtn, achievementsClose, achievementsList, achievementsNew,
-    exportBtn, importBtn, importFile, toastEl,
-    statsModal, statsBtn, statsClose, statsListEl, resetDataBtn,
-    recallModal, recallChoicesEl, recallSkipBtn, recallSubmitBtn,
-    nbackBtn, nbackModal, nbackStimEl, nbackNSelect, nbackSpeedSelect, nbackLenSelect, nbackStartBtn, nbackCloseBtn,
-    guideBtn, guideModal, guideCloseBtn, guideNoShow, guideBasicsList, guideAdvancedList, guideShortcutsList, guideNoShowLabel, guideOpenHintEl,
-  } = ui);
+  document.addEventListener('DOMContentLoaded', () => {
+    const ui = __RememberUI__.bind(document);
+    ({
+      gridEl,
+      movesEl,
+      timeEl,
+      bestEl,
+      difficultyEl,
+      newGameBtn,
+      winModal,
+      winStatsEl,
+      playAgainBtn,
+      closeModalBtn,
+      ratingStarsEl,
+      comboToastEl,
+      loseModal,
+      failRetryBtn,
+      failCloseBtn,
+      pauseBtn,
+      hintBtn,
+      hintLeftEl,
+      settingsBtn,
+      pauseOverlay,
+      resumeBtn,
+      settingsModal,
+      settingSound,
+      settingVibrate,
+      settingPreview,
+      settingAccent,
+      settingCardFace,
+      settingTheme,
+      settingMotion,
+      settingVolume,
+      settingVolumeValue,
+      settingSoundPack,
+      settingLanguage,
+      settingAdaptive,
+      settingSpaced,
+      settingGameMode,
+      settingCountdownEasy,
+      settingCountdownMedium,
+      settingCountdownHard,
+      countdownConfigEl,
+      settingsCancel,
+      settingsSave,
+      shareBtn,
+      leaderboardList,
+      pairsLeftEl,
+      progressBarEl,
+      confettiCanvas,
+      dailyModal,
+      dailyBtn,
+      dailyCloseBtn,
+      dailyStartBtn,
+      dailyInfoEl,
+      achievementsModal,
+      achievementsBtn,
+      achievementsClose,
+      achievementsList,
+      achievementsNew,
+      exportBtn,
+      importBtn,
+      importFile,
+      toastEl,
+      statsModal,
+      statsBtn,
+      statsClose,
+      statsListEl,
+      resetDataBtn,
+      recallModal,
+      recallChoicesEl,
+      recallSkipBtn,
+      recallSubmitBtn,
+      nbackBtn,
+      nbackModal,
+      nbackStimEl,
+      nbackNSelect,
+      nbackSpeedSelect,
+      nbackLenSelect,
+      nbackStartBtn,
+      nbackCloseBtn,
+      guideBtn,
+      guideModal,
+      guideCloseBtn,
+      guideNoShow,
+      guideBasicsList,
+      guideAdvancedList,
+      guideShortcutsList,
+      guideNoShowLabel,
+      guideOpenHintEl,
+    } = ui);
 
-  const events = {
-    onDifficultyChange: () => initGame(difficultyEl.value),
-    onNewGame: () => initGame(difficultyEl.value),
-    onPlayAgain: () => { closeModal(); initGame(difficultyEl.value); },
-    onCloseModal: closeModal,
-    onPause: togglePause,
-    onResume: resumeGame,
-    onFailRetry: () => { closeModalWithFocusRestore(loseModal); initGame(difficultyEl.value); },
-    onFailClose: () => { closeModalWithFocusRestore(loseModal); },
-    onHint: useHint,
-    onOpenSettings: () => { applySettingsToUI(); openModalWithFocus(settingsModal); },
-    onGuideOpen: () => openGuideModal(false),
-    onGuideClose: () => closeGuideModal(),
-    onGuideModalBackdrop: (e) => { if (e.target === guideModal) closeGuideModal(); },
-    onSettingsCancel: () => { closeModalWithFocusRestore(settingsModal); },
-    onSettingsSave: () => {
-      const prevCardFace = settings.cardFace;
-      settings.sound = !!settingSound.checked;
-      settings.vibrate = !!settingVibrate.checked;
-      settings.previewSeconds = Math.max(0, Math.min(5, parseInt(settingPreview.value || "0")));
-      settings.accent = (settingAccent && settingAccent.value) || 'indigo';
-      settings.theme = (settingTheme && settingTheme.value) || 'auto';
-      settings.motion = (settingMotion && settingMotion.value) || 'auto';
-      settings.volume = Math.max(0, Math.min(1, Number((settingVolume && settingVolume.value) ? (settingVolume.value / 100) : 0.5)));
-      settings.soundPack = (settingSoundPack && settingSoundPack.value) || 'clear';
-      settings.cardFace = (settingCardFace && settingCardFace.value) || 'emoji';
-      settings.gameMode = (settingGameMode && settingGameMode.value) || 'classic';
-      settings.countdown = {
-        easy: Math.max(10, Math.min(999, parseInt((settingCountdownEasy && settingCountdownEasy.value) || DEFAULT_SETTINGS.countdown.easy))),
-        medium: Math.max(10, Math.min(999, parseInt((settingCountdownMedium && settingCountdownMedium.value) || DEFAULT_SETTINGS.countdown.medium))),
-        hard: Math.max(10, Math.min(999, parseInt((settingCountdownHard && settingCountdownHard.value) || DEFAULT_SETTINGS.countdown.hard))),
-      };
-      settings.language = (settingLanguage && settingLanguage.value) || 'auto';
-      settings.adaptive = !!(settingAdaptive && settingAdaptive.checked);
-      settings.spaced = !!(settingSpaced && settingSpaced.checked);
-      saveSettings(settings);
-      applyAccentToDOM();
-      applyTheme();
-      applyMotionPreference();
-      if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !isCountdownMode());
-      closeModalWithFocusRestore(settingsModal);
-      applyLanguage();
-      initGame(difficultyEl.value);
-    },
-    onGameModeChange: () => { if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !(settingGameMode.value === 'countdown')); },
-    onVolumeInput: () => { if (settingVolumeValue) settingVolumeValue.textContent = `${settingVolume.value}%`; },
-    onShare: async () => {
-      const t = i18n();
-      const text = `${t.shareText} | ${t.difficulty} ${difficultyEl.options[difficultyEl.selectedIndex].text} | ${t.timeFmt} ${formatTime(elapsed)} | ${t.movesLabel} ${moves}`;
-      try {
-        if (navigator.share) await navigator.share({ title: t.shareTitle, text });
-        else if (navigator.clipboard) {
-          await navigator.clipboard.writeText(text);
-          alert(t.toastCopied);
-        } else {
-          alert(text);
-        }
-      } catch (_) { /* ignore */ }
-    },
-    onAchievementsOpen: () => { openAchievements(); },
-    onAchievementsClose: () => {
-      closeModalWithFocusRestore(achievementsModal);
-      if (achievementsNew) achievementsNew.classList.add('hidden');
-    },
-    onDailyOpen: () => {
-      if (dailyInfoEl) {
+    const events = {
+      onDifficultyChange: () => initGame(difficultyEl.value),
+      onNewGame: () => initGame(difficultyEl.value),
+      onPlayAgain: () => {
+        closeModal();
+        initGame(difficultyEl.value);
+      },
+      onCloseModal: closeModal,
+      onPause: togglePause,
+      onResume: resumeGame,
+      onFailRetry: () => {
+        closeModalWithFocusRestore(loseModal);
+        initGame(difficultyEl.value);
+      },
+      onFailClose: () => {
+        closeModalWithFocusRestore(loseModal);
+      },
+      onHint: useHint,
+      onOpenSettings: () => {
+        applySettingsToUI();
+        openModalWithFocus(settingsModal);
+      },
+      onGuideOpen: () => openGuideModal(false),
+      onGuideClose: () => closeGuideModal(),
+      onGuideModalBackdrop: (e) => {
+        if (e.target === guideModal) closeGuideModal();
+      },
+      onSettingsCancel: () => {
+        closeModalWithFocusRestore(settingsModal);
+      },
+      onSettingsSave: () => {
+        const prevCardFace = settings.cardFace;
+        settings.sound = !!settingSound.checked;
+        settings.vibrate = !!settingVibrate.checked;
+        settings.previewSeconds = Math.max(0, Math.min(5, parseInt(settingPreview.value || '0')));
+        settings.accent = (settingAccent && settingAccent.value) || 'indigo';
+        settings.theme = (settingTheme && settingTheme.value) || 'auto';
+        settings.motion = (settingMotion && settingMotion.value) || 'auto';
+        settings.volume = Math.max(
+          0,
+          Math.min(1, Number(settingVolume && settingVolume.value ? settingVolume.value / 100 : 0.5)),
+        );
+        settings.soundPack = (settingSoundPack && settingSoundPack.value) || 'clear';
+        settings.cardFace = (settingCardFace && settingCardFace.value) || 'emoji';
+        settings.gameMode = (settingGameMode && settingGameMode.value) || 'classic';
+        settings.countdown = {
+          easy: Math.max(
+            10,
+            Math.min(
+              999,
+              parseInt((settingCountdownEasy && settingCountdownEasy.value) || DEFAULT_SETTINGS.countdown.easy),
+            ),
+          ),
+          medium: Math.max(
+            10,
+            Math.min(
+              999,
+              parseInt((settingCountdownMedium && settingCountdownMedium.value) || DEFAULT_SETTINGS.countdown.medium),
+            ),
+          ),
+          hard: Math.max(
+            10,
+            Math.min(
+              999,
+              parseInt((settingCountdownHard && settingCountdownHard.value) || DEFAULT_SETTINGS.countdown.hard),
+            ),
+          ),
+        };
+        settings.language = (settingLanguage && settingLanguage.value) || 'auto';
+        settings.adaptive = !!(settingAdaptive && settingAdaptive.checked);
+        settings.spaced = !!(settingSpaced && settingSpaced.checked);
+        saveSettings(settings);
+        applyAccentToDOM();
+        applyTheme();
+        applyMotionPreference();
+        if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !isCountdownMode());
+        closeModalWithFocusRestore(settingsModal);
+        applyLanguage();
+        initGame(difficultyEl.value);
+      },
+      onGameModeChange: () => {
+        if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !(settingGameMode.value === 'countdown'));
+      },
+      onVolumeInput: () => {
+        if (settingVolumeValue) settingVolumeValue.textContent = `${settingVolume.value}%`;
+      },
+      onShare: async () => {
         const t = i18n();
-        const date = todayStr();
-        const status = __RememberStorage__.isDailyDone(date, difficultyEl.value) ? t.completed : t.notCompleted;
-        dailyInfoEl.textContent = `${t.today} ${date} · ${t.difficulty}：${difficultyEl.options[difficultyEl.selectedIndex].text} · ${t.status}：${status}`;
-      }
-      openModalWithFocus(dailyModal);
-    },
-    onDailyClose: () => {
-      closeModalWithFocusRestore(dailyModal);
-    },
-    onDailyStart: () => {
-      dailyActive = true;
-      dailySeed = seedFromDate(todayStr(), difficultyEl.value, settings.cardFace || 'emoji');
-      closeModalWithFocusRestore(dailyModal);
-      showToast(i18n().toastDailyStarted);
-      initGame(difficultyEl.value);
-    },
-    onStatsOpen: openStats,
-    onStatsClose: closeStats,
-    onNbackOpen: () => {
-      openModalWithFocus(nbackModal);
-    },
-    onNbackClose: () => {
-      if (nbackRunning) stopNBack();
-      closeModalWithFocusRestore(nbackModal);
-    },
-    onNbackToggle: () => {
-      if (nbackRunning) stopNBack();
-      else startNBack();
-    },
-    onResetData: () => {
-      if (!confirm(i18n().resetConfirm)) return;
-      const keys = __RememberStorage__.listAllKeys();
-      __RememberStorage__.removeKeysByPrefix(keys, 'memory_match_');
-      location.reload();
-    },
-    onExport: exportData,
-    onImportClick: () => { if (importFile) importFile.click(); },
-    onImportFileChange: async () => {
-      const f = importFile && importFile.files && importFile.files[0];
-      if (!f) return;
-      try {
-        const text = await f.text();
-        const obj = JSON.parse(text);
-        importDataFromObj(obj);
-        showToast(i18n().toastImportOk);
-      } catch (_) {
-        showToast(i18n().toastImportFail);
-      } finally {
-        if (importFile) importFile.value = '';
-      }
-    },
-    onRecallSkip: () => {
-      closeModalWithFocusRestore(recallModal);
-    },
-    onRecallSubmit: submitRecallTest,
-    onKeyDown: handleKeyDown,
-  };
+        const text = `${t.shareText} | ${t.difficulty} ${difficultyEl.options[difficultyEl.selectedIndex].text} | ${t.timeFmt} ${formatTime(elapsed)} | ${t.movesLabel} ${moves}`;
+        try {
+          if (navigator.share) await navigator.share({ title: t.shareTitle, text });
+          else if (navigator.clipboard) {
+            await navigator.clipboard.writeText(text);
+            alert(t.toastCopied);
+          } else {
+            alert(text);
+          }
+        } catch (_) {
+          /* ignore */
+        }
+      },
+      onAchievementsOpen: () => {
+        openAchievements();
+      },
+      onAchievementsClose: () => {
+        closeModalWithFocusRestore(achievementsModal);
+        if (achievementsNew) achievementsNew.classList.add('hidden');
+      },
+      onDailyOpen: () => {
+        if (dailyInfoEl) {
+          const t = i18n();
+          const date = todayStr();
+          const status = __RememberStorage__.isDailyDone(date, difficultyEl.value) ? t.completed : t.notCompleted;
+          dailyInfoEl.textContent = `${t.today} ${date} · ${t.difficulty}：${difficultyEl.options[difficultyEl.selectedIndex].text} · ${t.status}：${status}`;
+        }
+        openModalWithFocus(dailyModal);
+      },
+      onDailyClose: () => {
+        closeModalWithFocusRestore(dailyModal);
+      },
+      onDailyStart: () => {
+        dailyActive = true;
+        dailySeed = seedFromDate(todayStr(), difficultyEl.value, settings.cardFace || 'emoji');
+        closeModalWithFocusRestore(dailyModal);
+        showToast(i18n().toastDailyStarted);
+        initGame(difficultyEl.value);
+      },
+      onStatsOpen: openStats,
+      onStatsClose: closeStats,
+      onNbackOpen: () => {
+        openModalWithFocus(nbackModal);
+      },
+      onNbackClose: () => {
+        if (nbackRunning) stopNBack();
+        closeModalWithFocusRestore(nbackModal);
+      },
+      onNbackToggle: () => {
+        if (nbackRunning) stopNBack();
+        else startNBack();
+      },
+      onResetData: () => {
+        if (!confirm(i18n().resetConfirm)) return;
+        const keys = __RememberStorage__.listAllKeys();
+        __RememberStorage__.removeKeysByPrefix(keys, 'memory_match_');
+        location.reload();
+      },
+      onExport: exportData,
+      onImportClick: () => {
+        if (importFile) importFile.click();
+      },
+      onImportFileChange: async () => {
+        const f = importFile && importFile.files && importFile.files[0];
+        if (!f) return;
+        try {
+          const text = await f.text();
+          const obj = JSON.parse(text);
+          importDataFromObj(obj);
+          showToast(i18n().toastImportOk);
+        } catch (_) {
+          showToast(i18n().toastImportFail);
+        } finally {
+          if (importFile) importFile.value = '';
+        }
+      },
+      onRecallSkip: () => {
+        closeModalWithFocusRestore(recallModal);
+      },
+      onRecallSubmit: submitRecallTest,
+      onKeyDown: handleKeyDown,
+    };
 
-  __RememberUIEvents__.bind(ui, events, document);
+    __RememberUIEvents__.bind(ui, events, document);
 
-  settings = loadSettings();
-  applyAccentToDOM();
-  applyTheme();
-  applyMotionPreference();
-  updateProgressUI();
-  updateStatsUI();
-  applyLanguage();
-  maybeShowGuideOnFirstVisit();
-  window.addEventListener('resize', resizeConfettiCanvas);
-  const mqlDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
-  if (mqlDark && mqlDark.addEventListener) mqlDark.addEventListener('change', () => { if ((settings.theme || 'auto') === 'auto') applyTheme(); });
-  const mqlReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (mqlReduce && mqlReduce.addEventListener) mqlReduce.addEventListener('change', () => { if ((settings.motion || 'auto') === 'auto') applyMotionPreference(); });
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-      .then((reg) => logLifecycle('service_worker_registered', { scope: reg.scope }))
-      .catch((err) => logError('service_worker_registration_failed', { message: err?.message }));
-  }
+    settings = loadSettings();
+    applyAccentToDOM();
+    applyTheme();
+    applyMotionPreference();
+    updateProgressUI();
+    updateStatsUI();
+    applyLanguage();
+    maybeShowGuideOnFirstVisit();
+    window.addEventListener('resize', resizeConfettiCanvas);
+    const mqlDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    if (mqlDark && mqlDark.addEventListener)
+      mqlDark.addEventListener('change', () => {
+        if ((settings.theme || 'auto') === 'auto') applyTheme();
+      });
+    const mqlReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mqlReduce && mqlReduce.addEventListener)
+      mqlReduce.addEventListener('change', () => {
+        if ((settings.motion || 'auto') === 'auto') applyMotionPreference();
+      });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('./sw.js')
+        .then((reg) => logLifecycle('service_worker_registered', { scope: reg.scope }))
+        .catch((err) => logError('service_worker_registration_failed', { message: err?.message }));
+    }
 
-  initGame(currentDifficulty);
+    initGame(currentDifficulty);
   });
 }
 
@@ -1804,7 +2051,10 @@ function tickNBack(N, speed) {
     }
     // 前进到下一拍
     nbackIdx += 1;
-    if (nbackIdx >= nbackSeq.length) { finishNBack(); return; }
+    if (nbackIdx >= nbackSeq.length) {
+      finishNBack();
+      return;
+    }
     const stim = nbackSeq[nbackIdx];
     if (nbackStimEl) nbackStimEl.textContent = stim;
     nbackResponded = false;
@@ -1820,8 +2070,15 @@ function onNBackKey() {
   const rt = Math.max(0, Math.round(performance.now() - nbackStepStart));
   const N = Math.max(1, parseInt(nbackNSelect.value || '2'));
   const isTarget = nbackIdx >= N && nbackSeq[nbackIdx] === nbackSeq[nbackIdx - N];
-  if (isTarget) { nbackHits++; nbackRtSum += rt; nbackRtCount++; sfx('match'); }
-  else { nbackFalseAlarms++; sfx('mismatch'); }
+  if (isTarget) {
+    nbackHits++;
+    nbackRtSum += rt;
+    nbackRtCount++;
+    sfx('match');
+  } else {
+    nbackFalseAlarms++;
+    sfx('mismatch');
+  }
 }
 
 function finishNBack() {
@@ -1834,14 +2091,18 @@ function finishNBack() {
     rtSum: nbackRtSum,
     rtCount: nbackRtCount,
   });
-  saveStats(recordNBackAttempt(loadStats(), {
-    accuracy: summary.accuracy,
-    rtSum: summary.rtSum,
-    rtCount: summary.rtCount,
-  }));
+  saveStats(
+    recordNBackAttempt(loadStats(), {
+      accuracy: summary.accuracy,
+      rtSum: summary.rtSum,
+      rtCount: summary.rtCount,
+    }),
+  );
   updateStatsUI();
   const t = i18n();
-  showToast(`${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`);
+  showToast(
+    `${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`,
+  );
 }
 
 function openRecallTest() {
@@ -1853,34 +2114,42 @@ function openRecallTest() {
     shuffle,
   });
   recallCorrectSet = correctSet;
-  recallChoicesEl.innerHTML = items.map((item, index) => {
-    const value = String(item.v);
-    const safeValue = escapeHtml(value);
-    const safeAttr = escapeHtml(value);
-    const label = escapeHtml(getCardA11yLabel(theme, value));
-    if (theme === 'colors') {
-      return `<label class="flex items-center gap-2 border rounded-md p-2" aria-label="${label}"><input type="checkbox" data-value="${safeAttr}" class="h-4 w-4"/><span class="inline-block w-6 h-6 rounded border border-slate-300" style="background:${safeValue}"></span><span class="sr-only">${label}</span><span class="text-xs text-slate-500">${index + 1}</span></label>`;
-    }
-    return `<label class="flex items-center gap-2 border rounded-md p-2" aria-label="${label}"><input type="checkbox" data-value="${safeAttr}" class="h-4 w-4"/><span class="text-xl">${safeValue}</span></label>`;
-  }).join('');
+  recallChoicesEl.innerHTML = items
+    .map((item, index) => {
+      const value = String(item.v);
+      const safeValue = escapeHtml(value);
+      const safeAttr = escapeHtml(value);
+      const label = escapeHtml(getCardA11yLabel(theme, value));
+      if (theme === 'colors') {
+        return `<label class="flex items-center gap-2 border rounded-md p-2" aria-label="${label}"><input type="checkbox" data-value="${safeAttr}" class="h-4 w-4"/><span class="inline-block w-6 h-6 rounded border border-slate-300" style="background:${safeValue}"></span><span class="sr-only">${label}</span><span class="text-xs text-slate-500">${index + 1}</span></label>`;
+      }
+      return `<label class="flex items-center gap-2 border rounded-md p-2" aria-label="${label}"><input type="checkbox" data-value="${safeAttr}" class="h-4 w-4"/><span class="text-xl">${safeValue}</span></label>`;
+    })
+    .join('');
   openModalWithFocus(recallModal);
 }
 function submitRecallTest() {
   if (!recallModal || !recallChoicesEl) return;
   const result = scoreRecall(recallCorrectSet, getSelectedRecallValues(recallChoicesEl));
-  saveStats(recordRecallAttempt(loadStats(), {
-    precision: result.precision,
-    recall: result.recall,
-  }));
+  saveStats(
+    recordRecallAttempt(loadStats(), {
+      precision: result.precision,
+      recall: result.recall,
+    }),
+  );
   updateStatsUI();
   const t = i18n();
-  showToast(`${t.recallResult} · ${t.statsPrecision} ${Math.round(result.precision * 100)}% · ${t.statsRecall} ${Math.round(result.recall * 100)}%`);
+  showToast(
+    `${t.recallResult} · ${t.statsPrecision} ${Math.round(result.precision * 100)}% · ${t.statsRecall} ${Math.round(result.recall * 100)}%`,
+  );
   closeModalWithFocusRestore(recallModal);
 }
 
 function currentLang() {
   const pref = settings.language || 'auto';
-  const nav = (typeof navigator !== 'undefined' ? (navigator.language || navigator.userLanguage || 'en') : 'en').toLowerCase();
+  const nav = (
+    typeof navigator !== 'undefined' ? navigator.language || navigator.userLanguage || 'en' : 'en'
+  ).toLowerCase();
   return __RememberI18n__.currentLang(pref, nav);
 }
 
@@ -1888,97 +2157,165 @@ function i18n() {
   return __RememberI18n__.i18n(currentLang());
 }
 
-  // Mapping: element id → i18n key (where id differs from key, use [id, key])
-  const I18N_TEXT_MAP = [
-    'pageTitle', 'pageSubtitle',
-    'difficultyLabel', 'difficultyEasy', 'difficultyMedium', 'difficultyHard',
-    'timeLabel', 'movesLabel', 'bestLabel', 'leaderboardTitle',
-    'winTitle', 'loseTitle', 'loseDesc',
-    'statsTitle', 'achievementsTitle', 'dailyTitle', 'settingsTitle',
-    'recallTitle', 'recallDesc', 'recallSkip', 'recallSubmit',
-    'nbackTitle', 'nbackNLabel', 'nbackSpeedLabel', 'nbackLenLabel', 'nbackHint',
-    'guideTitle', 'guideIntro', 'guideBasicsTitle', 'guideAdvancedTitle', 'guideShortcutsTitle',
-    'accentIndigo', 'accentEmerald', 'accentRose',
-    'themeAuto', 'themeLight', 'themeDark',
-    'motionAuto', 'motionOn', 'motionOff',
-    'soundPackClear', 'soundPackElectro', 'soundPackSoft',
-    'languageAuto', 'languageZh', 'languageEn',
-    'gameModeClassic', 'gameModeCountdown',
-    'cardFaceEmoji', 'cardFaceNumbers', 'cardFaceLetters', 'cardFaceShapes', 'cardFaceColors',
-    'backupLabel',
-    // [elementId, i18nKey] pairs for labels where the id has a "Label" suffix
-    ['settingSoundLabel', 'settingSound'], ['settingVibrateLabel', 'settingVibrate'],
-    ['settingPreviewLabel', 'settingPreview'], ['settingAccentLabel', 'settingAccent'],
-    ['settingThemeLabel', 'settingTheme'], ['settingMotionLabel', 'settingMotion'],
-    ['settingVolumeLabel', 'settingVolume'], ['settingSoundPackLabel', 'settingSoundPack'],
-    ['settingAdaptiveLabel', 'settingAdaptive'], ['settingSpacedLabel', 'settingSpaced'],
-    ['settingLanguageLabel', 'settingLanguage'], ['settingGameModeLabel', 'settingGameMode'],
-    ['countdownEasyLabel', 'countdownEasy'], ['countdownMediumLabel', 'countdownMedium'],
-    ['countdownHardLabel', 'countdownHard'], ['settingCardFaceLabel', 'settingCardFace'],
-    ['guideNoShowLabel', 'guideNoShow'], ['guideOpenHint', 'guideOpenHint'],
-  ];
+// Mapping: element id → i18n key (where id differs from key, use [id, key])
+const I18N_TEXT_MAP = [
+  'pageTitle',
+  'pageSubtitle',
+  'difficultyLabel',
+  'difficultyEasy',
+  'difficultyMedium',
+  'difficultyHard',
+  'timeLabel',
+  'movesLabel',
+  'bestLabel',
+  'leaderboardTitle',
+  'winTitle',
+  'loseTitle',
+  'loseDesc',
+  'statsTitle',
+  'achievementsTitle',
+  'dailyTitle',
+  'settingsTitle',
+  'recallTitle',
+  'recallDesc',
+  'recallSkip',
+  'recallSubmit',
+  'nbackTitle',
+  'nbackNLabel',
+  'nbackSpeedLabel',
+  'nbackLenLabel',
+  'nbackHint',
+  'guideTitle',
+  'guideIntro',
+  'guideBasicsTitle',
+  'guideAdvancedTitle',
+  'guideShortcutsTitle',
+  'accentIndigo',
+  'accentEmerald',
+  'accentRose',
+  'themeAuto',
+  'themeLight',
+  'themeDark',
+  'motionAuto',
+  'motionOn',
+  'motionOff',
+  'soundPackClear',
+  'soundPackElectro',
+  'soundPackSoft',
+  'languageAuto',
+  'languageZh',
+  'languageEn',
+  'gameModeClassic',
+  'gameModeCountdown',
+  'cardFaceEmoji',
+  'cardFaceNumbers',
+  'cardFaceLetters',
+  'cardFaceShapes',
+  'cardFaceColors',
+  'backupLabel',
+  // [elementId, i18nKey] pairs for labels where the id has a "Label" suffix
+  ['settingSoundLabel', 'settingSound'],
+  ['settingVibrateLabel', 'settingVibrate'],
+  ['settingPreviewLabel', 'settingPreview'],
+  ['settingAccentLabel', 'settingAccent'],
+  ['settingThemeLabel', 'settingTheme'],
+  ['settingMotionLabel', 'settingMotion'],
+  ['settingVolumeLabel', 'settingVolume'],
+  ['settingSoundPackLabel', 'settingSoundPack'],
+  ['settingAdaptiveLabel', 'settingAdaptive'],
+  ['settingSpacedLabel', 'settingSpaced'],
+  ['settingLanguageLabel', 'settingLanguage'],
+  ['settingGameModeLabel', 'settingGameMode'],
+  ['countdownEasyLabel', 'countdownEasy'],
+  ['countdownMediumLabel', 'countdownMedium'],
+  ['countdownHardLabel', 'countdownHard'],
+  ['settingCardFaceLabel', 'settingCardFace'],
+  ['guideNoShowLabel', 'guideNoShow'],
+  ['guideOpenHint', 'guideOpenHint'],
+];
 
-  function applyLanguage() {
-    const t = i18n();
-    // Batch: set textContent for all mapped elements
-    for (const entry of I18N_TEXT_MAP) {
-      const id = Array.isArray(entry) ? entry[0] : entry;
-      const key = Array.isArray(entry) ? entry[1] : entry;
-      const el = document.getElementById(id);
-      if (el) el.textContent = t[key] || '';
-    }
-    // Buttons that are already bound as module-level variables
-    const btnMap = [
-      [nbackStartBtn, 'nbackStart'], [nbackCloseBtn, 'nbackClose'],
-      [newGameBtn, 'newGame'], [settingsBtn, 'settings'],
-      [achievementsBtn, 'achievements'], [statsBtn, 'stats'], [dailyBtn, 'daily'],
-      [playAgainBtn, 'playAgain'], [shareBtn, 'share'],
-      [closeModalBtn, 'back'], [resumeBtn, 'resume'],
-      [failRetryBtn, 'retry'], [failCloseBtn, 'back'],
-      [achievementsClose, 'close'], [statsClose, 'close'],
-      [dailyCloseBtn, 'close'], [dailyStartBtn, 'dailyStart'],
-      [guideCloseBtn, 'guideClose'],
-    ];
-    for (const [el, key] of btnMap) {
-      if (el) el.textContent = t[key] || '';
-    }
-    // Elements with fallback keys
-    const fbMap = [
-      ['settingsCancel', 'settingsCancel', 'close'],
-      ['settingsSave', 'settingsSave', 'save'],
-    ];
-    for (const [id, key, fb] of fbMap) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = t[key] || t[fb] || '';
-    }
-    // Special: nbackBtn, exportBtn, importBtn, resetData, guideBtn
-    const idKeyMap = [
-      ['nbackBtn', 'nback'], ['exportBtn', 'export'], ['importBtn', 'import'],
-      ['resetData', 'resetData'], ['guideBtn', 'guide'],
-    ];
-    for (const [id, key] of idKeyMap) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = t[key] || '';
-    }
-    // Guide lists (innerHTML)
-    if (guideBasicsList) guideBasicsList.innerHTML = (t.guideBasics || []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
-    if (guideAdvancedList) guideAdvancedList.innerHTML = (t.guideAdvanced || []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
-    if (guideShortcutsList) guideShortcutsList.innerHTML = (t.guideShortcuts || []).map(sc => `<li class="flex items-center gap-2"><span class="inline-flex items-center rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-700 dark:bg-slate-700 dark:text-slate-200">${escapeHtml(sc.key)}</span><span>${escapeHtml(sc.desc)}</span></li>`).join('');
-    // Hint button with remaining span
-    if (hintBtn) {
-      hintBtn.innerHTML = `${escapeHtml(t.hint)} <span id="hintLeft" class="ml-1">${hintsLeft}</span>`;
-      hintLeftEl = document.getElementById('hintLeft');
-    }
-    updateControlsUI();
+function applyLanguage() {
+  const t = i18n();
+  // Batch: set textContent for all mapped elements
+  for (const entry of I18N_TEXT_MAP) {
+    const id = Array.isArray(entry) ? entry[0] : entry;
+    const key = Array.isArray(entry) ? entry[1] : entry;
+    const el = document.getElementById(id);
+    if (el) el.textContent = t[key] || '';
   }
+  // Buttons that are already bound as module-level variables
+  const btnMap = [
+    [nbackStartBtn, 'nbackStart'],
+    [nbackCloseBtn, 'nbackClose'],
+    [newGameBtn, 'newGame'],
+    [settingsBtn, 'settings'],
+    [achievementsBtn, 'achievements'],
+    [statsBtn, 'stats'],
+    [dailyBtn, 'daily'],
+    [playAgainBtn, 'playAgain'],
+    [shareBtn, 'share'],
+    [closeModalBtn, 'back'],
+    [resumeBtn, 'resume'],
+    [failRetryBtn, 'retry'],
+    [failCloseBtn, 'back'],
+    [achievementsClose, 'close'],
+    [statsClose, 'close'],
+    [dailyCloseBtn, 'close'],
+    [dailyStartBtn, 'dailyStart'],
+    [guideCloseBtn, 'guideClose'],
+  ];
+  for (const [el, key] of btnMap) {
+    if (el) el.textContent = t[key] || '';
+  }
+  // Elements with fallback keys
+  const fbMap = [
+    ['settingsCancel', 'settingsCancel', 'close'],
+    ['settingsSave', 'settingsSave', 'save'],
+  ];
+  for (const [id, key, fb] of fbMap) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t[key] || t[fb] || '';
+  }
+  // Special: nbackBtn, exportBtn, importBtn, resetData, guideBtn
+  const idKeyMap = [
+    ['nbackBtn', 'nback'],
+    ['exportBtn', 'export'],
+    ['importBtn', 'import'],
+    ['resetData', 'resetData'],
+    ['guideBtn', 'guide'],
+  ];
+  for (const [id, key] of idKeyMap) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t[key] || '';
+  }
+  // Guide lists (innerHTML)
+  if (guideBasicsList)
+    guideBasicsList.innerHTML = (t.guideBasics || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+  if (guideAdvancedList)
+    guideAdvancedList.innerHTML = (t.guideAdvanced || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+  if (guideShortcutsList)
+    guideShortcutsList.innerHTML = (t.guideShortcuts || [])
+      .map(
+        (sc) =>
+          `<li class="flex items-center gap-2"><span class="inline-flex items-center rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-700 dark:bg-slate-700 dark:text-slate-200">${escapeHtml(sc.key)}</span><span>${escapeHtml(sc.desc)}</span></li>`,
+      )
+      .join('');
+  // Hint button with remaining span
+  if (hintBtn) {
+    hintBtn.innerHTML = `${escapeHtml(t.hint)} <span id="hintLeft" class="ml-1">${hintsLeft}</span>`;
+    hintLeftEl = document.getElementById('hintLeft');
+  }
+  updateControlsUI();
+}
 
 function useHint() {
   if (paused || isPreviewing) return;
   if (lockBoard) return;
   if (hintsLeft <= 0) return;
   if (firstCard || secondCard) return;
-  const cards = Array.from(gridEl.querySelectorAll('.card'))
-    .filter(c => !c.classList.contains('pointer-events-none') && !c.classList.contains('flipped'));
+  const cards = Array.from(gridEl.querySelectorAll('.card')).filter(
+    (c) => !c.classList.contains('pointer-events-none') && !c.classList.contains('flipped'),
+  );
   if (cards.length < 2) return;
   const map = new Map();
   for (const c of cards) {
@@ -1986,7 +2323,7 @@ function useHint() {
     if (!map.has(v)) map.set(v, []);
     map.get(v).push(c);
   }
-  const candidates = Array.from(map.values()).filter(list => list.length >= 2);
+  const candidates = Array.from(map.values()).filter((list) => list.length >= 2);
   if (!candidates.length) return;
   const pair = candidates[Math.floor(Math.random() * candidates.length)].slice(0, 2);
   lockBoard = true;
@@ -2007,22 +2344,56 @@ function useHint() {
 function handleKeyDown(e) {
   const key = e.key;
   if (guideModal && guideModal.classList.contains('flex')) {
-    if (key === 'Escape') { e.preventDefault(); closeGuideModal(); }
+    if (key === 'Escape') {
+      e.preventDefault();
+      closeGuideModal();
+    }
     return;
   }
-  if (nbackRunning && (key === 'j' || key === 'J')) { e.preventDefault(); onNBackKey(); return; }
-  if (key === 'p' || key === 'P') { e.preventDefault(); togglePause(); return; }
-  if (key === 'h' || key === 'H') { e.preventDefault(); useHint(); return; }
-  if (key === 'n' || key === 'N') { e.preventDefault(); initGame(difficultyEl.value); return; }
+  if (nbackRunning && (key === 'j' || key === 'J')) {
+    e.preventDefault();
+    onNBackKey();
+    return;
+  }
+  if (key === 'p' || key === 'P') {
+    e.preventDefault();
+    togglePause();
+    return;
+  }
+  if (key === 'h' || key === 'H') {
+    e.preventDefault();
+    useHint();
+    return;
+  }
+  if (key === 'n' || key === 'N') {
+    e.preventDefault();
+    initGame(difficultyEl.value);
+    return;
+  }
   const cards = Array.from(gridEl.querySelectorAll('.card'));
   if (!cards.length) return;
   const cols = difficulties[currentDifficulty].cols;
-  let idx = document.activeElement && document.activeElement.dataset && document.activeElement.dataset.index ? parseInt(document.activeElement.dataset.index) : 0;
-  if (key === 'ArrowLeft') { e.preventDefault(); idx = Math.max(0, idx - 1); cards[idx]?.focus(); }
-  else if (key === 'ArrowRight') { e.preventDefault(); idx = Math.min(cards.length - 1, idx + 1); cards[idx]?.focus(); }
-  else if (key === 'ArrowUp') { e.preventDefault(); idx = Math.max(0, idx - cols); cards[idx]?.focus(); }
-  else if (key === 'ArrowDown') { e.preventDefault(); idx = Math.min(cards.length - 1, idx + cols); cards[idx]?.focus(); }
-  else if (key === 'Enter' || key === ' ') {
+  let idx =
+    document.activeElement && document.activeElement.dataset && document.activeElement.dataset.index
+      ? parseInt(document.activeElement.dataset.index)
+      : 0;
+  if (key === 'ArrowLeft') {
+    e.preventDefault();
+    idx = Math.max(0, idx - 1);
+    cards[idx]?.focus();
+  } else if (key === 'ArrowRight') {
+    e.preventDefault();
+    idx = Math.min(cards.length - 1, idx + 1);
+    cards[idx]?.focus();
+  } else if (key === 'ArrowUp') {
+    e.preventDefault();
+    idx = Math.max(0, idx - cols);
+    cards[idx]?.focus();
+  } else if (key === 'ArrowDown') {
+    e.preventDefault();
+    idx = Math.min(cards.length - 1, idx + cols);
+    cards[idx]?.focus();
+  } else if (key === 'Enter' || key === ' ') {
     if (document.activeElement && document.activeElement.classList.contains('card')) {
       e.preventDefault();
       onFlip(document.activeElement);
@@ -2062,11 +2433,12 @@ function createDeck(pairs) {
   return shuffle(buildDeckItems(picks));
 }
 
-
 function loadAchievements() {
   return __RememberStorage__.loadAchievements();
 }
-function saveAchievements(obj) { __RememberStorage__.saveAchievements(obj); }
+function saveAchievements(obj) {
+  __RememberStorage__.saveAchievements(obj);
+}
 
 function checkAchievementsOnWin() {
   const result = checkAchievements(loadAchievements(), {
@@ -2084,13 +2456,15 @@ function updateAchievementsUI() {
   if (!achievementsList) return;
   const store = loadAchievements();
   const t = i18n();
-  const html = achievementsDef.map((def) => {
-    const hit = !!store[def.id];
-    const when = hit ? formatAchievementTime(store[def.id].at) : '';
-    const title = t[def.titleKey] || def.titleKey;
-    const desc = t[def.descKey] || def.descKey;
-    return `<li class="flex items-center justify-between ${hit ? 'text-emerald-600' : 'text-slate-500'}"><span>${hit ? '✅' : '⬜️'} ${escapeHtml(title)} <span class="text-xs text-slate-400">${escapeHtml(desc)}</span></span>${when ? `<span class="text-xs text-slate-400">${escapeHtml(when)}</span>` : ''}</li>`;
-  }).join('');
+  const html = achievementsDef
+    .map((def) => {
+      const hit = !!store[def.id];
+      const when = hit ? formatAchievementTime(store[def.id].at) : '';
+      const title = t[def.titleKey] || def.titleKey;
+      const desc = t[def.descKey] || def.descKey;
+      return `<li class="flex items-center justify-between ${hit ? 'text-emerald-600' : 'text-slate-500'}"><span>${hit ? '✅' : '⬜️'} ${escapeHtml(title)} <span class="text-xs text-slate-400">${escapeHtml(desc)}</span></span>${when ? `<span class="text-xs text-slate-400">${escapeHtml(when)}</span>` : ''}</li>`;
+    })
+    .join('');
   achievementsList.innerHTML = html;
 }
 
@@ -2102,8 +2476,7 @@ function openAchievements(newIds) {
       const t = i18n();
       achievementsNew.textContent = (t.achNewUnlock || '').replace('{n}', newIds.length);
       achievementsNew.classList.remove('hidden');
-    }
-    else achievementsNew.classList.add('hidden');
+    } else achievementsNew.classList.add('hidden');
   }
 }
 
@@ -2135,7 +2508,10 @@ function exportData() {
   a.download = getBackupFilename();
   document.body.appendChild(a);
   a.click();
-  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href);
+    a.remove();
+  }, 0);
 }
 
 function importDataFromObj(obj) {

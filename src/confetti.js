@@ -23,7 +23,7 @@
     resizeConfettiCanvas(confettiCanvas);
     confettiCanvas.classList && confettiCanvas.classList.remove('hidden');
 
-    const colors = ['#6366F1','#A78BFA','#22C55E','#F43F5E','#F59E0B','#10B981','#EF4444'];
+    const colors = ['#6366F1', '#A78BFA', '#22C55E', '#F43F5E', '#F59E0B', '#10B981', '#EF4444'];
     const N = 120;
     const parts = Array.from({ length: N }, () => ({
       x: Math.random() * confettiCanvas.width,
@@ -33,7 +33,7 @@
       vy: 2 + Math.random() * 3,
       color: colors[Math.floor(Math.random() * colors.length)],
       rot: Math.random() * Math.PI,
-      vr: (-0.2 + Math.random() * 0.4),
+      vr: -0.2 + Math.random() * 0.4,
     }));
 
     if (typeof requestAnimationFrame === 'undefined' || typeof performance === 'undefined') return;
@@ -42,8 +42,13 @@
     function frame(t) {
       ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
       for (const p of parts) {
-        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
-        if (p.y > confettiCanvas.height + 10) { p.y = -10; p.x = Math.random() * confettiCanvas.width; }
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        if (p.y > confettiCanvas.height + 10) {
+          p.y = -10;
+          p.x = Math.random() * confettiCanvas.width;
+        }
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);

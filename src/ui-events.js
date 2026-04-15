@@ -8,17 +8,40 @@
   function bind(ui, events, doc) {
     const d = doc || (typeof document !== 'undefined' ? document : null);
     const {
-      difficultyEl, newGameBtn, playAgainBtn, closeModalBtn,
-      pauseBtn, resumeBtn, failRetryBtn, failCloseBtn,
-      hintBtn, settingsBtn, guideBtn, guideCloseBtn, guideModal,
-      settingsCancel, settingsSave,
-      settingGameMode, settingVolume,
-      shareBtn, achievementsBtn, achievementsClose,
-      dailyBtn, dailyCloseBtn, dailyStartBtn,
-      statsBtn, statsClose,
-      nbackBtn, nbackCloseBtn, nbackStartBtn,
-      resetDataBtn, exportBtn, importBtn, importFile,
-      recallSkipBtn, recallSubmitBtn,
+      difficultyEl,
+      newGameBtn,
+      playAgainBtn,
+      closeModalBtn,
+      pauseBtn,
+      resumeBtn,
+      failRetryBtn,
+      failCloseBtn,
+      hintBtn,
+      settingsBtn,
+      guideBtn,
+      guideCloseBtn,
+      guideModal,
+      settingsCancel,
+      settingsSave,
+      settingGameMode,
+      settingVolume,
+      shareBtn,
+      achievementsBtn,
+      achievementsClose,
+      dailyBtn,
+      dailyCloseBtn,
+      dailyStartBtn,
+      statsBtn,
+      statsClose,
+      nbackBtn,
+      nbackCloseBtn,
+      nbackStartBtn,
+      resetDataBtn,
+      exportBtn,
+      importBtn,
+      importFile,
+      recallSkipBtn,
+      recallSubmitBtn,
     } = ui || {};
 
     // 游戏控制
@@ -44,8 +67,10 @@
 
     // 分享 / 成就
     if (shareBtn && events.onShare) shareBtn.addEventListener('click', events.onShare);
-    if (achievementsBtn && events.onAchievementsOpen) achievementsBtn.addEventListener('click', events.onAchievementsOpen);
-    if (achievementsClose && events.onAchievementsClose) achievementsClose.addEventListener('click', events.onAchievementsClose);
+    if (achievementsBtn && events.onAchievementsOpen)
+      achievementsBtn.addEventListener('click', events.onAchievementsOpen);
+    if (achievementsClose && events.onAchievementsClose)
+      achievementsClose.addEventListener('click', events.onAchievementsClose);
 
     // 每日挑战
     if (dailyBtn && events.onDailyOpen) dailyBtn.addEventListener('click', events.onDailyOpen);

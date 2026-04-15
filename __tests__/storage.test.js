@@ -1,5 +1,5 @@
-const Keys = require('../src/keys.js')
-const Storage = require('../src/storage.js')
+const Keys = require('../src/keys.js');
+const Storage = require('../src/storage.js');
 
 const DEFAULT_SETTINGS = {
   sound: true,
@@ -16,12 +16,12 @@ const DEFAULT_SETTINGS = {
   language: 'auto',
   adaptive: false,
   spaced: false,
-}
+};
 
 describe('storage normalization', () => {
   beforeEach(() => {
-    localStorage.clear()
-  })
+    localStorage.clear();
+  });
 
   test('loadSettings falls back to defaults and normalizes values', () => {
     localStorage.setItem(
@@ -42,7 +42,7 @@ describe('storage normalization', () => {
         adaptive: 1,
         spaced: 'true',
       }),
-    )
+    );
 
     expect(Storage.loadSettings(DEFAULT_SETTINGS)).toEqual({
       sound: false,
@@ -59,22 +59,19 @@ describe('storage normalization', () => {
       language: 'zh',
       adaptive: true,
       spaced: true,
-    })
-  })
+    });
+  });
 
   test('loadStats normalizes malformed values', () => {
-    localStorage.setItem(
-      Keys.statsKey(),
-      JSON.stringify({ games: '3', wins: -1, timeSum: 'bad', nbackRtCount: 2.8 }),
-    )
+    localStorage.setItem(Keys.statsKey(), JSON.stringify({ games: '3', wins: -1, timeSum: 'bad', nbackRtCount: 2.8 }));
 
     expect(Storage.loadStats()).toMatchObject({
       games: 3,
       wins: 0,
       timeSum: 0,
       nbackRtCount: 2,
-    })
-  })
+    });
+  });
 
   test('loadLeaderboard filters and sorts invalid entries', () => {
     localStorage.setItem(
@@ -86,19 +83,19 @@ describe('storage normalization', () => {
         { foo: 'bar' },
         { time: 40, moves: 9, at: 5 },
       ]),
-    )
+    );
 
     expect(Storage.loadLeaderboard('easy')).toEqual([
       { time: 40, moves: 9, at: 5 },
       { time: 40, moves: 10, at: 10 },
       { time: 50, moves: 12, at: 20 },
-    ])
-  })
+    ]);
+  });
 
   test('loadBest returns null for invalid entries', () => {
-    localStorage.setItem(Keys.bestKey('easy'), JSON.stringify({ time: 'bad', moves: 1 }))
-    expect(Storage.loadBest('easy')).toBeNull()
-  })
+    localStorage.setItem(Keys.bestKey('easy'), JSON.stringify({ time: 'bad', moves: 1 }));
+    expect(Storage.loadBest('easy')).toBeNull();
+  });
 
   test('loadAchievements keeps only unlocked known entries', () => {
     localStorage.setItem(
@@ -108,12 +105,12 @@ describe('storage normalization', () => {
         no_hint_win: { unlocked: false, at: 999 },
         random: { unlocked: true, at: 456 },
       }),
-    )
+    );
 
     expect(Storage.loadAchievements()).toEqual({
       first_win: { unlocked: true, at: 123 },
-    })
-  })
+    });
+  });
 
   test('saveLeaderboard persists normalized top three entries', () => {
     Storage.saveLeaderboard('easy', [
@@ -121,17 +118,17 @@ describe('storage normalization', () => {
       { time: 20, moves: 7, at: 2 },
       { time: 20, moves: 6, at: 1 },
       { time: 90, moves: 20, at: 4 },
-    ])
+    ]);
 
     expect(JSON.parse(localStorage.getItem(Keys.lbKey('easy')))).toEqual([
       { time: 20, moves: 6, at: 1 },
       { time: 20, moves: 7, at: 2 },
       { time: 70, moves: 12, at: 3 },
-    ])
-  })
+    ]);
+  });
 
   test('markDailyDone and isDailyDone use sanitized difficulty', () => {
-    Storage.markDailyDone('2026-04-06', 'unexpected')
-    expect(Storage.isDailyDone('2026-04-06', 'easy')).toBe(true)
-  })
-})
+    Storage.markDailyDone('2026-04-06', 'unexpected');
+    expect(Storage.isDailyDone('2026-04-06', 'easy')).toBe(true);
+  });
+});

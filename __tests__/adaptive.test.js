@@ -10,7 +10,7 @@ describe('adaptive assistance', () => {
 
   beforeEach(() => {
     originalAddEventListener = document.addEventListener;
-    document.addEventListener = function(type, listener, options) {
+    document.addEventListener = function (type, listener, options) {
       if (type === 'DOMContentLoaded') return undefined;
       return originalAddEventListener.call(this, type, listener, options);
     };
@@ -59,7 +59,7 @@ describe('guide onboarding visibility', () => {
 
   beforeEach(() => {
     originalAddEventListener = document.addEventListener;
-    document.addEventListener = function(type, listener, options) {
+    document.addEventListener = function (type, listener, options) {
       if (type === 'DOMContentLoaded') return undefined;
       return originalAddEventListener.call(this, type, listener, options);
     };

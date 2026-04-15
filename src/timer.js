@@ -9,7 +9,9 @@
 
   function formatTime(s) {
     const safe = Math.max(0, Math.floor(Number(s) || 0));
-    const m = Math.floor(safe / 60).toString().padStart(2, '0');
+    const m = Math.floor(safe / 60)
+      .toString()
+      .padStart(2, '0');
     const r = (safe % 60).toString().padStart(2, '0');
     return `${m}:${r}`;
   }
