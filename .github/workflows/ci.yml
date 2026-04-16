@@ -75,7 +75,7 @@ jobs:
         run: npm ci --prefer-offline
 
       - name: Run tests
-        run: npm test -- --runInBand --coverage
+        run: npx jest --runInBand --coverage
 
       - name: Upload coverage report
         if: matrix.node-version == 22
