@@ -1,4 +1,4 @@
-name: Semantic PR title
+name: Semantic PR Title
 
 on:
   pull_request:
@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   lint:
+    name: Validate PR title
     runs-on: ubuntu-latest
     steps:
       - name: Validate PR title
@@ -17,16 +18,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           types: |
-            chore
-            ci
-            docs
             feat
             fix
-            perf
-            refactor
-            revert
+            docs
             style
+            refactor
             test
+            chore
+            ci
+            perf
+            revert
           scopes: |
             ci
             deps
@@ -34,3 +35,8 @@ jobs:
             ui
             gameplay
             tooling
+          requireScope: false
+          subjectPattern: ^[A-Z].+$
+          subjectPatternError: |
+            Subject must start with a capital letter.
+            Example: "feat: Add new game mode"
