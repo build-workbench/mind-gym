@@ -1,31 +1,59 @@
-const __GLOBAL__ = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this;
+const __GLOBAL__ =
+  typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this;
 const __RememberKeys__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/keys.js') : __GLOBAL__.RememberKeys;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/keys.js')
+    : __GLOBAL__.RememberKeys;
 const __RememberUtils__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/utils.js') : __GLOBAL__.RememberUtils;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/utils.js')
+    : __GLOBAL__.RememberUtils;
 const __RememberStats__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/stats.js') : __GLOBAL__.RememberStats;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/stats.js')
+    : __GLOBAL__.RememberStats;
 const __RememberAchievements__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/achievements.js') : __GLOBAL__.RememberAchievements;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/achievements.js')
+    : __GLOBAL__.RememberAchievements;
 const __RememberModes__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/modes.js') : __GLOBAL__.RememberModes;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/modes.js')
+    : __GLOBAL__.RememberModes;
 const __RememberImportExport__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/import-export.js') : __GLOBAL__.RememberImportExport;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/import-export.js')
+    : __GLOBAL__.RememberImportExport;
 const __RememberStorage__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/storage.js') : __GLOBAL__.RememberStorage;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/storage.js')
+    : __GLOBAL__.RememberStorage;
 const __RememberI18n__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/i18n.js') : __GLOBAL__.RememberI18n;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/i18n.js')
+    : __GLOBAL__.RememberI18n;
 const __RememberEffects__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/effects.js') : __GLOBAL__.RememberEffects;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/effects.js')
+    : __GLOBAL__.RememberEffects;
 const __RememberPools__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/pools.js') : __GLOBAL__.RememberPools;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/pools.js')
+    : __GLOBAL__.RememberPools;
 const __RememberTimer__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/timer.js') : __GLOBAL__.RememberTimer;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/timer.js')
+    : __GLOBAL__.RememberTimer;
 const __RememberConfetti__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/confetti.js') : __GLOBAL__.RememberConfetti;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/confetti.js')
+    : __GLOBAL__.RememberConfetti;
 const __RememberUIEvents__ =
-  typeof module !== 'undefined' && module.exports ? require('./src/ui-events.js') : __GLOBAL__.RememberUIEvents;
-const __RememberUI__ = typeof module !== 'undefined' && module.exports ? require('./src/ui.js') : __GLOBAL__.RememberUI;
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/ui-events.js')
+    : __GLOBAL__.RememberUIEvents;
+const __RememberUI__ =
+  typeof module !== 'undefined' && module.exports ? require('./src/ui.js') : __GLOBAL__.RememberUI;
 const MODAL_FOCUS_PREV = new WeakMap();
 const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
 const DIFFS = ['easy', 'medium', 'hard'];
@@ -43,7 +71,60 @@ const CARD_LABELS_ZH = {
   shapes: '形状卡片',
   colors: '颜色卡片',
 };
-const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+// Focus trap state
+let activeFocusTrap = null;
+
+function getAllFocusable(el) {
+  if (!el) return [];
+  return Array.from(el.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+    node => !node.disabled && node.offsetParent !== null && node.getAttribute('tabindex') !== '-1'
+  );
+}
+
+function createFocusTrap(el) {
+  const handler = e => {
+    if (e.key !== 'Tab') return;
+    const focusable = getAllFocusable(el);
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+  el.addEventListener('keydown', handler);
+  return handler;
+}
+
+function activateFocusTrap(el) {
+  if (activeFocusTrap) {
+    deactivateFocusTrap(activeFocusTrap.el, activeFocusTrap.handler);
+  }
+  const handler = createFocusTrap(el);
+  activeFocusTrap = { el, handler };
+  return handler;
+}
+
+function deactivateFocusTrap(el, handler) {
+  if (el && handler) {
+    el.removeEventListener('keydown', handler);
+  }
+  if (activeFocusTrap && activeFocusTrap.el === el) {
+    activeFocusTrap = null;
+  }
+}
+
 const DEFAULT_SETTINGS = {
   sound: true,
   vibrate: true,
@@ -83,12 +164,25 @@ const NORMALIZE_ACHIEVEMENTS = __RememberAchievements__.normalizeAchievements;
 const CHECK_ACHIEVEMENTS = __RememberAchievements__.checkAchievementsOnWin;
 const TIMER_POLL_MS = 250;
 
+// Adaptive rating constants
+const ELO_K_FACTOR = 12;
+const RATING_BRONZE = 920;
+const RATING_SILVER = 1080;
+
+// Timing constants
+const COMBO_WINDOW_MS = 5000;
+const MISMATCH_FLIP_BACK_MS = 700;
+const HINT_DURATION_MS = 800;
+const TOAST_DURATION_MS = 2000;
+
 function getActiveElement() {
   return typeof document !== 'undefined' ? document.activeElement : null;
 }
 
 function getFocusable(el) {
-  return el ? Array.from(el.querySelectorAll(FOCUSABLE_SELECTOR)).find((node) => !node.disabled) : null;
+  return el
+    ? Array.from(el.querySelectorAll(FOCUSABLE_SELECTOR)).find(node => !node.disabled)
+    : null;
 }
 
 function focusElement(el) {
@@ -123,11 +217,15 @@ function openModalWithFocus(el) {
   if (!el) return;
   rememberModalFocus(el);
   showModal(el);
+  activateFocusTrap(el);
   focusModal(el);
 }
 
 function closeModalWithFocusRestore(el) {
   if (!el) return;
+  if (activeFocusTrap && activeFocusTrap.el === el) {
+    deactivateFocusTrap(el, activeFocusTrap.handler);
+  }
   hideModal(el);
   restoreModalFocus(el);
 }
@@ -140,7 +238,11 @@ function buildExportPayload() {
   return COLLECT_EXPORT({
     settings,
     bests: { easy: loadBest('easy'), medium: loadBest('medium'), hard: loadBest('hard') },
-    leaderboards: { easy: loadLeaderboard('easy'), medium: loadLeaderboard('medium'), hard: loadLeaderboard('hard') },
+    leaderboards: {
+      easy: loadLeaderboard('easy'),
+      medium: loadLeaderboard('medium'),
+      hard: loadLeaderboard('hard'),
+    },
     achievements: loadAchievements(),
     stats: loadStats(),
     adaptive: loadAdaptive(),
@@ -237,8 +339,8 @@ function resolveBoardTheme() {
 function parseSelectedRecallValues(container) {
   return new Set(
     Array.from(container.querySelectorAll('input[type="checkbox"][data-value]'))
-      .filter((checkbox) => checkbox.checked)
-      .map((checkbox) => checkbox.getAttribute('data-value')),
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.getAttribute('data-value'))
   );
 }
 
@@ -309,72 +411,10 @@ function getTimerPollMs() {
   return TIMER_POLL_MS;
 }
 
-function getKnownThemes() {
-  return THEMES.slice();
-}
-
-function getKnownDiffs() {
-  return DIFFS.slice();
-}
-
-function getDefaultSettings() {
-  return { ...DEFAULT_SETTINGS, countdown: { ...DEFAULT_SETTINGS.countdown } };
-}
-
-function getDefaultStats() {
-  return { ...DEFAULT_STATS };
-}
-
 function noop() {}
-
-function getNoop() {
-  return noop;
-}
-
-function buildLeaderboardSnapshot() {
-  return { easy: loadLeaderboard('easy'), medium: loadLeaderboard('medium'), hard: loadLeaderboard('hard') };
-}
-
-function buildBestSnapshot() {
-  return { easy: loadBest('easy'), medium: loadBest('medium'), hard: loadBest('hard') };
-}
-
-function getSpacedSnapshot() {
-  return {
-    emoji: loadSpaced('emoji'),
-    numbers: loadSpaced('numbers'),
-    letters: loadSpaced('letters'),
-    shapes: loadSpaced('shapes'),
-    colors: loadSpaced('colors'),
-  };
-}
 
 function getSelectedRecallValues(container) {
   return parseSelectedRecallValues(container);
-}
-
-function getThemeAccessibilityLabel(theme, value) {
-  return getCardA11yLabel(theme, value);
-}
-
-function getVersionValue() {
-  return 1;
-}
-
-function getStatsStore() {
-  return normalizeStats(loadStats());
-}
-
-function saveStatsStore(stats) {
-  saveStats(normalizeStats(stats));
-}
-
-function getAchievementsStore() {
-  return normalizeAchievements(loadAchievements());
-}
-
-function saveAchievementsStore(store) {
-  saveAchievements(normalizeAchievements(store));
 }
 
 function openModalForElement(el) {
@@ -385,519 +425,17 @@ function closeModalForElement(el) {
   closeModalWithFocusRestore(el);
 }
 
-function getTimerUpdateHandler() {
-  return updateTimerState;
-}
-
-function getBuildStatsSummary() {
-  return buildStatsSummary;
-}
-
-function getRecallScore(correctSet, selectedValues) {
-  return scoreRecall(correctSet, selectedValues);
-}
-
-function getNBackSummary(payload) {
-  return summarizeNBackResult(payload);
-}
-
-function getNBackConfig(raw) {
-  return createNBackConfig(raw);
-}
-
-function getThemeLabelValue(theme, value) {
-  return getThemeAccessibilityLabel(theme, value);
-}
-
-function getImportData(obj) {
-  return normalizeImportedData(obj);
-}
-
 function applyImportedData(normalized) {
   persistImportedData(normalized);
 }
 
-function getPayloadVersion() {
-  return getVersionValue();
-}
-
-function getBackupFileName() {
-  return getBackupFilename();
-}
-
-function getCurrentTimestampValue() {
-  return currentTimestamp();
-}
-
-function getAccessibilityLabel(theme, value) {
-  return getThemeLabelValue(theme, value);
-}
-
-function getLeaderboardSnapshot() {
-  return buildLeaderboardSnapshot();
-}
-
-function getBestSnapshot() {
-  return buildBestSnapshot();
-}
-
-function getSpacedDataSnapshot() {
-  return getSpacedSnapshot();
-}
-
-function getTimerUpdater() {
-  return getTimerUpdateHandler();
-}
-
-function getCurrentTimeValue() {
-  return getCurrentTimestampValue();
-}
-
-function getStatsSummaryBuilder() {
-  return getBuildStatsSummary();
-}
-
-function getImportNormalizer() {
-  return normalizeImportedData;
-}
-
-function getTimerIntervalMs() {
-  return getTimerPollMs();
-}
-
-function getNowValue() {
-  return getCurrentTimeValue();
-}
-
-function getCardLabelSafe(theme, value) {
-  return getAccessibilityLabel(theme, value);
-}
-
-function getFocusManager() {
-  return {
-    open: openModalForElement,
-    close: closeModalForElement,
-  };
-}
-
-function getModalBackdropCloser(modal, onClose) {
-  return (e) => handleModalBackdrop(e, modal, onClose);
-}
-
-function getTimestampProvider() {
-  return currentTimestamp;
-}
-
-function getToastScheduler() {
-  return setTimeout;
-}
-
-function getToastCanceller() {
-  return clearTimeout;
-}
-
-function getEmptyFn() {
-  return noop;
-}
-
-function getThemeValues() {
-  return getKnownThemes();
-}
-
-function getDifficultyValues() {
-  return getKnownDiffs();
-}
-
-function getSettingsDefaults() {
-  return getDefaultSettings();
-}
-
-function getStatsDefaults() {
-  return getDefaultStats();
-}
-
-function getModalCloseHandler(modal) {
-  return () => closeModalForElement(modal);
-}
-
-function getModalOpenHandler(modal) {
-  return () => openModalForElement(modal);
-}
-
-function getFocusState(modal) {
-  return {
-    open: getModalOpenHandler(modal),
-    close: getModalCloseHandler(modal),
-  };
-}
-
-function getTimerIntervalSafe() {
-  return getTimerIntervalMs();
-}
-
-function getImportNormalizerSafe() {
-  return getImportNormalizer();
-}
-
-function getStatsSummarySafe() {
-  return getStatsSummaryBuilder();
-}
-
-function getNowSafe() {
-  return getNowValue();
-}
-
-function getVersionSafe() {
-  return getPayloadVersion();
-}
-
-function getBackupVersionSafe() {
-  return getPayloadVersion();
-}
-
-function getNoopSafe() {
-  return getEmptyFn();
-}
-
-function getFocusStateSafe(modal) {
-  return getFocusState(modal);
-}
-
-function getModalHandlers(modal) {
-  return getFocusState(modal);
-}
-
-function getThemeValueAccessibility(theme, value) {
-  return getAccessibilityLabel(theme, value);
-}
-
-function getPayloadVersionValue() {
-  return getPayloadVersion();
-}
-
-function getBackupVersionValue() {
-  return getPayloadVersion();
-}
-
-function getImportVersion() {
-  return getPayloadVersion();
-}
-
-function getCurrentNow() {
-  return currentTimestamp();
-}
-
-function getModalRestore(el) {
-  return () => closeModalForElement(el);
-}
-
-function getModalRemember(el) {
-  return () => openModalForElement(el);
-}
-
-function getSummaryBuilder() {
-  return getStatsSummaryBuilder();
-}
-
-function getSelectedRecallValuesSafe(container) {
-  return getSelectedRecallValues(container);
-}
-
-function getA11yCardLabel(theme, value) {
-  return getAccessibilityLabel(theme, value);
-}
-
-function getThemeLabel(theme) {
-  return cardLabelForTheme(theme);
-}
-
-function getAchievementsDefinition() {
-  return achievementsDef;
-}
-
-function getAchievementsDefinitions() {
-  return getAchievementsDefinition();
-}
-
-function getStatsNormalizer() {
-  return normalizeStats;
-}
-
-function getAchievementsNormalizer() {
-  return normalizeAchievements;
-}
-
-function getLeaderboardNormalizer() {
-  return normalizeLeaderboard;
-}
-
-function getAdaptiveNormalizer() {
-  return normalizeAdaptive;
-}
-
-function getBestNormalizer() {
-  return normalizeBestEntry;
-}
-
-function getSettingsNormalizer() {
-  return NORMALIZE_SETTINGS;
-}
-
-function getExportCollector() {
-  return COLLECT_EXPORT;
-}
-
-function getStorageThemes() {
-  return THEMES;
-}
-
-function getStorageDiffs() {
-  return DIFFS;
-}
-
-function getRecallBuilder(params) {
-  return buildRecallItems(params);
-}
-
-function getStatsSummaryValue(stats) {
-  return buildStatsSummary(stats);
-}
-
-function getImportNormalizerValue() {
-  return getImportNormalizer();
-}
-
-function getImportNormalizerFn() {
-  return getImportNormalizer();
-}
-
-function getStatsSummaryFn() {
-  return getStatsSummaryBuilder();
-}
-
-function getTimerPollValue() {
-  return getTimerPollMs();
-}
-
-function getTimerPollInterval() {
-  return getTimerPollMs();
-}
-
-function getTimerResolution() {
-  return getTimerPollMs();
-}
-
-function getValueTimestamp() {
-  return currentTimestamp();
-}
-
-function getTimestampNow() {
-  return currentTimestamp();
-}
-
-function doNothing() {}
-
-function getNoopValue() {
-  return doNothing;
-}
-
-function getNoopFunction() {
-  return doNothing;
-}
-
-function getNoopHandler() {
-  return doNothing;
-}
-
-function getNoopFn() {
-  return doNothing;
-}
-
-function getImportedData(obj) {
-  return normalizeImportedData(obj);
-}
-
-function getNormalizedImport(obj) {
-  return normalizeImportedData(obj);
-}
-
-function persistImportData(normalized) {
-  return applyImportedData(normalized);
-}
-
-function storeImportedData(normalized) {
-  return applyImportedData(normalized);
-}
-
-function markModalOpen(el) {
-  return openModalForElement(el);
-}
-
-function markModalClosed(el) {
-  return closeModalForElement(el);
-}
-
-function onModalOpen(el) {
-  return openModalForElement(el);
-}
-
-function onModalClose(el) {
-  return closeModalForElement(el);
-}
-
-function showModalAndFocus(el) {
-  return openModalForElement(el);
-}
-
-function hideModalAndRestoreFocus(el) {
-  return closeModalForElement(el);
-}
-
-function focusOpenedModal(el) {
-  rememberModalFocus(el);
-  focusModal(el);
-}
-
-function restoreClosedModalFocus(el) {
-  restoreModalFocus(el);
-}
-
-function onModalBackdropClose(e, modal) {
-  return handleModalBackdrop(e, modal, () => closeModalForElement(modal));
-}
-
-function createToastTimeout(callback, delay) {
-  return setTimeout(callback, delay);
-}
-
-function cancelToastTimeout(id) {
-  clearTimeout(id);
-}
-
-function getToastDelayScheduler() {
-  return createToastTimeout;
-}
-
-function getToastDelayCanceller() {
-  return cancelToastTimeout;
-}
-
-function getTimerStateUpdater() {
-  return updateTimerState;
-}
-
-function getTimerUpdaterSafe() {
-  return updateTimerState;
-}
-
-function getCurrentTimestamp() {
-  return currentTimestamp();
-}
-
-function getCurrentTimestampProvider() {
-  return currentTimestamp;
-}
-
-function getVersionId() {
-  return getPayloadVersion();
-}
-
-function getBackupVersionId() {
-  return getPayloadVersion();
-}
-
-function getVersionFn() {
-  return getPayloadVersion();
-}
-
-function getBackupVersionFn() {
-  return getPayloadVersion();
-}
-
-function getThemeLabelValueSafe(theme, value) {
-  return getAccessibilityLabel(theme, value);
-}
-
-function getCardValueA11y(theme, value) {
-  return getAccessibilityLabel(theme, value);
-}
-
-function getCardLabelValue(theme, value) {
-  return getAccessibilityLabel(theme, value);
-}
-
-function getThemeCardLabel(theme) {
-  return getThemeLabel(theme);
-}
-
-function getModalFocusTarget(el) {
-  return getFocusable(el) || el;
-}
-
-function focusModalTarget(el) {
-  focusElement(getModalFocusTarget(el));
-}
-
-function focusModalDeferred(el) {
-  queueFocus(() => focusModalTarget(el));
-}
-
-function getModalBackdropHandler(modal, onClose) {
-  return (e) => handleModalBackdrop(e, modal, onClose);
-}
-
-function getModalFocusState(modal) {
-  return getFocusState(modal);
-}
-
-function getModalFocusHandlers(modal) {
-  return getFocusState(modal);
-}
-
-function getFocusProvider() {
-  return getFocusManager();
-}
-
-function getCurrentTimestampSafe() {
-  return currentTimestamp();
-}
-
-function getCurrentTimeSafe() {
-  return currentTimestamp();
-}
-
-function getThemeLabelSafe(theme, value) {
-  return getAccessibilityLabel(theme, value);
-}
-
-function getCurrentTimestampHandler() {
-  return currentTimestamp;
-}
-
-function getCurrentNowHandler() {
-  return currentTimestamp;
-}
-
-function getToastFileName() {
-  return getBackupFilename();
-}
-
-function getTimerPollMsSafe() {
-  return getTimerPollMs();
-}
-
-function getCurrentValueTimestamp() {
-  return currentTimestamp();
-}
-
-function getRecallValueSelector(container) {
-  return getSelectedRecallValues(container);
-}
 function loadAdaptive() {
   return __RememberStorage__.loadAdaptive();
 }
 
 function getAdaptiveAssist(diff) {
+  const validDiffs = Object.keys(HINT_LIMITS);
+  if (!validDiffs.includes(diff)) diff = 'easy'; // 默认回退到 easy
   const baseHints = HINT_LIMITS[diff] || 0;
   const r = loadAdaptive().rating || 1000;
   let preview = Number(settings.previewSeconds ?? 0);
@@ -927,7 +465,7 @@ function updateAdaptiveOnEnd(win, stars, diff) {
   const a = loadAdaptive();
   const exp = expectedStarsFor(diff);
   const perf = win ? stars : 1.5; // 失败视作较差表现
-  const k = 12;
+  const k = ELO_K_FACTOR;
   a.rating = Math.max(600, Math.min(1600, Math.round(a.rating + k * (perf - exp))));
   a.lastDiff = diff;
   saveAdaptive(a);
@@ -936,8 +474,8 @@ function decideDifficulty() {
   const a = loadAdaptive();
   const r = a.rating || 1000;
   // 简易分段，可根据需求再细化
-  if (r < 920) return 'easy';
-  if (r < 1080) return 'medium';
+  if (r < RATING_BRONZE) return 'easy';
+  if (r < RATING_SILVER) return 'medium';
   return 'hard';
 }
 
@@ -966,7 +504,7 @@ function pickWithSpaced(theme, pool, pairs) {
   copy.sort((a, b) => (weights[b.v] || 0) - (weights[a.v] || 0));
   const topN = Math.min(Math.floor(pairs * 0.4), copy.length);
   const picksTop = copy.slice(0, topN);
-  const rest = pool.filter((x) => !picksTop.some((y) => y.v === x.v));
+  const rest = pool.filter(x => !picksTop.some(y => y.v === x.v));
   shuffle(rest);
   const picks = [...picksTop, ...rest.slice(0, pairs - picksTop.length)];
   return picks;
@@ -976,9 +514,19 @@ const difficulties = {
   medium: { rows: 4, cols: 5, pairs: 10 },
   hard: { rows: 6, cols: 6, pairs: 18 },
 };
-const emojiPool = __RememberPools__ && __RememberPools__.emojiPool ? __RememberPools__.emojiPool : [];
+const emojiPool =
+  __RememberPools__ && __RememberPools__.emojiPool ? __RememberPools__.emojiPool : [];
 
-let gridEl, movesEl, timeEl, bestEl, difficultyEl, newGameBtn, winModal, winStatsEl, playAgainBtn, closeModalBtn;
+let gridEl,
+  movesEl,
+  timeEl,
+  bestEl,
+  difficultyEl,
+  newGameBtn,
+  winModal,
+  winStatsEl,
+  playAgainBtn,
+  closeModalBtn;
 let ratingStarsEl;
 let comboToastEl;
 let pauseBtn, hintBtn, hintLeftEl, settingsBtn, pauseOverlay, resumeBtn;
@@ -987,10 +535,26 @@ let shareBtn, leaderboardList, pairsLeftEl, progressBarEl, settingAccent, confet
 let settingTheme, settingMotion, settingVolume, settingVolumeValue, settingSoundPack;
 let settingLanguage;
 let settingAdaptive, settingSpaced;
-let settingGameMode, settingCountdownEasy, settingCountdownMedium, settingCountdownHard, countdownConfigEl;
-let settingCardFace, achievementsModal, achievementsBtn, achievementsClose, achievementsList, achievementsNew;
+let settingGameMode,
+  settingCountdownEasy,
+  settingCountdownMedium,
+  settingCountdownHard,
+  countdownConfigEl;
+let settingCardFace,
+  achievementsModal,
+  achievementsBtn,
+  achievementsClose,
+  achievementsList,
+  achievementsNew;
 let exportBtn, importBtn, importFile, toastEl;
-let nbackBtn, nbackModal, nbackStimEl, nbackNSelect, nbackSpeedSelect, nbackLenSelect, nbackStartBtn, nbackCloseBtn;
+let nbackBtn,
+  nbackModal,
+  nbackStimEl,
+  nbackNSelect,
+  nbackSpeedSelect,
+  nbackLenSelect,
+  nbackStartBtn,
+  nbackCloseBtn;
 let recallModal, recallChoicesEl, recallSkipBtn, recallSubmitBtn;
 let dailyModal, dailyBtn, dailyCloseBtn, dailyStartBtn, dailyInfoEl;
 let loseModal, failRetryBtn, failCloseBtn;
@@ -1073,7 +637,12 @@ const ACCENTS = {
     progressBg: 'bg-emerald-500',
     ring: 'ring-emerald-400',
   },
-  rose: { frontBg: 'bg-rose-100', frontText: 'text-rose-700', progressBg: 'bg-rose-500', ring: 'ring-rose-400' },
+  rose: {
+    frontBg: 'bg-rose-100',
+    frontText: 'text-rose-700',
+    progressBg: 'bg-rose-500',
+    ring: 'ring-rose-400',
+  },
 };
 
 function escapeHtml(str) {
@@ -1115,23 +684,31 @@ function getAccent() {
 }
 
 function removeClasses(el, list) {
-  list.forEach((c) => el.classList.remove(c));
+  list.forEach(c => el.classList.remove(c));
 }
 
 function applyAccentToDOM() {
-  const allProgress = [ACCENTS.indigo.progressBg, ACCENTS.emerald.progressBg, ACCENTS.rose.progressBg];
+  const allProgress = [
+    ACCENTS.indigo.progressBg,
+    ACCENTS.emerald.progressBg,
+    ACCENTS.rose.progressBg,
+  ];
   if (progressBarEl) {
     removeClasses(progressBarEl, allProgress);
     progressBarEl.classList.add(getAccent().progressBg);
   }
   const allFrontBg = [ACCENTS.indigo.frontBg, ACCENTS.emerald.frontBg, ACCENTS.rose.frontBg];
-  const allFrontText = [ACCENTS.indigo.frontText, ACCENTS.emerald.frontText, ACCENTS.rose.frontText];
+  const allFrontText = [
+    ACCENTS.indigo.frontText,
+    ACCENTS.emerald.frontText,
+    ACCENTS.rose.frontText,
+  ];
   const allRings = [ACCENTS.indigo.ring, ACCENTS.emerald.ring, ACCENTS.rose.ring];
-  document.querySelectorAll('.card-front').forEach((el) => {
+  document.querySelectorAll('.card-front').forEach(el => {
     removeClasses(el, [...allFrontBg, ...allFrontText]);
     el.classList.add(getAccent().frontBg, getAccent().frontText);
   });
-  document.querySelectorAll('.card.pointer-events-none').forEach((el) => {
+  document.querySelectorAll('.card.pointer-events-none').forEach(el => {
     removeClasses(el, allRings);
     el.classList.add(getAccent().ring);
   });
@@ -1147,13 +724,15 @@ function updateProgressUI() {
 
 function applyTheme() {
   const theme = settings.theme || 'auto';
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const prefersDark =
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const isDark = theme === 'dark' || (theme === 'auto' && prefersDark);
   document.documentElement.classList.toggle('dark', !!isDark);
 }
 
 function isReducedMotion() {
-  const prefReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefReduce =
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (settings.motion === 'on') return true;
   if (settings.motion === 'off') return false;
   return !!prefReduce;
@@ -1194,7 +773,10 @@ function isCountdownMode() {
 }
 function getCountdownFor(diff) {
   const c = settings.countdown || DEFAULT_SETTINGS.countdown;
-  const n = Math.max(10, Math.min(999, parseInt((c && c[diff]) || DEFAULT_SETTINGS.countdown[diff])));
+  const n = Math.max(
+    10,
+    Math.min(999, parseInt((c && c[diff]) || DEFAULT_SETTINGS.countdown[diff]))
+  );
   return n;
 }
 
@@ -1214,7 +796,7 @@ function updateStatsOnWin() {
       moves,
       hintsUsed,
       maxCombo: maxComboThisGame,
-    }),
+    })
   );
 }
 function updateStatsUI() {
@@ -1272,15 +854,15 @@ function applySettingsToUI() {
   if (settingGameMode) settingGameMode.value = String(settings.gameMode || 'classic');
   if (settingCountdownEasy)
     settingCountdownEasy.value = String(
-      (settings.countdown && settings.countdown.easy) || DEFAULT_SETTINGS.countdown.easy,
+      (settings.countdown && settings.countdown.easy) || DEFAULT_SETTINGS.countdown.easy
     );
   if (settingCountdownMedium)
     settingCountdownMedium.value = String(
-      (settings.countdown && settings.countdown.medium) || DEFAULT_SETTINGS.countdown.medium,
+      (settings.countdown && settings.countdown.medium) || DEFAULT_SETTINGS.countdown.medium
     );
   if (settingCountdownHard)
     settingCountdownHard.value = String(
-      (settings.countdown && settings.countdown.hard) || DEFAULT_SETTINGS.countdown.hard,
+      (settings.countdown && settings.countdown.hard) || DEFAULT_SETTINGS.countdown.hard
     );
   if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !isCountdownMode());
   if (settingLanguage) settingLanguage.value = String(settings.language || 'auto');
@@ -1471,7 +1053,7 @@ function onFlip(cardEl) {
   cardEl.setAttribute('aria-pressed', 'true');
   cardEl.setAttribute(
     'aria-label',
-    `${getCardA11yLabel(resolveBoardTheme(), cardEl.dataset.value)} · ${currentLang() === 'zh' ? '已翻开' : 'revealed'}`,
+    `${getCardA11yLabel(resolveBoardTheme(), cardEl.dataset.value)} · ${currentLang() === 'zh' ? '已翻开' : 'revealed'}`
   );
   sfx('flip');
   if (!firstCard) {
@@ -1494,18 +1076,18 @@ function onFlip(cardEl) {
     secondCard.classList.add('pointer-events-none', 'ring-2', getAccent().ring, 'match-pulse');
     firstCard.setAttribute(
       'aria-label',
-      `${getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`,
+      `${getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
     );
     secondCard.setAttribute(
       'aria-label',
-      `${getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`,
+      `${getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
     );
     matchedPairs += 1;
     sfx('match');
     vibrateMs(40);
     // combo logic
     const now = performance.now();
-    if (now - lastMatchAt <= 5000) comboCount += 1;
+    if (now - lastMatchAt <= COMBO_WINDOW_MS) comboCount += 1;
     else comboCount = 1;
     lastMatchAt = now;
     if (comboCount >= 2) {
@@ -1525,10 +1107,16 @@ function onFlip(cardEl) {
       secondCard.classList.remove('flipped');
       firstCard.setAttribute('aria-pressed', 'false');
       secondCard.setAttribute('aria-pressed', 'false');
-      firstCard.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value));
-      secondCard.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value));
+      firstCard.setAttribute(
+        'aria-label',
+        getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)
+      );
+      secondCard.setAttribute(
+        'aria-label',
+        getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)
+      );
       resetBoardState();
-    }, 700);
+    }, MISMATCH_FLIP_BACK_MS);
     comboCount = 0;
   }
 }
@@ -1556,7 +1144,7 @@ function initGame(diffKey) {
     el.dataset.index = String(idx);
     gridEl.appendChild(el);
   });
-  lastGameValues = Array.from(new Set(deck.map((d) => d.v)));
+  lastGameValues = Array.from(new Set(deck.map(d => d.v)));
   moves = 0;
   matchedPairs = 0;
   started = false;
@@ -1591,9 +1179,9 @@ function initGame(diffKey) {
     isPreviewing = true;
     lockBoard = true;
     const cards = Array.from(gridEl.querySelectorAll('.card'));
-    cards.forEach((c) => c.classList.add('flipped'));
+    cards.forEach(c => c.classList.add('flipped'));
     setTimeout(() => {
-      cards.forEach((c) => c.classList.remove('flipped'));
+      cards.forEach(c => c.classList.remove('flipped'));
       isPreviewing = false;
       lockBoard = false;
       updateControlsUI();
@@ -1630,7 +1218,7 @@ function onWin() {
   updateAdaptiveOnEnd(
     true,
     getRating(elapsed, moves, currentDifficulty, hintsUsed, maxComboThisGame),
-    currentDifficulty,
+    currentDifficulty
   );
   applySpacedAfterWin(settings.cardFace || 'emoji');
   const arr = loadLeaderboard(currentDifficulty);
@@ -1813,7 +1401,7 @@ if (typeof document !== 'undefined') {
       },
       onGuideOpen: () => openGuideModal(false),
       onGuideClose: () => closeGuideModal(),
-      onGuideModalBackdrop: (e) => {
+      onGuideModalBackdrop: e => {
         if (e.target === guideModal) closeGuideModal();
       },
       onSettingsCancel: () => {
@@ -1829,7 +1417,10 @@ if (typeof document !== 'undefined') {
         settings.motion = (settingMotion && settingMotion.value) || 'auto';
         settings.volume = Math.max(
           0,
-          Math.min(1, Number(settingVolume && settingVolume.value ? settingVolume.value / 100 : 0.5)),
+          Math.min(
+            1,
+            Number(settingVolume && settingVolume.value ? settingVolume.value / 100 : 0.5)
+          )
         );
         settings.soundPack = (settingSoundPack && settingSoundPack.value) || 'clear';
         settings.cardFace = (settingCardFace && settingCardFace.value) || 'emoji';
@@ -1839,22 +1430,31 @@ if (typeof document !== 'undefined') {
             10,
             Math.min(
               999,
-              parseInt((settingCountdownEasy && settingCountdownEasy.value) || DEFAULT_SETTINGS.countdown.easy),
-            ),
+              parseInt(
+                (settingCountdownEasy && settingCountdownEasy.value) ||
+                  DEFAULT_SETTINGS.countdown.easy
+              )
+            )
           ),
           medium: Math.max(
             10,
             Math.min(
               999,
-              parseInt((settingCountdownMedium && settingCountdownMedium.value) || DEFAULT_SETTINGS.countdown.medium),
-            ),
+              parseInt(
+                (settingCountdownMedium && settingCountdownMedium.value) ||
+                  DEFAULT_SETTINGS.countdown.medium
+              )
+            )
           ),
           hard: Math.max(
             10,
             Math.min(
               999,
-              parseInt((settingCountdownHard && settingCountdownHard.value) || DEFAULT_SETTINGS.countdown.hard),
-            ),
+              parseInt(
+                (settingCountdownHard && settingCountdownHard.value) ||
+                  DEFAULT_SETTINGS.countdown.hard
+              )
+            )
           ),
         };
         settings.language = (settingLanguage && settingLanguage.value) || 'auto';
@@ -1870,7 +1470,8 @@ if (typeof document !== 'undefined') {
         initGame(difficultyEl.value);
       },
       onGameModeChange: () => {
-        if (countdownConfigEl) countdownConfigEl.classList.toggle('hidden', !(settingGameMode.value === 'countdown'));
+        if (countdownConfigEl)
+          countdownConfigEl.classList.toggle('hidden', !(settingGameMode.value === 'countdown'));
       },
       onVolumeInput: () => {
         if (settingVolumeValue) settingVolumeValue.textContent = `${settingVolume.value}%`;
@@ -1901,7 +1502,9 @@ if (typeof document !== 'undefined') {
         if (dailyInfoEl) {
           const t = i18n();
           const date = todayStr();
-          const status = __RememberStorage__.isDailyDone(date, difficultyEl.value) ? t.completed : t.notCompleted;
+          const status = __RememberStorage__.isDailyDone(date, difficultyEl.value)
+            ? t.completed
+            : t.notCompleted;
           dailyInfoEl.textContent = `${t.today} ${date} · ${t.difficulty}：${difficultyEl.options[difficultyEl.selectedIndex].text} · ${t.status}：${status}`;
         }
         openModalWithFocus(dailyModal);
@@ -1984,8 +1587,8 @@ if (typeof document !== 'undefined') {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('./sw.js')
-        .then((reg) => logLifecycle('service_worker_registered', { scope: reg.scope }))
-        .catch((err) => logError('service_worker_registration_failed', { message: err?.message }));
+        .then(reg => logLifecycle('service_worker_registered', { scope: reg.scope }))
+        .catch(err => logError('service_worker_registration_failed', { message: err?.message }));
     }
 
     initGame(currentDifficulty);
@@ -2020,8 +1623,16 @@ function startNBack() {
     length: nbackLenSelect.value || '20',
     speed: nbackSpeedSelect.value || '900',
   });
+  // 边界检查：确保 emojiPool 不为空
+  if (!Array.isArray(emojiPool) || emojiPool.length === 0) {
+    console.error('startNBack: emojiPool is empty or invalid');
+    return;
+  }
   const pool = emojiPool.slice();
-  nbackSeq = Array.from({ length: config.length }, () => pool[Math.floor(Math.random() * pool.length)]);
+  nbackSeq = Array.from(
+    { length: config.length },
+    () => pool[Math.floor(Math.random() * pool.length)]
+  );
   nbackIdx = -1;
   nbackTargets = 0;
   nbackHits = 0;
@@ -2096,12 +1707,12 @@ function finishNBack() {
       accuracy: summary.accuracy,
       rtSum: summary.rtSum,
       rtCount: summary.rtCount,
-    }),
+    })
   );
   updateStatsUI();
   const t = i18n();
   showToast(
-    `${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`,
+    `${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`
   );
 }
 
@@ -2110,7 +1721,7 @@ function openRecallTest() {
   const theme = resolveBoardTheme();
   const { items, correctSet } = buildRecallItems({
     truthValues: lastGameValues,
-    poolValues: getPoolForTheme(theme).map((item) => item.v),
+    poolValues: getPoolForTheme(theme).map(item => item.v),
     shuffle,
   });
   recallCorrectSet = correctSet;
@@ -2135,12 +1746,12 @@ function submitRecallTest() {
     recordRecallAttempt(loadStats(), {
       precision: result.precision,
       recall: result.recall,
-    }),
+    })
   );
   updateStatsUI();
   const t = i18n();
   showToast(
-    `${t.recallResult} · ${t.statsPrecision} ${Math.round(result.precision * 100)}% · ${t.statsRecall} ${Math.round(result.recall * 100)}%`,
+    `${t.recallResult} · ${t.statsPrecision} ${Math.round(result.precision * 100)}% · ${t.statsRecall} ${Math.round(result.recall * 100)}%`
   );
   closeModalWithFocusRestore(recallModal);
 }
@@ -2290,14 +1901,18 @@ function applyLanguage() {
   }
   // Guide lists (innerHTML)
   if (guideBasicsList)
-    guideBasicsList.innerHTML = (t.guideBasics || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+    guideBasicsList.innerHTML = (t.guideBasics || [])
+      .map(item => `<li>${escapeHtml(item)}</li>`)
+      .join('');
   if (guideAdvancedList)
-    guideAdvancedList.innerHTML = (t.guideAdvanced || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+    guideAdvancedList.innerHTML = (t.guideAdvanced || [])
+      .map(item => `<li>${escapeHtml(item)}</li>`)
+      .join('');
   if (guideShortcutsList)
     guideShortcutsList.innerHTML = (t.guideShortcuts || [])
       .map(
-        (sc) =>
-          `<li class="flex items-center gap-2"><span class="inline-flex items-center rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-700 dark:bg-slate-700 dark:text-slate-200">${escapeHtml(sc.key)}</span><span>${escapeHtml(sc.desc)}</span></li>`,
+        sc =>
+          `<li class="flex items-center gap-2"><span class="inline-flex items-center rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-700 dark:bg-slate-700 dark:text-slate-200">${escapeHtml(sc.key)}</span><span>${escapeHtml(sc.desc)}</span></li>`
       )
       .join('');
   // Hint button with remaining span
@@ -2314,7 +1929,7 @@ function useHint() {
   if (hintsLeft <= 0) return;
   if (firstCard || secondCard) return;
   const cards = Array.from(gridEl.querySelectorAll('.card')).filter(
-    (c) => !c.classList.contains('pointer-events-none') && !c.classList.contains('flipped'),
+    c => !c.classList.contains('pointer-events-none') && !c.classList.contains('flipped')
   );
   if (cards.length < 2) return;
   const map = new Map();
@@ -2323,7 +1938,7 @@ function useHint() {
     if (!map.has(v)) map.set(v, []);
     map.get(v).push(c);
   }
-  const candidates = Array.from(map.values()).filter((list) => list.length >= 2);
+  const candidates = Array.from(map.values()).filter(list => list.length >= 2);
   if (!candidates.length) return;
   const pair = candidates[Math.floor(Math.random() * candidates.length)].slice(0, 2);
   lockBoard = true;
@@ -2335,7 +1950,7 @@ function useHint() {
     if (!pair[0].classList.contains('pointer-events-none')) pair[0].classList.remove('flipped');
     if (!pair[1].classList.contains('pointer-events-none')) pair[1].classList.remove('flipped');
     lockBoard = false;
-  }, 800);
+  }, HINT_DURATION_MS);
   hintsLeft -= 1;
   hintsUsed += 1;
   updateHintUI();
@@ -2417,6 +2032,15 @@ function buildDeckItems(picks) {
 function createDeck(pairs) {
   const theme = settings.cardFace || 'emoji';
   const pool = getPoolForTheme(theme);
+  // 边界检查：确保 pool 足够且 pairs 有效
+  if (!Array.isArray(pool) || pool.length === 0) {
+    console.error('createDeck: pool is empty or invalid for theme:', theme);
+    return [];
+  }
+  if (typeof pairs !== 'number' || pairs < 1 || pairs > pool.length) {
+    console.error('createDeck: invalid pairs value:', pairs, 'pool size:', pool.length);
+    pairs = Math.min(pairs || 8, pool.length);
+  }
   if (dailyActive) {
     const rng = mulberry32(dailySeed);
     const poolCopy = pool.slice();
@@ -2457,7 +2081,7 @@ function updateAchievementsUI() {
   const store = loadAchievements();
   const t = i18n();
   const html = achievementsDef
-    .map((def) => {
+    .map(def => {
       const hit = !!store[def.id];
       const when = hit ? formatAchievementTime(store[def.id].at) : '';
       const title = t[def.titleKey] || def.titleKey;
@@ -2485,7 +2109,7 @@ function showToast(msg) {
   toastEl.textContent = msg;
   toastEl.classList.remove('hidden');
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toastEl.classList.add('hidden'), 2000);
+  showToast._t = setTimeout(() => toastEl.classList.add('hidden'), TOAST_DURATION_MS);
 }
 
 function showCombo(n) {

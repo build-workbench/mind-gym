@@ -5,6 +5,8 @@
     root.RememberConfetti = factory();
   }
 })(typeof self !== 'undefined' ? self : this, function () {
+  const PARTICLE_COUNT = 120;
+
   function resizeConfettiCanvas(confettiCanvas) {
     if (!confettiCanvas) return;
     if (typeof window === 'undefined') return;
@@ -24,7 +26,7 @@
     confettiCanvas.classList && confettiCanvas.classList.remove('hidden');
 
     const colors = ['#6366F1', '#A78BFA', '#22C55E', '#F43F5E', '#F59E0B', '#10B981', '#EF4444'];
-    const N = 120;
+    const N = PARTICLE_COUNT;
     const parts = Array.from({ length: N }, () => ({
       x: Math.random() * confettiCanvas.width,
       y: -20 - Math.random() * confettiCanvas.height,
