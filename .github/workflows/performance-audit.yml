@@ -53,14 +53,22 @@ jobs:
           npx serve dist -l 3000 &
           SERVER_PID=$!
 
-          # Wait for server
-          sleep 3
+          # Wait for server to be ready
+          echo "Waiting for server to start..."
+          for i in {1..10}; do
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+              echo "Server is ready!"
+              break
+            fi
+            echo "Attempt $i: Server not ready yet, waiting..."
+            sleep 2
+          done
 
-          # Ensure server is running
-          curl -s http://localhost:3000 > /dev/null || {
-            echo "Server failed to start"
+          # Verify server is running
+          if ! curl -s http://localhost:3000 > /dev/null 2>&1; then
+            echo "Server failed to start after 10 attempts"
             exit 1
-          }
+          fi
 
           # Run Lighthouse CI
           lhci autorun --config=lighthouserc.js || true
