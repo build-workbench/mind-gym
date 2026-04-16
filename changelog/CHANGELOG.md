@@ -5,11 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-For detailed changelogs, see the [changelog/](./changelog/) directory.
+For detailed changelogs in both English and Chinese, see the [`archive/`](./archive/) directory.
+
+---
+
+本条目的所有显著变更都将记录在此文件中。
+
+格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
+并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
+
+详细的双语更新日志请查看 [`archive/`](./archive/) 目录。
+
+---
+
+## [v1.6.1] - 2026-04-16
+
+### Added / 新增
+
+- Complete bilingual (EN/ZH) documentation for all docs/
+- Professional documentation structure with navigation
+- Changelog archive system with bilingual release notes
+
+### Changed / 变更
+
+- Refactored all documentation with improved formatting
+- Updated README with enhanced structure
+
+---
 
 ## [v1.6.0] - 2026-04-16
 
-### Added
+### Added / 新增
 
 - `.github/workflows/dependency-review.yml` for dependency auditing
 - Issue templates: bug_report, feature_request, documentation
@@ -17,7 +43,7 @@ For detailed changelogs, see the [changelog/](./changelog/) directory.
 - Build verification steps in CI workflow
 - Coverage report upload in CI
 
-### Changed
+### Changed / 变更
 
 - Optimized pages.yml with timeouts, caching, and dist verification
 - Split ci.yml into lint, test, build jobs with ci-passed summary
@@ -25,31 +51,35 @@ For detailed changelogs, see the [changelog/](./changelog/) directory.
 - Improved manifest.webmanifest with shortcuts and metadata
 - Updated pull_request_template.md with emojis and expanded scopes
 
-[View details](./changelog/2026-04-16_workflow-enhancement.md)
+[View details](./archive/v1.6.0.md)
+
+---
 
 ## [v1.5.0] - 2026-04-16
 
-### Added
+### Added / 新增
 
 - Root `CHANGELOG.md` with complete version history
 - `changelog/README.md` with version table and writing guidelines
 - Changelog writing template and naming convention
 
-### Changed
+### Changed / 变更
 
 - Unified all changelog file naming: `YYYY-MM-DD_short-title.md`
 - Standardized changelog format with version numbers
 - Added tables for structured data in all changelog files
 
-### Removed
+### Removed / 移除
 
 - Deprecated old changelog files with inconsistent naming
 
-[View details](./changelog/2026-04-16_changelog-system.md)
+[View details](./archive/v1.5.0.md)
+
+---
 
 ## [v1.4.0] - 2026-04-16
 
-### Added
+### Added / 新增
 
 - Comprehensive documentation refactor across all files
 - ASCII architecture diagram in docs/architecture.md
@@ -58,53 +88,59 @@ For detailed changelogs, see the [changelog/](./changelog/) directory.
 - Data storage tables in README files
 - Code examples throughout documentation
 
-### Changed
+### Changed / 变更
 
 - Unified documentation style with tables and code blocks
 - Improved CONTRIBUTING.md with detailed guidelines
 - Enhanced CLAUDE.md with complete module loading order
 
-[View details](./changelog/2026-04-16_documentation-refactor.md)
+[View details](./archive/v1.4.0.md)
+
+---
 
 ## [v1.3.0] - 2026-04-16
 
-### Changed
+### Changed / 变更
 
 - Formatted all code with Prettier (31 files)
 - Updated `caniuse-lite` to 1.0.30001788
 - Updated `baseline-browser-mapping` to latest
 - Upgraded `jest-environment-jsdom` to 30.3.0
 
-### Fixed
+### Fixed / 修复
 
 - 7 npm security vulnerabilities resolved
 
-[View details](./changelog/2026-04-16_code-formatting.md)
+[View details](./archive/v1.3.0.md)
+
+---
 
 ## [v1.2.1] - 2026-07-15
 
-### Added
+### Added / 新增
 
 - 14 new i18n keys for achievements
 - `__tests__/helpers.test.js` with 7 test cases
 - Package metadata in package.json
 
-### Changed
+### Changed / 变更
 
 - Extracted `showModal`/`hideModal` helper functions
 - Extracted `buildDeckItems` function
 
-### Fixed
+### Fixed / 修复
 
 - `.gitattributes` invalid syntax
 - `.gitignore` contradiction
 - Empty catch block in `importDataFromObj`
 
-[View details](./changelog/2026-07-15_code-optimization.md)
+[View details](./archive/v1.2.1.md)
+
+---
 
 ## [v1.2.0] - 2026-04-06
 
-### Added
+### Added / 新增
 
 - `src/stats.js` - Statistics logic module
 - `src/achievements.js` - Achievement system module
@@ -112,65 +148,74 @@ For detailed changelogs, see the [changelog/](./changelog/) directory.
 - `src/import-export.js` - Data normalization module
 - 5 new test files
 
-### Changed
+### Changed / 变更
 
 - Refactored storage with normalization
 - Timer now uses timestamp-based calculation
 - Improved accessibility with ARIA attributes
 
-[View details](./changelog/2026-04-06_quality-and-hardening.md)
+[View details](./archive/v1.2.0.md)
+
+---
 
 ## [v1.1.0] - 2026-03-10
 
-### Changed
+### Changed / 变更
 
 - Renamed `deploy.yml` to `pages.yml`
 - Unified CI permissions and concurrency
 - Added path filtering to reduce unnecessary builds
 
-[View details](./changelog/2026-03-10_workflow-standardization.md)
+[View details](./archive/v1.1.0.md)
+
+---
 
 ## [v1.0.0] - 2025-12-19
 
-### Added
+### Added / 新增
 
 - 10 UMD modules in `src/` directory
 - Modular architecture for better testability
 
-### Changed
+### Changed / 变更
 
 - Extracted DOM bindings to `src/ui.js`
 - Extracted event handlers to `src/ui-events.js`
 
-[View details](./changelog/2025-12-19_modular-refactor.md)
+[View details](./archive/v1.0.0.md)
+
+---
 
 ## [v0.2.0] - 2025-12-18
 
-### Added
+### Added / 新增
 
 - MIT License
 - PWA icon (`assets/icon.svg`)
 - Documentation skeleton in `docs/`
 
-### Fixed
+### Fixed / 修复
 
 - Service Worker CDN cache deletion issue
 - Tailwind CDN initialization order
 
-[View details](./changelog/2025-12-18_docs-and-pwa.md)
+[View details](./archive/v0.2.0.md)
+
+---
 
 ## [v0.1.0] - 2025-02-13
 
-### Added
+### Added / 新增
 
 - `.editorconfig` for code style consistency
 - Standard badges in README
 
-[View details](./changelog/2025-02-13_project-infrastructure.md)
+[View details](./archive/v0.1.0.md)
 
 ---
 
-[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.6.1...HEAD
+[v1.6.1]: https://github.com/LessUp/mind-gym/compare/v1.6.0...v1.6.1
 [v1.6.0]: https://github.com/LessUp/mind-gym/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/LessUp/mind-gym/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/LessUp/mind-gym/compare/v1.3.0...v1.4.0

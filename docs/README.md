@@ -1,44 +1,121 @@
-# Mind Gym 文档
+# Mind Gym Documentation
 
-本目录包含项目架构、数据模型与训练模式的详细文档，便于维护、扩展与贡献。
+[![Documentation Status](https://img.shields.io/badge/docs-up_to_date-brightgreen.svg)](./)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
 
-## 📚 文档导航
+> Comprehensive technical documentation for the Mind Gym memory training application.
 
-| 文档                          | 说明                          |
-| ----------------------------- | ----------------------------- |
-| [架构概览](./architecture.md) | 系统设计、模块职责、数据流    |
-| [训练模式](./modes.md)        | 各游戏模式的设计与实现        |
-| [存储模型](./storage.md)      | localStorage 数据结构与持久化 |
-| [PWA/离线](./pwa.md)          | Service Worker 缓存策略       |
+[English](./README.md) | [简体中文](./README.zh-CN.md)
 
-## 🗺 快速导航
+---
 
-### 我想了解...
+## 📚 Documentation Index
 
-- **项目整体结构** → [架构概览](./architecture.md)
-- **如何添加新训练模式** → [训练模式](./modes.md) + [架构概览](./architecture.md#架构改进方向)
-- **localStorage 键名** → [存储模型](./storage.md#键名约定)
-- **数据导入导出格式** → [存储模型](./storage.md#导入导出)
-- **离线支持实现** → [PWA/离线](./pwa.md)
+| Document | Description | Audience |
+|----------|-------------|----------|
+| [Architecture](./architecture.md) | System design, data flow, and module responsibilities | Developers, Contributors |
+| [Training Modes](./modes.md) | Detailed mode specifications and game mechanics | Developers, Users |
+| [Storage Model](./storage.md) | Data structures, persistence, and import/export | Developers |
+| [PWA & Offline](./pwa.md) | Service Worker strategy and offline capabilities | Developers |
 
-### 我想修改...
+---
 
-- **添加新成就** → `src/achievements.js` + `src/i18n.js`
-- **修改评分算法** → `src/stats.js`
-- **添加新卡面主题** → `src/pools.js` + `src/i18n.js`
-- **调整缓存策略** → `sw.js` + [PWA/离线](./pwa.md)
+## 🚀 Quick Navigation
 
-## 📝 文档约定
+### For Developers
 
-- 文档以中文为主，必要时保留英文术语/变量名
-- 代码示例使用 JavaScript
-- 数据结构使用 TypeScript 风格的类型标注
-- 涉及持久化的数据结构变更时，需同步更新：
-  - `docs/storage.md`
-  - `changelog/` 变更记录
+**Getting Started**
+- New to the codebase? → [Architecture Overview](./architecture.md#system-architecture)
+- Want to understand data flow? → [Data Flow](./architecture.md#data-flow)
+- Need storage details? → [Storage Keys](./storage.md#key-conventions)
 
-## 🔗 相关资源
+**Contributing**
+- Adding a new game mode? → [Mode Development](./modes.md#extending-game-modes)
+- Modifying storage? → [Data Migration](./storage.md#data-migration)
+- Updating UI? → [Module Reference](./architecture.md#module-responsibilities)
 
-- [贡献指南](../CONTRIBUTING.md) — 开发流程与代码规范
-- [变更日志](../changelog/) — 版本历史
-- [CLAUDE.md](../CLAUDE.md) — AI 助手开发指南
+### For Users
+
+**Understanding Features**
+- How does scoring work? → [Star Rating](./modes.md#star-rating-system)
+- What are the different modes? → [Mode Overview](./modes.md#mode-overview)
+- How is my data stored? → [Local Storage](./storage.md#localstorage-schema)
+
+---
+
+## 🏗️ Architecture at a Glance
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      User Interface                          │
+│    (index.html + Tailwind CSS + Vanilla JS)                  │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────┐
+│                    Core Application                          │
+│  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│  │  Game Logic │  │ State Manager│  │   Mode Handlers  │   │
+│  │   (app.js)  │  │              │  │  (modes.js)      │   │
+│  └─────────────┘  └──────────────┘  └──────────────────┘   │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────┐
+│                    Data Layer                                │
+│  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│  │   Storage   │  │    Stats     │  │   Achievements   │   │
+│  │ (storage.js)│  │  (stats.js)  │  │(achievements.js) │   │
+│  └─────────────┘  └──────────────┘  └──────────────────┘   │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────┐
+│                  Persistence Layer                           │
+│              (localStorage + Service Worker)                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📝 Documentation Standards
+
+### Language Conventions
+
+- **English**: Primary language for technical documentation
+- **Chinese**: Available in `.zh-CN.md` variants for accessibility
+- **Code**: All code examples use JavaScript (ES2022)
+
+### Notation Standards
+
+| Notation | Meaning | Example |
+|----------|---------|---------|
+| `<variable>` | Placeholder | `<difficulty>` → `easy` \| `medium` \| `hard` |
+| `[optional]` | Optional parameter | `[theme]` |
+| `Type[]` | Array of type | `string[]` |
+| `{key: Type}` | Object structure | `{time: number, moves: number}` |
+
+### Version Compatibility
+
+This documentation corresponds to **Mind Gym v1.6.x**. For older versions, refer to the [Changelog](../changelog/CHANGELOG.md).
+
+---
+
+## 🔗 External Resources
+
+- [Contributing Guidelines](../CONTRIBUTING.md)
+- [Changelog](../changelog/CHANGELOG.md)
+- [Project README](../README.md)
+- [GitHub Repository](https://github.com/LessUp/mind-gym)
+- [Live Demo](https://lessup.github.io/mind-gym/)
+
+---
+
+## 💡 Need Help?
+
+If you can't find what you're looking for:
+
+1. Check the [FAQ](../README.md#faq) in the main README
+2. Browse [open issues](https://github.com/LessUp/mind-gym/issues) on GitHub
+3. Review [closed issues](https://github.com/LessUp/mind-gym/issues?q=is%3Aissue+is%3Aclosed) for similar questions
+
+---
+
+*Last updated: 2026-04-16*

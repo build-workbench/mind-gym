@@ -1,30 +1,32 @@
-# PWA / 离线策略
+# PWA & Offline Strategy
 
-本文档说明 Mind Gym 的 PWA 配置和 Service Worker 缓存策略。
+Complete guide to Progressive Web App implementation and offline capabilities in Mind Gym.
 
-## 组件概览
+---
 
-| 组件             | 文件                   | 职责                     |
-| ---------------- | ---------------------- | ------------------------ |
-| Web App Manifest | `manifest.webmanifest` | 安装元信息、图标、主题色 |
-| Service Worker   | `sw.js`                | 离线缓存、请求拦截       |
+## Component Overview
+
+| Component | File | Responsibility |
+|-----------|------|----------------|
+| **Web App Manifest** | `manifest.webmanifest` | Install metadata, icons, theme colors |
+| **Service Worker** | `sw.js` | Offline caching, request interception |
 
 ---
 
 ## Web App Manifest
 
-### 配置内容
+### Configuration
 
 ```json
 {
-  "name": "记忆力训练 - 翻牌配对",
-  "short_name": "记忆翻牌",
+  "name": "Mind Gym - Memory Training",
+  "short_name": "Mind Gym",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#4f46e5",
-  "description": "纯前端记忆训练小游戏：翻牌配对，多难度、排行榜、成就与离线支持。",
+  "description": "Browser-based memory training with multiple modes, adaptive difficulty, and progress tracking.",
   "icons": [
     {
       "src": "./assets/icon.svg",
@@ -36,32 +38,32 @@
 }
 ```
 
-### 字段说明
+### Field Reference
 
-| 字段               | 值           | 说明                  |
-| ------------------ | ------------ | --------------------- |
-| `name`             | 完整名称     | 安装后显示的全名      |
-| `short_name`       | 简短名称     | 主屏幕图标下方显示    |
-| `start_url`        | `./`         | 启动入口              |
-| `scope`            | `./`         | PWA 作用范围          |
-| `display`          | `standalone` | 独立窗口，无浏览器 UI |
-| `background_color` | `#f8fafc`    | 启动画面背景色        |
-| `theme_color`      | `#4f46e5`    | 地址栏/状态栏颜色     |
-| `icons`            | SVG 图标     | 支持任意尺寸          |
+| Field | Value | Description |
+|-------|-------|-------------|
+| `name` | Full name | Displayed in app stores and install prompts |
+| `short_name` | Short name | Shown under the home screen icon |
+| `start_url` | `./` | Entry point when launched |
+| `scope` | `./` | PWA scope boundary |
+| `display` | `standalone` | Independent window, no browser UI |
+| `background_color` | `#f8fafc` | Splash screen background |
+| `theme_color` | `#4f46e5` | Address bar/toolbar color |
+| `icons` | SVG icon | Scalable to any size |
 
 ---
 
 ## Service Worker
 
-### 缓存版本
+### Cache Version
 
 ```javascript
-const CACHE_NAME = 'memory-match-v3';
+const CACHE_NAME = 'mind-gym-v3';
 ```
 
-> ⚠️ 修改核心资源后，应更新缓存版本号以触发重新缓存。
+> ⚠️ **Important**: Increment version when modifying core resources to trigger re-caching.
 
-### 预缓存资源
+### Pre-cached Assets
 
 ```javascript
 const ASSETS = [
@@ -84,9 +86,9 @@ const ASSETS = [
 ];
 ```
 
-### 缓存策略
+### Caching Strategies
 
-#### 1. CSS 文件 — Cache First
+#### 1. CSS Files — Cache First
 
 ```javascript
 if (url.pathname.endsWith('.css')) {
@@ -103,9 +105,9 @@ if (url.pathname.endsWith('.css')) {
 }
 ```
 
-优先使用缓存，缓存未命中时从网络获取并缓存。
+Returns cached version immediately; fetches and caches only if missing.
 
-#### 2. 导航请求 — Network First
+#### 2. Navigation Requests — Network First
 
 ```javascript
 if (req.mode === 'navigate' || req.headers.get('accept')?.includes('text/html')) {
@@ -123,9 +125,9 @@ if (req.mode === 'navigate' || req.headers.get('accept')?.includes('text/html'))
 }
 ```
 
-优先使用网络，网络失败时回退到缓存。
+Attempts network first for freshness; falls back to cache on failure.
 
-#### 3. 其他 GET 请求 — Cache First
+#### 3. Other GET Requests — Cache First
 
 ```javascript
 if (req.method === 'GET') {
@@ -144,9 +146,9 @@ if (req.method === 'GET') {
 
 ---
 
-## 生命周期
+## Service Worker Lifecycle
 
-### 安装 (install)
+### Install Phase
 
 ```javascript
 self.addEventListener('install', (event) => {
@@ -159,11 +161,11 @@ self.addEventListener('install', (event) => {
 });
 ```
 
-1. 打开缓存
-2. 预缓存所有核心资源
-3. 跳过等待，立即激活
+1. Open cache
+2. Pre-cache all core assets
+3. Skip waiting, activate immediately
 
-### 激活 (activate)
+### Activate Phase
 
 ```javascript
 self.addEventListener('activate', (event) => {
@@ -176,83 +178,105 @@ self.addEventListener('activate', (event) => {
 });
 ```
 
-1. 删除旧版本缓存
-2. 立即控制所有客户端
+1. Delete old version caches
+2. Take control of all clients immediately
 
-### 拦截 (fetch)
+### Fetch Interception
 
 ```javascript
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // 仅处理同源请求
+  // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // 不缓存 sw.js 自身
+  // Don't cache sw.js itself
   if (url.pathname.endsWith('/sw.js')) return;
 
-  // 根据请求类型选择缓存策略...
+  // Apply appropriate strategy...
 });
 ```
 
 ---
 
-## 离线能力
+## Offline Capabilities
 
-### 离线可用功能
+### Feature Matrix
 
-| 功能      | 离线可用 | 说明                 |
-| --------- | -------- | -------------------- |
-| 经典配对  | ✅       | 完全离线             |
-| 限时模式  | ✅       | 完全离线             |
-| 每日挑战  | ⚠️ 部分  | 需要首次在线获取种子 |
-| N-back    | ✅       | 完全离线             |
-| 回忆测验  | ✅       | 完全离线             |
-| 统计/成就 | ✅       | 本地存储             |
-| 设置      | ✅       | 本地存储             |
-| 导入/导出 | ✅       | 本地操作             |
+| Feature | Offline Status | Notes |
+|---------|---------------|-------|
+| Classic Matching | ✅ Full | Fully offline |
+| Countdown Mode | ✅ Full | Fully offline |
+| Daily Challenge | ⚠️ Partial | Requires online for first-time seed |
+| N-back | ✅ Full | Fully offline |
+| Delayed Recall | ✅ Full | Fully offline |
+| Statistics | ✅ Full | Local storage |
+| Achievements | ✅ Full | Local storage |
+| Settings | ✅ Full | Local storage |
+| Import/Export | ✅ Full | Local operations |
 
-### 离线限制
+### Offline Limitations
 
-- Tailwind CSS 通过 CDN 加载，首次访问需在线
-- Service Worker 会缓存 CDN 资源供后续离线使用
-- 每日挑战种子基于日期，离线时使用本地日期
-
----
-
-## 更新机制
-
-### 用户侧更新
-
-1. Service Worker 检测到新版本
-2. 后台下载新资源
-3. 下次访问时使用新版本
-
-### 强制更新
-
-用户可通过以下方式强制更新：
-
-1. 清除浏览器缓存
-2. 在开发者工具中清除 Service Worker
-3. 重新访问页面
-
-### 开发注意事项
-
-修改核心资源后：
-
-1. 更新 `CACHE_NAME` 版本号
-2. 确保 `ASSETS` 列表包含新文件
-3. 测试离线功能是否正常
+| Limitation | Explanation |
+|------------|-------------|
+| First Visit | Requires online connection for initial asset download |
+| CDN Resources | Tailwind CSS CDN cached for offline use after first load |
+| Daily Challenge | Seed based on local date; no server validation |
 
 ---
 
-## 调试技巧
+## Update Mechanism
 
-### 查看缓存内容
+### Automatic Updates
+
+1. New Service Worker detected on page load
+2. New assets downloaded in background
+3. Update applied on next page visit
+
+### Force Update (User)
+
+1. Clear browser cache
+2. Unregister Service Worker in DevTools
+3. Hard refresh (Ctrl+Shift+R / Cmd+Shift+R)
+
+### Force Update (Developer)
 
 ```javascript
-// 在浏览器控制台
+// In browser console
+navigator.serviceWorker.getRegistrations().then(regs => {
+  for (let reg of regs) {
+    reg.unregister();
+  }
+});
+// Then refresh
+```
+
+---
+
+## Browser Compatibility
+
+| Browser | PWA Support | Service Worker | Install Prompt |
+|---------|-------------|----------------|----------------|
+| Chrome 90+ | ✅ Full | ✅ | ✅ |
+| Firefox 90+ | ✅ Full | ✅ | ✅ (Android) |
+| Safari 14+ | ✅ Partial | ✅ | ⭐ "Add to Home Screen" |
+| Edge 90+ | ✅ Full | ✅ | ✅ |
+
+### Safari Notes
+
+- No automatic install prompt; use "Share → Add to Home Screen"
+- Service Worker persistence limited in private mode
+- Some PWA features (like badging) not supported
+
+---
+
+## Debugging Tools
+
+### View Cache Contents
+
+```javascript
+// List all cached resources
 caches.keys().then((names) => {
   names.forEach((name) => {
     caches.open(name).then((cache) => {
@@ -265,7 +289,7 @@ caches.keys().then((names) => {
 });
 ```
 
-### 清除所有缓存
+### Clear All Caches
 
 ```javascript
 caches.keys().then((names) => {
@@ -273,29 +297,66 @@ caches.keys().then((names) => {
 });
 ```
 
-### 模拟离线
+### Chrome DevTools
 
-Chrome DevTools → Application → Service Workers → Offline
+1. **Application** tab → **Service Workers**
+   - View registered workers
+   - Force update
+   - Simulate offline
+
+2. **Application** tab → **Cache Storage**
+   - Inspect cached resources
+   - Delete individual entries
+
+3. **Network** tab
+   - Check "Offline" to simulate
+   - Verify assets served from Service Worker
 
 ---
 
-## 安装提示
+## Troubleshooting
 
-### 自动提示
+### Issue: App won't install
 
-PWA 支持浏览器的自动安装提示。用户访问时，浏览器会显示安装横幅。
+| Check | Solution |
+|-------|----------|
+| HTTPS | PWA requires HTTPS (or localhost) |
+| Manifest | Validate at [PWABuilder](https://www.pwabuilder.com/) |
+| Service Worker | Check DevTools → Application → Service Workers |
 
-### 手动安装
+### Issue: Offline mode not working
 
-- **Chrome**: 地址栏右侧安装图标
-- **Safari**: 分享 → 添加到主屏幕
-- **Firefox**: 地址栏右侧安装图标
+| Check | Solution |
+|-------|----------|
+| First visit | Must be online for initial cache |
+| Cache version | Increment `CACHE_NAME` after changes |
+| Asset list | Ensure `ASSETS` includes all required files |
 
-### 检测安装状态
+### Issue: Updates not appearing
 
-```javascript
-// 检测是否以 PWA 模式运行
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  console.log('Running as PWA');
-}
-```
+| Check | Solution |
+|-------|----------|
+| Hard refresh | Ctrl+Shift+R / Cmd+Shift+R |
+| SW unregister | DevTools → Application → Service Workers → Unregister |
+| Cache clear | DevTools → Application → Clear Storage |
+
+---
+
+## Best Practices
+
+### For Developers
+
+1. **Version Management**: Always update `CACHE_NAME` when modifying cached assets
+2. **Asset Completeness**: Ensure `ASSETS` list is comprehensive
+3. **Testing**: Test offline mode in Incognito/Private browsing
+4. **Gradual Rollout**: Consider shipping Service Worker updates behind feature flags
+
+### For Users
+
+1. **Initial Load**: Keep browser open on first visit until Service Worker installs
+2. **Updates**: Close and reopen app to receive updates
+3. **Storage**: App uses minimal localStorage (< 50KB typical)
+
+---
+
+*For architecture details, see [Architecture Overview](./architecture.md). For data persistence, see [Storage Model](./storage.md).*

@@ -1,16 +1,22 @@
-# 架构概览
+# Architecture Overview
 
-## 项目形态
+This document describes the system design, module responsibilities, and data flow of Mind Gym.
 
-| 特性           | 说明                               |
-| -------------- | ---------------------------------- |
-| **部署方式**   | 纯静态前端，无需后端               |
-| **构建工具**   | 无打包器；仅 Tailwind CLI 编译 CSS |
-| **框架**       | 无框架，原生 JavaScript (ES2022)   |
-| **数据持久化** | localStorage                       |
-| **PWA**        | Service Worker + Web App Manifest  |
+---
 
-## 系统架构图
+## Project Characteristics
+
+| Characteristic | Implementation |
+|---------------|----------------|
+| **Deployment** | Static frontend, no backend required |
+| **Build Tool** | None; only Tailwind CLI for CSS compilation |
+| **Framework** | Vanilla JavaScript (ES2022) |
+| **State Management** | In-memory variables + localStorage |
+| **PWA** | Service Worker + Web App Manifest |
+
+---
+
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -50,36 +56,40 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 模块职责
+---
 
-### 核心模块
+## Module Responsibilities
 
-| 模块             | 文件                  | 职责                                  |
-| ---------------- | --------------------- | ------------------------------------- |
-| **Orchestrator** | `app.js`              | 游戏主循环、状态机、模式调度、UI 协调 |
-| **Storage**      | `src/storage.js`      | localStorage CRUD，数据规范化         |
-| **Stats**        | `src/stats.js`        | 统计数据累计与计算                    |
-| **Modes**        | `src/modes.js`        | N-back、回忆测验纯逻辑                |
-| **Achievements** | `src/achievements.js` | 成就定义与解锁检查                    |
+### Core Modules
 
-### 支撑模块
+| Module | File | Responsibility |
+|--------|------|----------------|
+| **Orchestrator** | `app.js` | Game main loop, state machine, mode dispatch, UI coordination |
+| **Storage** | `src/storage.js` | localStorage CRUD, data normalization |
+| **Stats** | `src/stats.js` | Statistics aggregation and calculation |
+| **Modes** | `src/modes.js` | N-back and delayed recall logic |
+| **Achievements** | `src/achievements.js` | Achievement definitions and unlock checking |
 
-| 模块              | 文件                   | 职责                      |
-| ----------------- | ---------------------- | ------------------------- |
-| **Keys**          | `src/keys.js`          | localStorage 键名常量     |
-| **Utils**         | `src/utils.js`         | 洗牌、种子随机、HTML 转义 |
-| **I18n**          | `src/i18n.js`          | 国际化词典与语言检测      |
-| **Effects**       | `src/effects.js`       | 音效（Web Audio）与震动   |
-| **Pools**         | `src/pools.js`         | 卡面素材池                |
-| **Timer**         | `src/timer.js`         | 正计时/倒计时管理         |
-| **Confetti**      | `src/confetti.js`      | 胜利粒子动画              |
-| **UI**            | `src/ui.js`            | DOM 元素绑定              |
-| **UI Events**     | `src/ui-events.js`     | 事件监听注册              |
-| **Import/Export** | `src/import-export.js` | 备份数据规范化            |
+### Support Modules
 
-## 数据流
+| Module | File | Responsibility |
+|--------|------|----------------|
+| **Keys** | `src/keys.js` | localStorage key constants |
+| **Utils** | `src/utils.js` | Shuffle, seeded RNG, HTML escape |
+| **I18n** | `src/i18n.js` | Internationalization dictionaries and detection |
+| **Effects** | `src/effects.js` | Sound effects (Web Audio) and vibration |
+| **Pools** | `src/pools.js` | Card face asset pools |
+| **Timer** | `src/timer.js` | Elapsed time / countdown management |
+| **Confetti** | `src/confetti.js` | Victory particle animation |
+| **UI** | `src/ui.js` | DOM element bindings |
+| **UI Events** | `src/ui-events.js` | Event listener registration |
+| **Import/Export** | `src/import-export.js` | Backup data normalization |
 
-### 初始化流程
+---
+
+## Data Flow
+
+### Initialization Flow
 
 ```
 DOMContentLoaded
@@ -103,7 +113,7 @@ DOMContentLoaded
             └── reset state (moves, timer, hints)
 ```
 
-### 游戏进行中
+### Game Loop Flow
 
 ```
 onFlip(card)
@@ -130,7 +140,7 @@ onFlip(card)
     └── reset board state
 ```
 
-### 结算流程
+### Win/End Flow
 
 ```
 onWin()
@@ -164,98 +174,161 @@ onTimeUp()
     └── update adaptive rating
 ```
 
-## 状态管理
+---
 
-### 游戏状态变量 (app.js)
+## State Management
+
+### Game State Variables (app.js)
 
 ```javascript
-// 游戏进度
-let firstCard = null; // 第一张翻开的牌
-let secondCard = null; // 第二张翻开的牌
-let lockBoard = false; // 是否锁定棋盘
-let moves = 0; // 步数
-let matchedPairs = 0; // 已配对数
-let started = false; // 游戏是否开始
+// Game progress
+let firstCard = null;        // First flipped card
+let secondCard = null;       // Second flipped card
+let lockBoard = false;       // Board locked state
+let moves = 0;               // Move count
+let matchedPairs = 0;        // Matched pairs count
+let started = false;         // Game started flag
 
-// 计时
-let elapsed = 0; // 已用时间（秒）
-let countdownLeft = 0; // 倒计时剩余
-let timerId = null; // 定时器 ID
+// Timing
+let elapsed = 0;             // Elapsed time (seconds)
+let countdownLeft = 0;       // Countdown remaining
+let timerId = null;          // Timer ID
 
-// 难度与设置
+// Difficulty & Settings
 let currentDifficulty = 'easy';
 let settings = { ...DEFAULT_SETTINGS };
 
-// 特殊状态
+// Special states
 let paused = false;
 let isPreviewing = false;
 let timeUp = false;
 let hintsLeft = 0;
 let hintsUsed = 0;
 
-// 连击系统
+// Combo system
 let comboCount = 0;
 let maxComboThisGame = 0;
 let lastMatchAt = 0;
 
-// 回忆测验
+// Recall test
 let seenCountMap = new Map();
 let lastGameValues = [];
 let recallCorrectSet = new Set();
 
-// N-back 模式
+// N-back mode
 let nbackRunning = false;
 let nbackTimer = null;
 let nbackSeq = [];
 let nbackIdx = 0;
-// ... 更多 N-back 状态
+// ... more N-back state
 
-// 每日挑战
+// Daily challenge
 let dailyActive = false;
 let dailySeed = 0;
 ```
 
-## 架构改进方向
+---
 
-当前 `app.js` 仍然较大（~2500 行），可按以下方向继续优化：
+## Performance Considerations
 
-### 第一阶段：模块内分区 ✅
+### Rendering Performance
 
-- [x] 抽出 `stats.js`、`achievements.js`、`modes.js`、`import-export.js`
-- [x] 纯函数可独立测试
+| Technique | Implementation | Benefit |
+|-----------|----------------|---------|
+| CSS Transforms | `transform: rotateY()` for card flip | GPU acceleration |
+| CSS Transitions | `transition: transform 0.3s` | Smooth 60fps animations |
+| Canvas 2D | `confetti.js` particle system | Efficient particle rendering |
+| Virtual List | N/A (fixed grid sizes) | Not needed for this scale |
 
-### 第二阶段：ES Modules 迁移
+### Memory Management
 
-- [ ] 将 UMD 模块改为 ES Modules
-- [ ] `index.html` 使用 `type="module"` 加载
-- [ ] 支持 tree-shaking（如需打包）
+| Strategy | Implementation |
+|----------|----------------|
+| Event Delegation | Single listeners on containers vs per-card |
+| Timer Cleanup | `clearInterval()` on game end/modal close |
+| DOM Caching | Elements cached in `ui.js`, not re-queried |
+| State Reset | All game state reset on `initGame()` |
 
-### 第三阶段：复杂模式独立化
+---
 
-- [ ] N-back 模式独立为 `src/nback.js`
-- [ ] 回忆测验独立为 `src/recall.js`
-- [ ] 每日挑战独立为 `src/daily.js`
-- [ ] 自适应系统独立为 `src/adaptive.js`
+## Extension Architecture
 
-## 扩展指南
+### Adding a New Training Mode
 
-### 添加新训练模式
+1. **Logic Module** - Add to `src/modes.js`
+   - Implement pure logic functions
+   - Accept parameters object, return results
+   - No DOM manipulation
 
-1. 在 `src/modes.js` 中添加模式逻辑
-2. 在 `app.js` 中添加模式状态和 UI 控制
-3. 在 `src/i18n.js` 中添加文案
-4. 在 `index.html` 中添加模态框（如需要）
-5. 编写单元测试
+2. **State Management** - Add to `app.js`
+   - Initialize mode state variables
+   - Add mode control functions
 
-### 添加新卡面主题
+3. **UI Integration** - Modify `index.html` + `src/ui.js`
+   - Add modal if needed
+   - Bind UI elements in `ui.js`
 
-1. 在 `src/pools.js` 中添加素材池
-2. 在 `src/i18n.js` 中添加卡面标签
-3. 在 `src/import-export.js` 中更新 `VALID_THEMES`
-4. 更新文档
+4. **Localization** - Update `src/i18n.js`
+   - Add mode name and description keys
+   - Both Chinese and English
 
-### 添加新成就
+5. **Documentation** - Update `docs/modes.md`
+   - Add mode specifications
+   - Include implementation examples
 
-1. 在 `src/achievements.js` 的 `achievementsDef` 中添加定义
-2. 在 `src/i18n.js` 中添加 `titleKey` 和 `descKey` 对应的文案
-3. 在 `checkAchievementsOnWin` 中添加检查逻辑
+6. **Testing** - Create `__tests__/newmode.test.js`
+   - Test core logic functions
+   - Mock dependencies
+
+### Adding a New Card Theme
+
+1. **Asset Definition** - `src/pools.js`
+   - Add emoji/string array for new theme
+   - Follow naming convention
+
+2. **Localization** - `src/i18n.js`
+   - Add theme display name translations
+
+3. **Validator Update** - `src/import-export.js`
+   - Update `VALID_THEMES` array
+
+4. **Documentation** - Update relevant docs
+   - List in storage.md theme enum
+
+---
+
+## Architecture Roadmap
+
+### Current State
+
+- `app.js` remains large (~2500 lines)
+- UMD modules work well but could use ES Modules
+- No bundler keeps deployment simple
+
+### Future Improvements
+
+| Priority | Change | Impact |
+|----------|--------|--------|
+| P1 | ES Modules migration | Tree-shaking, modern imports |
+| P2 | Extract `nback.js` | Isolated N-back module |
+| P3 | Extract `recall.js` | Isolated recall test module |
+| P4 | Extract `daily.js` | Isolated daily challenge |
+| P5 | Extract `adaptive.js` | Isolated adaptive system |
+
+---
+
+## Browser Compatibility
+
+| Feature | Chrome | Firefox | Safari | Edge |
+|---------|--------|---------|--------|------|
+| Core Game | 90+ | 90+ | 14+ | 90+ |
+| Web Audio | 90+ | 90+ | 14+ | 90+ |
+| Vibration API | 90+ | 90+* | No | 90+ |
+| Service Worker | 90+ | 90+ | 14+ | 90+ |
+| localStorage | 90+ | 90+ | 14+ | 90+ |
+
+\* Firefox mobile only
+
+---
+
+*For implementation details of specific modes, see [Training Modes](./modes.md). For data structures, see [Storage Model](./storage.md).*

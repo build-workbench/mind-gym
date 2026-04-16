@@ -1,6 +1,6 @@
 {
   "name": "mind-gym",
-  "version": "1.0.0",
+  "version": "1.6.1",
   "private": true,
   "description": "Browser-based card-flip memory training game with multiple modes, adaptive difficulty, and PWA support",
   "keywords": [

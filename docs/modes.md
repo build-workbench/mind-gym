@@ -1,66 +1,69 @@
-# 训练模式说明
+# Training Modes
 
-本文档详细说明 Mind Gym 的所有训练模式及其实现。
-
-## 模式概览
-
-| 模式     | 触发方式           | 主要目标     | 核心指标       |
-| -------- | ------------------ | ------------ | -------------- |
-| 经典配对 | 默认模式           | 翻牌配对     | 时间、步数     |
-| 限时模式 | 设置切换           | 限时配对     | 时间限制内完成 |
-| 每日挑战 | 点击「每日」按钮   | 固定种子挑战 | 与全球玩家比较 |
-| 回忆测验 | 通关后自动触发     | 再认记忆     | 精确率、召回率 |
-| N-back   | 点击「N-back」按钮 | 工作记忆     | 准确率、反应时 |
+Complete specifications for all Mind Gym training modes and game mechanics.
 
 ---
 
-## 经典配对（Classic）
+## Mode Overview
 
-### 玩法说明
+| Mode | Trigger | Primary Goal | Key Metrics |
+|------|---------|--------------|-------------|
+| **Classic Matching** | Default | Find matching pairs | Time, Moves |
+| **Countdown** | Settings toggle | Match within time limit | Completion before timeout |
+| **Daily Challenge** | "Daily" button | Fixed seed competition | Compare globally |
+| **Delayed Recall** | Post-win auto-trigger | Recognition memory | Precision, Recall |
+| **N-back** | "N-back" button | Working memory | Accuracy, RT |
 
-翻开两张卡片，若相同则配对成功并锁定，否则翻回继续。目标是以最少步数、最短时间完成所有配对。
+---
 
-### 难度配置
+## Classic Matching
 
-| 难度   | 网格 | 配对数 | 默认提示数 |
-| ------ | ---- | ------ | ---------- |
-| Easy   | 4×4  | 8 对   | 3          |
-| Medium | 4×5  | 10 对  | 2          |
-| Hard   | 6×6  | 18 对  | 1          |
+### Gameplay
 
-### 结算内容
+Flip two cards per turn. Matching pairs remain locked; non-matching cards flip back. Goal: complete all pairs in minimum time and moves.
 
-- **用时** — 从第一次翻牌到完成
-- **步数** — 翻开第二张牌计为一步
-- **星级评分** — 基于时间、步数、提示、连击综合评定
-- **排行榜** — 当前难度前 3 名
-- **最佳成绩** — 当前难度历史最佳
+### Difficulty Levels
 
-### 快捷键
+| Level | Grid | Pairs | Default Hints | Target Time |
+|-------|------|-------|---------------|-------------|
+| Easy | 4×4 | 8 | 3 | 60s |
+| Medium | 4×5 | 10 | 2 | 120s |
+| Hard | 6×6 | 18 | 1 | 180s |
 
-| 按键              | 功能         |
-| ----------------- | ------------ |
-| `N`               | 新开一局     |
-| `P`               | 暂停/继续    |
-| `H`               | 使用提示     |
-| `↑↓←→`            | 导航卡牌     |
-| `Enter` / `Space` | 翻开选中卡牌 |
+### Scoring Results
 
-### 实现要点
+| Metric | Description |
+|--------|-------------|
+| **Time** | From first flip to completion |
+| **Moves** | Each second-card flip counts as one move |
+| **Star Rating** | 1-5 stars based on time, moves, hints, combos |
+| **Leaderboard** | Top 3 times per difficulty |
+| **Best Score** | Personal record per difficulty |
+
+### Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `N` | New game |
+| `P` | Pause/Resume |
+| `H` | Use hint |
+| `↑↓←→` | Navigate cards |
+| `Enter` / `Space` | Flip selected card |
+
+### State Machine
 
 ```javascript
-// 翻牌状态机 (app.js)
 function onFlip(cardEl) {
   if (paused || isPreviewing || lockBoard) return;
   if (cardEl.classList.contains('flipped')) return;
 
-  // 开始计时
+  // Start timer on first flip
   if (!started) {
     started = true;
     startTimer();
   }
 
-  // 翻牌动画
+  // Flip animation
   cardEl.classList.add('flipped');
 
   if (!firstCard) {
@@ -68,39 +71,39 @@ function onFlip(cardEl) {
     return;
   }
 
-  // 第二张牌
+  // Second card logic
   secondCard = cardEl;
   moves++;
-
-  // 检查匹配...
+  
+  // Check for match...
 }
 ```
 
 ---
 
-## 限时模式（Countdown）
+## Countdown Mode
 
-### 开启方式
+### Activation
 
-设置 → 玩法 → 选择「限时」
+Settings → Game Mode → "Countdown"
 
-### 配置选项
+### Configuration
 
-在设置中可自定义各难度的倒计时秒数（10-999 秒）：
+Customize countdown seconds per difficulty (10-999s):
 
-| 难度   | 默认时限 |
-| ------ | -------- |
-| Easy   | 90 秒    |
-| Medium | 150 秒   |
-| Hard   | 240 秒   |
+| Difficulty | Default Time |
+|------------|--------------|
+| Easy | 90s |
+| Medium | 150s |
+| Hard | 240s |
 
-### 机制说明
+### Mechanics
 
-- 倒计时显示在时间区域
-- 时间到自动判负
-- 弹出失败模态框，可重试或返回
+- Countdown displays in time area
+- Automatic loss when time expires
+- Failure modal with retry option
 
-### 实现要点
+### Implementation
 
 ```javascript
 // src/timer.js
@@ -116,13 +119,13 @@ function startTimer(params) {
 
 ---
 
-## 每日挑战（Daily Challenge）
+## Daily Challenge
 
-### 玩法说明
+### Gameplay
 
-每日为所有玩家生成相同的牌组，便于公平比较。种子由日期 + 难度 + 卡面主题组合生成。
+Same card layout for all players worldwide, generated from a deterministic seed based on date + difficulty + theme.
 
-### 种子算法
+### Seed Algorithm
 
 ```javascript
 // src/utils.js
@@ -137,40 +140,43 @@ function seedFromDate(dateStr, diff, theme) {
 }
 ```
 
-### 完成状态
+### Completion Status
 
-- 以 `memory_match_daily_<date>_<difficulty>` 记录
-- 显示「已完成」/「未完成」状态
-- 不记录成绩，仅记录完成
+- key: `memory_match_daily_<date>_<difficulty>`
+- Stores: `{ done: true, at: timestamp }`
+- Shows: "Completed" / "Not Completed" badge
+- No scores recorded, only completion
 
-### 流程
+### Flow
 
-1. 点击「每日」按钮
-2. 选择难度
-3. 点击「开始挑战」
-4. 完成后标记为已完成
+1. Click "Daily" button
+2. Select difficulty
+3. Click "Start Challenge"
+4. Mark as completed on win
 
 ---
 
-## 回忆测验（Delayed Recall）
+## Delayed Recall Test
 
-### 触发时机
+### Trigger
 
-通关后自动弹出，可跳过。
+Automatically appears after winning a game (can be skipped).
 
-### 测试内容
+### Test Content
 
-- 从本局出现的卡面中选取若干「真项」
-- 从未出现的卡面中选取若干「伪项」
-- 玩家勾选「本局出现过」的项
+| Component | Description |
+|-----------|-------------|
+| **Targets** | Cards that appeared in the game ("true items") |
+| **Distractors** | Cards that did NOT appear ("false items") |
+| **Task** | Select all cards that appeared in the current game |
 
-### 构造算法
+### Item Generation
 
 ```javascript
 // src/modes.js
 function buildRecallItems(params) {
-  const truth = params.truthValues; // 本局出现过的卡面
-  const pool = params.poolValues; // 所有可选卡面
+  const truth = params.truthValues;    // Cards from current game
+  const pool = params.poolValues;       // All possible cards
 
   const trueCount = Math.min(6, truth.length);
   const falseCandidates = pool.filter((v) => !truth.includes(v));
@@ -178,87 +184,95 @@ function buildRecallItems(params) {
   const trues = shuffle(truth).slice(0, trueCount);
   const falses = shuffle(falseCandidates).slice(0, 9 - trueCount);
 
-  const items = [...trues.map((v) => ({ v, correct: true })), ...falses.map((v) => ({ v, correct: false }))];
+  const items = [
+    ...trues.map((v) => ({ v, correct: true })),
+    ...falses.map((v) => ({ v, correct: false }))
+  ];
   return { items: shuffle(items), correctSet: new Set(trues) };
 }
 ```
 
-### 评分指标
+### Scoring Metrics
 
-| 指标   | 公式           | 说明                 |
-| ------ | -------------- | -------------------- |
-| 精确率 | TP / (TP + FP) | 选中的有多少是正确的 |
-| 召回率 | TP / (TP + FN) | 正确的有多少被选中   |
+| Metric | Formula | Description |
+|--------|---------|-------------|
+| **Precision** | TP / (TP + FP) | Of selected cards, how many were correct |
+| **Recall** | TP / (TP + FN) | Of correct cards, how many were selected |
 
-### 数据记录
+Where:
+- TP = True Positives (correct cards selected)
+- FP = False Positives (incorrect cards selected)
+- FN = False Negatives (correct cards missed)
 
-写入 `stats` 的 `recallAttempts`、`precisionSum`、`recallSum`。
+### Data Recording
+
+Stats updated: `recallAttempts`, `precisionSum`, `recallSum`
 
 ---
 
-## N-back 训练
+## N-back Training
 
-### 玩法说明
+### Gameplay
 
-连续呈现刺激（emoji），玩家判断当前刺激是否与 N 步前的刺激相同。
+Stimuli (emoji) presented sequentially. Player determines if current stimulus matches the one from N steps ago.
 
-### 配置选项
+### Configuration
 
-| 参数 | 可选值            | 说明         |
-| ---- | ----------------- | ------------ |
-| N    | 1, 2, 3           | 回溯步数     |
-| 节奏 | 1200, 900, 700 ms | 刺激呈现间隔 |
-| 长度 | 20, 30, 40        | 刺激序列长度 |
+| Parameter | Options | Description |
+|-----------|---------|-------------|
+| N | 1, 2, 3 | Steps to look back |
+| Pace | 1200, 900, 700 ms | Stimulus presentation interval |
+| Length | 20, 30, 40 | Number of stimuli in sequence |
 
-### 操作方式
+### Controls
 
-- 按 `J` 键表示「与 N 步前相同」
-- 不按键表示「不同」
+- Press `J` key: "Matches N-back"
+- No keypress: "Does not match"
 
-### 评分指标
+### Scoring
 
-| 指标   | 说明                                   |
-| ------ | -------------------------------------- |
-| 准确率 | 正确响应 / 目标总数                    |
-| 反应时 | 从刺激呈现到按键的时间（仅命中时统计） |
+| Metric | Description |
+|--------|-------------|
+| **Accuracy** | Correct responses / Total targets |
+| **Reaction Time** | Time from stimulus to keypress (hits only) |
 
-### 统计内容
+### Stats Tracking
 
 ```javascript
-// app.js
-let nbackTargets = 0; // 目标数（与 N 步前相同的刺激）
-let nbackHits = 0; // 命中数（正确按 J）
-let nbackMisses = 0; // 漏报数（目标未按 J）
-let nbackFalseAlarms = 0; // 虚报数（非目标按 J）
-let nbackRtSum = 0; // 反应时累计
-let nbackRtCount = 0; // 反应时样本数
+// Tracked in app.js
+let nbackTargets = 0;       // Targets (stimuli matching N-back)
+let nbackHits = 0;          // Hits (correct J presses)
+let nbackMisses = 0;        // Misses (target not pressed)
+let nbackFalseAlarms = 0;   // False Alarms (non-target pressed)
+let nbackRtSum = 0;         // RT sum (ms)
+let nbackRtCount = 0;       // RT sample count
 ```
 
-### 实现要点
+### Implementation
 
 ```javascript
 // app.js
 function tickNBack(N, speed) {
   nbackTimer = setInterval(() => {
-    // 检查上一拍是否漏报
+    // Check for miss on previous stimulus
     if (nbackIdx >= N) {
       const targetPrev = nbackSeq[nbackIdx] === nbackSeq[nbackIdx - N];
       if (targetPrev && !nbackResponded) nbackMisses++;
     }
 
-    // 前进到下一拍
+    // Advance to next stimulus
     nbackIdx++;
     if (nbackIdx >= nbackSeq.length) {
       finishNBack();
       return;
     }
 
-    // 显示刺激
+    // Display stimulus
     nbackStimEl.textContent = nbackSeq[nbackIdx];
     nbackResponded = false;
     nbackStepStart = performance.now();
 
-    // 统计目标数
+    // Count target
     if (nbackIdx >= N && nbackSeq[nbackIdx] === nbackSeq[nbackIdx - N]) {
       nbackTargets++;
     }
@@ -268,27 +282,30 @@ function tickNBack(N, speed) {
 
 ---
 
-## 自适应辅助（Adaptive Assist）
+## Adaptive Assist
 
-### 功能说明
+### Purpose
 
-根据玩家评分动态调整每局的「预览时间」和「提示次数」。
+Dynamically adjusts preview time and hint count based on player performance rating.
 
-### 评分范围
+### Rating Range
 
-- 初始评分：1000
-- 范围：600 ~ 1600
+| Statistic | Value |
+|-----------|-------|
+| Initial Rating | 1000 |
+| Minimum | 600 |
+| Maximum | 1600 |
 
-### 调整策略
+### Adjustment Strategy
 
-| 评分范围    | 预览时间 | 提示调整 |
-| ----------- | -------- | -------- |
-| < 940       | ≥ 2 秒   | +1       |
-| 940 ~ 1040  | ≥ 1 秒   | 不变     |
-| 1040 ~ 1140 | ≤ 1 秒   | 不变     |
-| > 1140      | 0 秒     | -1       |
+| Rating Range | Preview Time | Hint Adjustment |
+|--------------|--------------|-----------------|
+| < 940 | ≥ 2s | +1 hint |
+| 940 - 1040 | ≥ 1s | No change |
+| 1040 - 1140 | ≤ 1s | No change |
+| > 1140 | 0s | -1 hint |
 
-### 结算更新
+### Rating Update
 
 ```javascript
 // app.js
@@ -297,10 +314,12 @@ function updateAdaptiveOnEnd(win, stars, diff) {
 
   const a = loadAdaptive();
   const exp = expectedStarsFor(diff); // easy:4, medium:3.5, hard:3
-  const perf = win ? stars : 1.5; // 失败视为较差表现
-  const k = 12; // ELO-like K 因子
+  const perf = win ? stars : 1.5;     // Loss = poor performance
+  const k = 12;                       // ELO-like K-factor
 
-  a.rating = Math.max(600, Math.min(1600, Math.round(a.rating + k * (perf - exp))));
+  a.rating = Math.max(600, Math.min(1600, 
+    Math.round(a.rating + k * (perf - exp))
+  ));
   a.lastDiff = diff;
 
   saveAdaptive(a);
@@ -309,13 +328,13 @@ function updateAdaptiveOnEnd(win, stars, diff) {
 
 ---
 
-## 间隔复现（Spaced Reinforcement）
+## Spaced Reinforcement
 
-### 功能说明
+### Purpose
 
-对「易错卡面」施加权重，使其在后续局中更可能出现。
+Weights "difficult cards" (those requiring multiple exposures) to appear more frequently in future games.
 
-### 权重机制
+### Weight Mechanism
 
 ```javascript
 // app.js
@@ -324,12 +343,12 @@ function applySpacedAfterWin(theme) {
 
   const weights = loadSpaced(theme);
 
-  // 衰减旧权重
+  // Decay old weights
   for (const k of Object.keys(weights)) {
     weights[k] = Math.max(0, weights[k] * 0.8);
   }
 
-  // 累加本局曝光（>1 次才计为"困难"）
+  // Add exposure counts (>1 exposure = difficult)
   seenCountMap.forEach((cnt, v) => {
     const extra = Math.max(0, cnt - 1);
     if (extra > 0) weights[v] = (weights[v] || 0) + extra;
@@ -339,7 +358,7 @@ function applySpacedAfterWin(theme) {
 }
 ```
 
-### 选卡策略
+### Card Selection
 
 ```javascript
 // app.js
@@ -347,10 +366,10 @@ function pickWithSpaced(theme, pool, pairs) {
   const weights = loadSpaced(theme);
   const copy = pool.slice();
 
-  // 按权重降序排列
+  // Sort by weight descending
   copy.sort((a, b) => (weights[b.v] || 0) - (weights[a.v] || 0));
 
-  // 取前 40% 高权重卡
+  // Take top 40% weighted cards
   const topN = Math.min(Math.floor(pairs * 0.4), copy.length);
   const picksTop = copy.slice(0, topN);
   const rest = pool.filter((x) => !picksTop.some((y) => y.v === x.v));
@@ -360,28 +379,28 @@ function pickWithSpaced(theme, pool, pairs) {
 }
 ```
 
-### 后续规划
+### Future Roadmap
 
-- 升级为 SM-2 / Leitner 算法
-- 引入复习间隔与掌握度评分
-- 支持跨设备同步
+- Upgrade to SM-2 / Leitner algorithm
+- Add review intervals and mastery scores
+- Cross-device synchronization
 
 ---
 
-## 连击系统（Combo）
+## Combo System
 
-### 触发条件
+### Trigger
 
-5 秒内连续配对成功。
+Consecutive matches within 5 seconds.
 
-### 效果
+### Effects
 
-- 连击计数累加
-- 显示连击 Toast
-- 结算时统计最高连击
-- 影响星级评分
+- Combo counter increments
+- Combo toast displayed (≥2)
+- Maximum combo recorded for session
+- Impacts star rating calculation
 
-### 实现
+### Implementation
 
 ```javascript
 // app.js
@@ -401,9 +420,9 @@ if (comboCount >= 2) {
 
 ---
 
-## 星级评分
+## Star Rating System
 
-### 计算公式
+### Formula
 
 ```javascript
 // src/stats.js
@@ -413,29 +432,57 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
   let score = 100;
 
-  // 时间扣分（最多 40 分）
+  // Time penalty (max 40 points)
   score -= Math.min(60, (elapsedSec / parTime) * 40);
 
-  // 步数扣分
+  // Moves penalty
   score -= Math.max(0, movesCount - parMoves) * 3;
 
-  // 提示扣分
+  // Hints penalty
   score -= usedHints * 10;
 
-  // 连击加分（最多 10 分）
+  // Combo bonus (max 10 points)
   score += Math.min(10, comboMax * 2);
 
-  // 归一化到 1-5 星
+  // Normalize to 1-5 stars
   score = Math.max(0, Math.min(100, score));
   return Math.max(1, Math.min(5, Math.ceil(score / 20)));
 }
 ```
 
-### 评分因素
+### Rating Factors
 
-| 因素 | 影响            |
-| ---- | --------------- |
-| 时间 | 超时按比例扣分  |
-| 步数 | 超出配对数扣分  |
-| 提示 | 每次扣 10 分    |
-| 连击 | 每次连击加 2 分 |
+| Factor | Impact |
+|--------|--------|
+| Time | Proportional penalty for exceeding par |
+| Moves | 3 point penalty per move above minimum |
+| Hints | 10 point penalty per hint used |
+| Combos | +2 points per combo achieved |
+
+---
+
+## Extending Game Modes
+
+### Adding a New Mode
+
+1. **Logic**: Add pure functions to `src/modes.js`
+2. **State**: Add state variables to `app.js`
+3. **UI**: Add modal to `index.html`, bindings to `src/ui.js`
+4. **i18n**: Add translations to `src/i18n.js`
+5. **Docs**: Update this file with specifications
+6. **Tests**: Create `__tests__/newmode.test.js`
+
+### Mode Checklist
+
+- [ ] Core logic in `modes.js`
+- [ ] State management in `app.js`
+- [ ] UI integration in `index.html` & `ui.js`
+- [ ] Localization in `i18n.js` (zh + en)
+- [ ] Stats integration in `stats.js`
+- [ ] Achievement hooks in `achievements.js`
+- [ ] Documentation updated
+- [ ] Unit tests written
+
+---
+
+*For system architecture, see [Architecture Overview](./architecture.md). For data structures, see [Storage Model](./storage.md).*

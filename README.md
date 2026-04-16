@@ -1,156 +1,244 @@
-# Mind Gym
+<h1 align="center">
+  🧠 Mind Gym
+</h1>
 
-[![CI](https://github.com/LessUp/mind-gym/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/mind-gym/actions/workflows/ci.yml)
-[![Deploy](https://github.com/LessUp/mind-gym/actions/workflows/pages.yml/badge.svg)](https://github.com/LessUp/mind-gym/actions/workflows/pages.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=black)
-![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?logo=tailwindcss&logoColor=white)
-![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?logo=pwa&logoColor=white)
+<p align="center">
+  <strong>Browser-based memory training for cognitive enhancement</strong>
+</p>
 
-English | [简体中文](README.zh-CN.md)
+<p align="center">
+  <a href="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml">
+    <img src="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://github.com/LessUp/mind-gym/actions/workflows/pages.yml">
+    <img src="https://github.com/LessUp/mind-gym/actions/workflows/pages.yml/badge.svg" alt="Deploy">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=black" alt="JavaScript">
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind">
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/badge/PWA-Ready-5A0FC8?logo=pwa&logoColor=white" alt="PWA">
+  </a>
+</p>
 
-A browser-based memory training game combining cognitive science principles with intuitive interaction design. Features multiple training modes including classic matching, timed challenges, daily challenges, N-back training, and delayed recall tests.
+<p align="center">
+  English | <a href="README.zh-CN.md">简体中文</a>
+</p>
+
+<p align="center">
+  <a href="https://lessup.github.io/mind-gym/">🎮 Play Online</a> •
+  <a href="#installation">📱 Install</a> •
+  <a href="#documentation">📖 Docs</a> •
+  <a href="#contribute">🤝 Contribute</a>
+</p>
+
+---
 
 ## ✨ Features
 
-### Game Modes
+### Training Modes
 
-| Mode                 | Description                                                                  |
-| -------------------- | ---------------------------------------------------------------------------- |
-| **Classic Matching** | Flip cards to find matching pairs across 3 difficulty levels (4×4, 4×5, 6×6) |
-| **Countdown Mode**   | Race against time with configurable time limits per difficulty               |
-| **Daily Challenge**  | Same card layout for all players worldwide, seeded by date                   |
-| **N-Back Training**  | Working memory exercise — judge if current stimulus matches N steps back     |
-| **Delayed Recall**   | Post-game quiz to test memory of cards that appeared                         |
+| Mode | Description | Cognitive Target |
+|------|-------------|------------------|
+| **Classic Matching** | Flip cards to find matching pairs (4×4, 4×5, 6×6) | Visual memory, attention |
+| **Countdown Mode** | Race against configurable time limits | Processing speed, stress handling |
+| **Daily Challenge** | Same card layout for all players worldwide | Consistency, competition |
+| **N-back Training** | Working memory exercise — match stimulus N-steps back | Working memory, focus |
+| **Delayed Recall** | Post-game recognition test | Long-term memory consolidation |
 
-### Adaptive Features
+### Adaptive Intelligence
 
-- **Adaptive Difficulty** — Automatically adjusts preview time and hint counts based on performance
-- **Spaced Reinforcement** — Prioritizes challenging cards in future rounds
-- **Combo System** — Consecutive matches within 5 seconds build combos
-- **Star Ratings** — Performance scored based on time, moves, hints, and combos
+- **Adaptive Difficulty** — Adjusts preview time and hints based on performance (ELO-like rating 600-1600)
+- **Spaced Reinforcement** — Prioritizes challenging cards using decay-weighted selection
+- **Combo System** — 5-second window for consecutive match bonuses
+- **Star Ratings** — Performance scoring based on time, moves, hints, and combos
 
 ### User Experience
 
-- **Full i18n** — Chinese and English with automatic browser language detection
-- **PWA Support** — Installable, works offline via Service Worker
-- **Keyboard Shortcuts** — Full keyboard navigation support
-- **Statistics Dashboard** — Track games, win rate, average times, recall precision, N-back accuracy
-- **Achievement System** — Unlock achievements for various milestones
-- **Data Backup** — Export/import all progress as JSON
+| Feature | Description |
+|---------|-------------|
+| 🌍 **Full i18n** | Chinese & English with auto-detection |
+| 📲 **PWA Support** | Installable, works offline |
+| ⌨️ **Keyboard Shortcuts** | Complete keyboard navigation |
+| 📊 **Statistics Dashboard** | Track progress across all metrics |
+| 🏆 **Achievement System** | Unlock milestones |
+| 💾 **Data Backup** | Export/import all progress as JSON |
+
+---
 
 ## 🚀 Quick Start
 
 ### Play Online
 
-Visit [GitHub Pages](https://lessup.github.io/mind-gym/) to play immediately.
+Visit **[https://lessup.github.io/mind-gym/](https://lessup.github.io/mind-gym/)** to play immediately in your browser.
+
+### Install as PWA
+
+#### Desktop
+
+**Chrome/Edge:**
+1. Visit the site
+2. Click the install icon (➕) in the address bar
+3. Launch from desktop
+
+#### Mobile
+
+**iOS Safari:**
+1. Tap Share → "Add to Home Screen"
+
+**Android Chrome:**
+1. Tap Menu → "Add to Home screen"
 
 ### Local Development
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/LessUp/mind-gym.git
 cd mind-gym
 
-# Install dev dependencies (for testing and CSS building)
+# Install dependencies
 npm install
 
-# Start a local server (any static server works)
+# Start local server
 npx serve .
-# Or simply open index.html in your browser
 ```
 
 ### Development Commands
 
-```bash
-npm test              # Run Jest unit tests
-npm run lint          # Check code formatting with Prettier
-npm run format        # Auto-format all files
-npm run build:css     # Compile Tailwind CSS → assets/app.css
-npm run prepare:deploy  # Build CSS + copy files to dist/
-```
+| Command | Purpose |
+|---------|---------|
+| `npm test` | Run Jest unit tests |
+| `npm run lint` | Check code formatting |
+| `npm run format` | Auto-format all files |
+| `npm run build:css` | Compile Tailwind CSS |
+| `npm run prepare:deploy` | Build + copy to dist/ |
+
+---
 
 ## 📁 Project Structure
 
 ```
 mind-gym/
-├── index.html              # Main HTML (single-page app)
-├── app.js                  # Game orchestrator: state machine, modes, UI coordination
-├── sw.js                   # Service Worker: offline caching
+├── index.html              # Main SPA entry
+├── app.js                  # Game orchestrator (state machine, modes)
+├── sw.js                   # Service Worker (offline caching)
 ├── manifest.webmanifest    # PWA manifest
 │
-├── src/                    # Modular source files (UMD format)
-│   ├── keys.js             # localStorage key constants
-│   ├── utils.js            # Shuffle, seeded RNG, HTML escape
-│   ├── storage.js          # localStorage CRUD operations
-│   ├── stats.js            # Statistics tracking logic
-│   ├── achievements.js     # Achievement definitions and checking
-│   ├── modes.js            # N-back and recall mode logic
-│   ├── import-export.js    # Data normalization for backup/restore
-│   ├── i18n.js             # Internationalization dictionaries
-│   ├── effects.js          # Sound effects (Web Audio) & vibration
-│   ├── pools.js            # Card face asset pools
-│   ├── timer.js            # Game timer (elapsed & countdown)
-│   ├── confetti.js         # Victory animation (Canvas 2D)
-│   ├── ui.js               # DOM element bindings
-│   └── ui-events.js        # Event listener registration
+├── src/                    # Modular source (UMD)
+│   ├── storage.js          # localStorage CRUD
+│   ├── stats.js            # Statistics aggregation
+│   ├── achievements.js     # Achievement logic
+│   ├── modes.js            # N-back & recall logic
+│   ├── i18n.js             # Internationalization
+│   ├── timer.js            # Timer management
+│   └── ...                 # Additional modules
 │
-├── __tests__/              # Jest unit tests
-├── docs/                   # Architecture & design documentation
+├── __tests__/              # Jest tests
+├── docs/                   # Technical documentation
+│   ├── README.md
+│   ├── architecture.md
+│   ├── modes.md
+│   ├── storage.md
+│   └── pwa.md
 ├── changelog/              # Version history
-├── scripts/                # Deployment scripts
-└── assets/                 # Icons, CSS, static assets
+└── assets/                 # Icons, CSS, static files
 ```
+
+---
 
 ## 🎮 Keyboard Shortcuts
 
-| Key               | Action                |
-| ----------------- | --------------------- |
-| `N`               | New game              |
-| `P`               | Pause / Resume        |
-| `H`               | Use hint              |
-| `J`               | N-back match response |
-| `↑↓←→`            | Navigate cards        |
-| `Enter` / `Space` | Flip selected card    |
-| `Escape`          | Close modal           |
+| Key | Action |
+|-----|--------|
+| `N` | New game |
+| `P` | Pause / Resume |
+| `H` | Use hint |
+| `J` | N-back match (during N-back) |
+| `↑↓←→` | Navigate cards |
+| `Enter` / `Space` | Flip selected card |
+| `Escape` | Close modal |
 
-## 🛠 Tech Stack
+---
 
-- **Runtime**: Vanilla JavaScript (ES2022), zero runtime dependencies
-- **Styling**: Tailwind CSS (CLI compiled, no CDN in production)
-- **Storage**: localStorage for settings, stats, achievements
-- **Testing**: Jest 30 + jsdom
-- **CI/CD**: GitHub Actions (Node 22)
-- **Deployment**: GitHub Pages
+## 🛠 Technology Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Runtime** | Vanilla JavaScript (ES2022) — zero runtime dependencies |
+| **Styling** | Tailwind CSS 3.4 (CLI compiled) |
+| **Storage** | localStorage for persistence |
+| **Testing** | Jest 30 + jsdom |
+| **CI/CD** | GitHub Actions |
+| **Hosting** | GitHub Pages |
+
+### Browser Support
+
+| Browser | Version | PWA Install |
+|---------|---------|-------------|
+| Chrome | 90+ | ✅ |
+| Firefox | 90+ | ✅ |
+| Safari | 14+ | ⚠️* |
+| Edge | 90+ | ✅ |
+
+\* Safari: Use "Add to Home Screen" from share menu
+
+---
 
 ## 📊 Data Storage
 
 All data is stored locally in `localStorage` with the `memory_match_` prefix:
 
-| Key                          | Description                           |
-| ---------------------------- | ------------------------------------- |
-| `_settings`                  | User preferences                      |
-| `_best_<difficulty>`         | Best time/moves per difficulty        |
-| `_lb_<difficulty>`           | Leaderboard (top 3) per difficulty    |
-| `_achievements`              | Unlocked achievements                 |
-| `_stats`                     | Cumulative statistics                 |
-| `_adaptive`                  | Adaptive difficulty rating (600-1600) |
-| `_spaced_<theme>`            | Spaced reinforcement weights          |
-| `_daily_<date>_<difficulty>` | Daily challenge completion            |
+| Key | Data |
+|-----|------|
+| `_settings` | User preferences |
+| `_best_<difficulty>` | Best scores |
+| `_lb_<difficulty>` | Leaderboards |
+| `_stats` | Aggregate statistics |
+| `_achievements` | Unlocked achievements |
+| `_adaptive` | Adaptive rating (600-1600) |
 
-See [docs/storage.md](docs/storage.md) for detailed data structures.
+See [docs/storage.md](docs/storage.md) for complete data structures.
+
+---
 
 ## 📖 Documentation
 
-- [Architecture Overview](docs/architecture.md) — System design and data flow
-- [Training Modes](docs/modes.md) — Detailed mode descriptions
-- [Storage Model](docs/storage.md) — Data structures and persistence
-- [PWA/Offline](docs/pwa.md) — Service Worker caching strategy
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/architecture.md) | System design and data flow |
+| [Training Modes](docs/modes.md) | Mode specifications and algorithms |
+| [Storage Model](docs/storage.md) | Data structures and persistence |
+| [PWA/Offline](docs/pwa.md) | Service Worker and caching |
+
+---
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## 📄 License
+### Quick Contribution Guide
 
-[MIT License](LICENSE)
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make changes following our code style
+4. Run tests (`npm test`)
+5. Commit with clear messages
+6. Push and open a Pull Request
+
+---
+
+## 📝 License
+
+[MIT License](LICENSE) © LessUp
+
+---
+
+<p align="center">
+  Made with ❤️ for cognitive health
+</p>
