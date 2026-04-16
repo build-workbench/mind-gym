@@ -55,7 +55,12 @@
       gameMode: pickEnum(source.gameMode, VALID_GAME_MODES, fallback.gameMode || 'classic'),
       countdown: {
         easy: clampInt(source.countdown && source.countdown.easy, 10, 999, countdownDefaults.easy),
-        medium: clampInt(source.countdown && source.countdown.medium, 10, 999, countdownDefaults.medium),
+        medium: clampInt(
+          source.countdown && source.countdown.medium,
+          10,
+          999,
+          countdownDefaults.medium
+        ),
         hard: clampInt(source.countdown && source.countdown.hard, 10, 999, countdownDefaults.hard),
       },
       language: pickEnum(source.language, VALID_LANGUAGES, fallback.language || 'auto'),

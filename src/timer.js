@@ -31,7 +31,11 @@
 
   function startTimer(params) {
     if (params.timerId) {
-      return { timerId: params.timerId, elapsed: params.elapsed, countdownLeft: params.countdownLeft };
+      return {
+        timerId: params.timerId,
+        elapsed: params.elapsed,
+        countdownLeft: params.countdownLeft,
+      };
     }
 
     const now = typeof params.now === 'function' ? params.now : Date.now;

@@ -16,7 +16,8 @@
   function seedFromDate(dateStr, diff, theme) {
     let h = 2166136261;
     const s = `${dateStr}|${diff}|${theme}`;
-    for (let i = 0; i < s.length; i++) ((h = (h ^ s.charCodeAt(i)) >>> 0), (h = Math.imul(h, 16777619) >>> 0));
+    for (let i = 0; i < s.length; i++)
+      ((h = (h ^ s.charCodeAt(i)) >>> 0), (h = Math.imul(h, 16777619) >>> 0));
     return h >>> 0;
   }
 

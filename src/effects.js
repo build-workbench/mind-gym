@@ -10,7 +10,12 @@
   function ensureAudio() {
     if (audioCtx) return audioCtx;
     try {
-      const g = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : {};
+      const g =
+        typeof globalThis !== 'undefined'
+          ? globalThis
+          : typeof window !== 'undefined'
+            ? window
+            : {};
       const Ctx = g.AudioContext || g.webkitAudioContext;
       if (Ctx) audioCtx = new Ctx();
     } catch {
@@ -42,9 +47,12 @@
     const typeMap = pack === 'electro' ? 'square' : pack === 'soft' ? 'triangle' : 'sine';
     const volFactor = Math.max(0, Math.min(1, Number(settings.volume ?? 0.5)));
     if (type === 'flip') beep(660, 0.06, typeMap, 0.05 * (pack === 'soft' ? 0.7 : 1) * volFactor);
-    else if (type === 'match') beep(880, 0.12, typeMap, 0.07 * (pack === 'soft' ? 0.7 : 1) * volFactor);
-    else if (type === 'mismatch') beep(220, 0.12, typeMap, 0.06 * (pack === 'soft' ? 0.7 : 1) * volFactor);
-    else if (type === 'win') beep(1200, 0.2, typeMap, 0.1 * (pack === 'soft' ? 0.7 : 1) * volFactor);
+    else if (type === 'match')
+      beep(880, 0.12, typeMap, 0.07 * (pack === 'soft' ? 0.7 : 1) * volFactor);
+    else if (type === 'mismatch')
+      beep(220, 0.12, typeMap, 0.06 * (pack === 'soft' ? 0.7 : 1) * volFactor);
+    else if (type === 'win')
+      beep(1200, 0.2, typeMap, 0.1 * (pack === 'soft' ? 0.7 : 1) * volFactor);
   }
 
   function vibrateMs(ms, settings) {

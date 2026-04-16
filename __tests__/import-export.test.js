@@ -47,7 +47,7 @@ describe('import/export normalization', () => {
         adaptive: { rating: 9999, lastDiff: 'oops' },
         spaced: { colors: { '#fff': 3, '#000': -1 }, bad: { foo: 1 } },
       },
-      DEFAULT_SETTINGS,
+      DEFAULT_SETTINGS
     );
 
     expect(normalized.version).toBe(3);
@@ -68,7 +68,9 @@ describe('import/export normalization', () => {
   });
 
   test('normalizeImportData rejects non-object payload', () => {
-    expect(() => ImportExport.normalizeImportData(null, DEFAULT_SETTINGS)).toThrow('Invalid backup payload');
+    expect(() => ImportExport.normalizeImportData(null, DEFAULT_SETTINGS)).toThrow(
+      'Invalid backup payload'
+    );
   });
 
   test('collectExportData preserves provided sections', () => {

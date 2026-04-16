@@ -41,7 +41,7 @@ describe('storage normalization', () => {
         language: 'zh',
         adaptive: 1,
         spaced: 'true',
-      }),
+      })
     );
 
     expect(Storage.loadSettings(DEFAULT_SETTINGS)).toEqual({
@@ -63,7 +63,10 @@ describe('storage normalization', () => {
   });
 
   test('loadStats normalizes malformed values', () => {
-    localStorage.setItem(Keys.statsKey(), JSON.stringify({ games: '3', wins: -1, timeSum: 'bad', nbackRtCount: 2.8 }));
+    localStorage.setItem(
+      Keys.statsKey(),
+      JSON.stringify({ games: '3', wins: -1, timeSum: 'bad', nbackRtCount: 2.8 })
+    );
 
     expect(Storage.loadStats()).toMatchObject({
       games: 3,
@@ -82,7 +85,7 @@ describe('storage normalization', () => {
         { time: -1, moves: 8, at: 1 },
         { foo: 'bar' },
         { time: 40, moves: 9, at: 5 },
-      ]),
+      ])
     );
 
     expect(Storage.loadLeaderboard('easy')).toEqual([
@@ -104,7 +107,7 @@ describe('storage normalization', () => {
         first_win: { unlocked: true, at: 123 },
         no_hint_win: { unlocked: false, at: 999 },
         random: { unlocked: true, at: 456 },
-      }),
+      })
     );
 
     expect(Storage.loadAchievements()).toEqual({

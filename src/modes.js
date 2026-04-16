@@ -19,14 +19,17 @@
     const data = isPlainObject(params) ? params : {};
     const truth = Array.isArray(data.truthValues) ? [...new Set(data.truthValues)] : [];
     const pool = Array.isArray(data.poolValues) ? data.poolValues.slice() : [];
-    const shuffle = typeof data.shuffle === 'function' ? data.shuffle : (arr) => arr;
+    const shuffle = typeof data.shuffle === 'function' ? data.shuffle : arr => arr;
     const trueCount = Math.min(6, truth.length);
-    const falseCandidates = pool.filter((value) => !truth.includes(value));
+    const falseCandidates = pool.filter(value => !truth.includes(value));
     shuffle(truth);
     shuffle(falseCandidates);
     const trues = truth.slice(0, trueCount);
     const falses = falseCandidates.slice(0, Math.max(0, 9 - trueCount));
-    const items = [...trues.map((v) => ({ v, correct: true })), ...falses.map((v) => ({ v, correct: false }))];
+    const items = [
+      ...trues.map(v => ({ v, correct: true })),
+      ...falses.map(v => ({ v, correct: false })),
+    ];
     shuffle(items);
     return { items, correctSet: new Set(trues) };
   }
@@ -34,15 +37,17 @@
   function scoreRecall(correctSet, selectedValues) {
     const truth = correctSet instanceof Set ? correctSet : new Set();
     const selected =
-      selectedValues instanceof Set ? selectedValues : new Set(Array.isArray(selectedValues) ? selectedValues : []);
+      selectedValues instanceof Set
+        ? selectedValues
+        : new Set(Array.isArray(selectedValues) ? selectedValues : []);
     let tp = 0;
     let fp = 0;
     let fn = 0;
-    truth.forEach((value) => {
+    truth.forEach(value => {
       if (selected.has(value)) tp += 1;
       else fn += 1;
     });
-    selected.forEach((value) => {
+    selected.forEach(value => {
       if (!truth.has(value)) fp += 1;
     });
     return {

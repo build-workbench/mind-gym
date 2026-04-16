@@ -131,11 +131,11 @@
   ];
 
   function getPoolForTheme(theme) {
-    if (theme === 'numbers') return numbersPool.map((v) => ({ v, type: 'text' }));
-    if (theme === 'letters') return lettersPool.map((v) => ({ v, type: 'text' }));
-    if (theme === 'shapes') return shapesPool.map((v) => ({ v, type: 'text' }));
-    if (theme === 'colors') return colorsPool.map((c) => ({ v: c, type: 'color', color: c }));
-    return emojiPool.map((v) => ({ v, type: 'text' }));
+    if (theme === 'numbers') return numbersPool.map(v => ({ v, type: 'text' }));
+    if (theme === 'letters') return lettersPool.map(v => ({ v, type: 'text' }));
+    if (theme === 'shapes') return shapesPool.map(v => ({ v, type: 'text' }));
+    if (theme === 'colors') return colorsPool.map(c => ({ v: c, type: 'color', color: c }));
+    return emojiPool.map(v => ({ v, type: 'text' }));
   }
 
   return {

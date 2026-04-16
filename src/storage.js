@@ -4,14 +4,14 @@
       require('./keys.js'),
       require('./stats.js'),
       require('./achievements.js'),
-      require('./import-export.js'),
+      require('./import-export.js')
     );
   } else {
     root.RememberStorage = factory(
       root.RememberKeys,
       root.RememberStats,
       root.RememberAchievements,
-      root.RememberImportExport,
+      root.RememberImportExport
     );
   }
 })(
@@ -109,7 +109,9 @@
     }
 
     function loadStats() {
-      return RememberStats.normalizeStats(safeParseJSON(RememberKeys.statsKey(), RememberStats.DEFAULT_STATS));
+      return RememberStats.normalizeStats(
+        safeParseJSON(RememberKeys.statsKey(), RememberStats.DEFAULT_STATS)
+      );
     }
 
     function saveStats(s) {
@@ -119,7 +121,7 @@
     function loadSettings(fallbackSettings) {
       return normalizeSettings(
         safeParseJSON(RememberKeys.settingsKey(), cloneSettings(fallbackSettings)),
-        fallbackSettings,
+        fallbackSettings
       );
     }
 
@@ -231,5 +233,5 @@
       listAllKeys,
       removeKeysByPrefix,
     };
-  },
+  }
 );

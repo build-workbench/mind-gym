@@ -12,8 +12,8 @@ describe('mode helpers', () => {
 
     expect(correctSet.size).toBe(6);
     expect(items).toHaveLength(9);
-    expect(items.filter((item) => item.correct)).toHaveLength(6);
-    expect(items.filter((item) => !item.correct)).toHaveLength(3);
+    expect(items.filter(item => item.correct)).toHaveLength(6);
+    expect(items.filter(item => !item.correct)).toHaveLength(3);
   });
 
   test('scoreRecall returns precision and recall', () => {
@@ -44,7 +44,7 @@ describe('mode helpers', () => {
         length: 20,
         rtSum: 900,
         rtCount: 3,
-      }),
+      })
     ).toEqual({
       accuracy: 0.75,
       avgRt: 300,

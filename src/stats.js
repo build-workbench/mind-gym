@@ -111,16 +111,19 @@
 
   function buildStatsSummary(stats, formatTime) {
     const s = normalizeStats(stats);
-    const formatTimeFn = typeof formatTime === 'function' ? formatTime : (value) => String(value);
+    const formatTimeFn = typeof formatTime === 'function' ? formatTime : value => String(value);
     return {
       avgTime: s.wins > 0 ? formatTimeFn(Math.round(s.timeSum / s.wins)) : '—',
       avgMoves: s.wins > 0 ? Math.round(s.movesSum / s.wins) : '—',
       avgHints: s.wins > 0 ? (s.hintsSum / s.wins).toFixed(2) : '—',
       avgCombo: s.wins > 0 ? (s.comboSum / s.wins).toFixed(2) : '—',
       winRate: formatRate(s.wins, s.games),
-      avgPrecision: s.recallAttempts > 0 ? Math.round((s.precisionSum / s.recallAttempts) * 100) + '%' : '—',
-      avgRecall: s.recallAttempts > 0 ? Math.round((s.recallSum / s.recallAttempts) * 100) + '%' : '—',
-      avgNBackAcc: s.nbackAttempts > 0 ? Math.round((s.nbackAccSum / s.nbackAttempts) * 100) + '%' : '—',
+      avgPrecision:
+        s.recallAttempts > 0 ? Math.round((s.precisionSum / s.recallAttempts) * 100) + '%' : '—',
+      avgRecall:
+        s.recallAttempts > 0 ? Math.round((s.recallSum / s.recallAttempts) * 100) + '%' : '—',
+      avgNBackAcc:
+        s.nbackAttempts > 0 ? Math.round((s.nbackAccSum / s.nbackAttempts) * 100) + '%' : '—',
       avgNBackRt: s.nbackRtCount > 0 ? Math.round(s.nbackRtSum / s.nbackRtCount) + 'ms' : '—',
     };
   }
