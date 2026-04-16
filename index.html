@@ -1,57 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
   <head>
     <!-- Critical: Character encoding must be first -->
     <meta charset="UTF-8" />
-    
+
     <!-- Critical: Viewport for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    
+
     <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://github.com" />
-    
+
     <!-- Primary Meta Tags -->
     <title>Mind Gym - Memory Training Game | Boost Your Cognitive Skills</title>
     <meta name="title" content="Mind Gym - Memory Training Game | Boost Your Cognitive Skills" />
-    <meta name="description" content="Train your memory with Mind Gym! A browser-based memory game featuring classic matching, N-back training, daily challenges, and adaptive difficulty. Play free, no install needed." />
-    <meta name="keywords" content="memory game, brain training, cognitive training, memory exercise, N-back, card matching, mental workout, memory improvement" />
+    <meta
+      name="description"
+      content="Train your memory with Mind Gym! A browser-based memory game featuring classic matching, N-back training, daily challenges, and adaptive difficulty. Play free, no install needed."
+    />
+    <meta
+      name="keywords"
+      content="memory game, brain training, cognitive training, memory exercise, N-back, card matching, mental workout, memory improvement"
+    />
     <meta name="author" content="LessUp" />
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+
     <!-- Canonical URL -->
     <link rel="canonical" href="https://lessup.github.io/mind-gym/" />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://lessup.github.io/mind-gym/" />
     <meta property="og:title" content="Mind Gym - Memory Training Game" />
-    <meta property="og:description" content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!" />
+    <meta
+      property="og:description"
+      content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!"
+    />
     <meta property="og:image" content="https://lessup.github.io/mind-gym/assets/og-image.png" />
     <meta property="og:site_name" content="Mind Gym" />
     <meta property="og:locale" content="en_US" />
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://lessup.github.io/mind-gym/" />
     <meta property="twitter:title" content="Mind Gym - Memory Training Game" />
-    <meta property="twitter:description" content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!" />
-    <meta property="twitter:image" content="https://lessup.github.io/mind-gym/assets/og-image.png" />
-    
+    <meta
+      property="twitter:description"
+      content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!"
+    />
+    <meta
+      property="twitter:image"
+      content="https://lessup.github.io/mind-gym/assets/og-image.png"
+    />
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.webmanifest" />
-    
+
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="./assets/icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icon.svg" />
     <link rel="mask-icon" href="./assets/icon.svg" color="#4f46e5" />
-    
+
     <!-- Theme Colors -->
     <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1e1b4b" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
-    
+
     <!-- Mobile App Capable -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -60,69 +78,69 @@
     <meta name="application-name" content="Mind Gym" />
     <meta name="msapplication-TileColor" content="#4f46e5" />
     <meta name="msapplication-config" content="./browserconfig.xml" />
-    
+
     <!-- Performance: Preload critical CSS -->
     <link rel="preload" href="./assets/app.css" as="style" />
-    
+
     <!-- Styles -->
     <link rel="stylesheet" href="./assets/app.css" />
-    
+
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Mind Gym",
-      "description": "Browser-based memory training game with multiple modes including classic matching, N-back training, and daily challenges.",
-      "url": "https://lessup.github.io/mind-gym/",
-      "applicationCategory": "GameApplication",
-      "genre": ["Puzzle", "Brain Training", "Memory"],
-      "operatingSystem": "Any",
-      "browserRequirements": "Requires JavaScript. Requires HTML5.",
-      "featureList": [
-        "Classic card matching",
-        "N-back working memory training",
-        "Daily challenges",
-        "Adaptive difficulty",
-        "Progress tracking",
-        "Achievement system",
-        "Offline support"
-      ],
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "LessUp",
-        "url": "https://github.com/LessUp"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "LessUp"
-      },
-      "license": "https://github.com/LessUp/mind-gym/blob/master/LICENSE",
-      "sourceOrganization": {
-        "@type": "Organization",
-        "name": "LessUp"
-      },
-      "programmingLanguage": ["JavaScript", "HTML", "CSS"],
-      "inLanguage": ["en", "zh"],
-      "isAccessibleForFree": true,
-      "hasPart": [
-        {
-          "@type": "VideoGame",
-          "name": "Classic Matching Mode"
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Mind Gym",
+        "description": "Browser-based memory training game with multiple modes including classic matching, N-back training, and daily challenges.",
+        "url": "https://lessup.github.io/mind-gym/",
+        "applicationCategory": "GameApplication",
+        "genre": ["Puzzle", "Brain Training", "Memory"],
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "featureList": [
+          "Classic card matching",
+          "N-back working memory training",
+          "Daily challenges",
+          "Adaptive difficulty",
+          "Progress tracking",
+          "Achievement system",
+          "Offline support"
+        ],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
         },
-        {
-          "@type": "VideoGame",
-          "name": "N-back Training Mode"
-        }
-      ]
-    }
+        "author": {
+          "@type": "Organization",
+          "name": "LessUp",
+          "url": "https://github.com/LessUp"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "LessUp"
+        },
+        "license": "https://github.com/LessUp/mind-gym/blob/master/LICENSE",
+        "sourceOrganization": {
+          "@type": "Organization",
+          "name": "LessUp"
+        },
+        "programmingLanguage": ["JavaScript", "HTML", "CSS"],
+        "inLanguage": ["en", "zh"],
+        "isAccessibleForFree": true,
+        "hasPart": [
+          {
+            "@type": "VideoGame",
+            "name": "Classic Matching Mode"
+          },
+          {
+            "@type": "VideoGame",
+            "name": "N-back Training Mode"
+          }
+        ]
+      }
     </script>
-    
+
     <!-- Inline Critical CSS for Above-the-Fold Content -->
     <style>
       /* Critical loading styles */
@@ -133,24 +151,26 @@
         background: #f8fafc;
         color: #0f172a;
       }
-      
+
       /* Prevent FOUC */
       .loading {
         opacity: 0;
         animation: fadeIn 0.3s ease-in forwards;
       }
-      
+
       @keyframes fadeIn {
-        to { opacity: 1; }
+        to {
+          opacity: 1;
+        }
       }
-      
+
       /* Critical layout styles */
       #app {
         min-height: 100vh;
         display: flex;
         flex-direction: column;
       }
-      
+
       /* Loading spinner */
       .initial-loader {
         position: fixed;
@@ -164,11 +184,13 @@
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
-      
+
       @keyframes spin {
-        to { transform: translate(-50%, -50%) rotate(360deg); }
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
       }
-      
+
       /* Dark mode support */
       @media (prefers-color-scheme: dark) {
         body {
@@ -177,55 +199,66 @@
         }
       }
     </style>
-    
+
     <!-- Preconnect to required origins -->
     <link rel="prefetch" href="./app.js" />
     <link rel="prefetch" href="./src/storage.js" />
   </head>
-  
+
   <body class="loading">
+    <!-- Skip to main content link for accessibility -->
+    <a
+      href="#app"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-2 focus:bg-indigo-600 focus:text-white focus:rounded"
+    >
+      Skip to main content
+    </a>
+
     <!-- Initial Loading State -->
     <div id="initial-loader" class="initial-loader" aria-hidden="true"></div>
-    
+
     <!-- Main Application Container -->
     <div id="app" role="application" aria-label="Mind Gym Memory Training Game">
       <!-- Content will be dynamically loaded by app.js -->
       <noscript>
-        <div style="padding: 2rem; text-align: center;">
+        <div style="padding: 2rem; text-align: center">
           <h1>JavaScript Required</h1>
-          <p>Mind Gym requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+          <p>
+            Mind Gym requires JavaScript to run. Please enable JavaScript in your browser settings.
+          </p>
           <p>需要使用 JavaScript。请启用浏览器的 JavaScript 设置。</p>
         </div>
       </noscript>
     </div>
-    
+
     <!-- Service Worker Registration -->
     <script>
       // Remove loader when app starts
-      window.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('DOMContentLoaded', function () {
         const loader = document.getElementById('initial-loader');
         if (loader) {
           loader.style.opacity = '0';
-          setTimeout(function() {
+          setTimeout(function () {
             loader.remove();
             document.body.classList.remove('loading');
           }, 300);
         }
       });
-      
+
       // Register Service Worker with aggressive caching
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('./sw.js')
-            .then(function(registration) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker
+            .register('./sw.js')
+            .then(function (registration) {
               console.log('[SW] Registered:', registration.scope);
-              
+
               // Check for updates
-              registration.addEventListener('updatefound', function() {
+              registration.addEventListener('updatefound', function () {
                 const newWorker = registration.installing;
                 console.log('[SW] Update found, installing...');
-                
-                newWorker.addEventListener('statechange', function() {
+
+                newWorker.addEventListener('statechange', function () {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                     // New content available
                     console.log('[SW] Update ready');
@@ -234,57 +267,65 @@
                 });
               });
             })
-            .catch(function(error) {
+            .catch(function (error) {
               console.log('[SW] Registration failed:', error);
             });
-          
+
           // Listen for messages from SW
-          navigator.serviceWorker.addEventListener('message', function(event) {
+          navigator.serviceWorker.addEventListener('message', function (event) {
             console.log('[SW] Message:', event.data);
           });
         });
       }
     </script>
-    
+
     <!-- Module Scripts - Loaded with optimal order -->
     <!-- Critical modules first -->
     <script src="./src/keys.js"></script>
     <script src="./src/utils.js"></script>
-    
+
     <!-- Core functionality -->
     <script src="./src/stats.js"></script>
     <script src="./src/achievements.js"></script>
     <script src="./src/modes.js"></script>
     <script src="./src/import-export.js"></script>
-    
+
     <!-- Storage and data -->
     <script src="./src/storage.js"></script>
-    
+
     <!-- UI and features -->
     <script src="./src/i18n.js"></script>
     <script src="./src/effects.js"></script>
     <script src="./src/pools.js"></script>
     <script src="./src/timer.js"></script>
     <script src="./src/confetti.js"></script>
-    
+
     <!-- Event handling -->
     <script src="./src/ui-events.js"></script>
     <script src="./src/ui.js"></script>
-    
+
     <!-- Main application (last) -->
     <script src="./app.js"></script>
-    
+
     <!-- Deferred non-critical scripts -->
     <script defer>
       // Analytics placeholder (if needed in future)
       // Performance monitoring
       if ('performance' in window) {
-        window.addEventListener('load', function() {
-          setTimeout(function() {
+        window.addEventListener('load', function () {
+          setTimeout(function () {
             const perfData = performance.getEntriesByType('navigation')[0];
             if (perfData) {
-              console.log('[Perf] DOM loaded:', perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart, 'ms');
-              console.log('[Perf] Full load:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
+              console.log(
+                '[Perf] DOM loaded:',
+                perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                'ms'
+              );
+              console.log(
+                '[Perf] Full load:',
+                perfData.loadEventEnd - perfData.loadEventStart,
+                'ms'
+              );
             }
           }, 0);
         });
