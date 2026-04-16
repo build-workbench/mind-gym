@@ -6,13 +6,13 @@ This document describes the system design, module responsibilities, and data flo
 
 ## Project Characteristics
 
-| Characteristic | Implementation |
-|---------------|----------------|
-| **Deployment** | Static frontend, no backend required |
-| **Build Tool** | None; only Tailwind CLI for CSS compilation |
-| **Framework** | Vanilla JavaScript (ES2022) |
-| **State Management** | In-memory variables + localStorage |
-| **PWA** | Service Worker + Web App Manifest |
+| Characteristic       | Implementation                              |
+| -------------------- | ------------------------------------------- |
+| **Deployment**       | Static frontend, no backend required        |
+| **Build Tool**       | None; only Tailwind CLI for CSS compilation |
+| **Framework**        | Vanilla JavaScript (ES2022)                 |
+| **State Management** | In-memory variables + localStorage          |
+| **PWA**              | Service Worker + Web App Manifest           |
 
 ---
 
@@ -62,28 +62,28 @@ This document describes the system design, module responsibilities, and data flo
 
 ### Core Modules
 
-| Module | File | Responsibility |
-|--------|------|----------------|
-| **Orchestrator** | `app.js` | Game main loop, state machine, mode dispatch, UI coordination |
-| **Storage** | `src/storage.js` | localStorage CRUD, data normalization |
-| **Stats** | `src/stats.js` | Statistics aggregation and calculation |
-| **Modes** | `src/modes.js` | N-back and delayed recall logic |
-| **Achievements** | `src/achievements.js` | Achievement definitions and unlock checking |
+| Module           | File                  | Responsibility                                                |
+| ---------------- | --------------------- | ------------------------------------------------------------- |
+| **Orchestrator** | `app.js`              | Game main loop, state machine, mode dispatch, UI coordination |
+| **Storage**      | `src/storage.js`      | localStorage CRUD, data normalization                         |
+| **Stats**        | `src/stats.js`        | Statistics aggregation and calculation                        |
+| **Modes**        | `src/modes.js`        | N-back and delayed recall logic                               |
+| **Achievements** | `src/achievements.js` | Achievement definitions and unlock checking                   |
 
 ### Support Modules
 
-| Module | File | Responsibility |
-|--------|------|----------------|
-| **Keys** | `src/keys.js` | localStorage key constants |
-| **Utils** | `src/utils.js` | Shuffle, seeded RNG, HTML escape |
-| **I18n** | `src/i18n.js` | Internationalization dictionaries and detection |
-| **Effects** | `src/effects.js` | Sound effects (Web Audio) and vibration |
-| **Pools** | `src/pools.js` | Card face asset pools |
-| **Timer** | `src/timer.js` | Elapsed time / countdown management |
-| **Confetti** | `src/confetti.js` | Victory particle animation |
-| **UI** | `src/ui.js` | DOM element bindings |
-| **UI Events** | `src/ui-events.js` | Event listener registration |
-| **Import/Export** | `src/import-export.js` | Backup data normalization |
+| Module            | File                   | Responsibility                                  |
+| ----------------- | ---------------------- | ----------------------------------------------- |
+| **Keys**          | `src/keys.js`          | localStorage key constants                      |
+| **Utils**         | `src/utils.js`         | Shuffle, seeded RNG, HTML escape                |
+| **I18n**          | `src/i18n.js`          | Internationalization dictionaries and detection |
+| **Effects**       | `src/effects.js`       | Sound effects (Web Audio) and vibration         |
+| **Pools**         | `src/pools.js`         | Card face asset pools                           |
+| **Timer**         | `src/timer.js`         | Elapsed time / countdown management             |
+| **Confetti**      | `src/confetti.js`      | Victory particle animation                      |
+| **UI**            | `src/ui.js`            | DOM element bindings                            |
+| **UI Events**     | `src/ui-events.js`     | Event listener registration                     |
+| **Import/Export** | `src/import-export.js` | Backup data normalization                       |
 
 ---
 
@@ -182,17 +182,17 @@ onTimeUp()
 
 ```javascript
 // Game progress
-let firstCard = null;        // First flipped card
-let secondCard = null;       // Second flipped card
-let lockBoard = false;       // Board locked state
-let moves = 0;               // Move count
-let matchedPairs = 0;        // Matched pairs count
-let started = false;         // Game started flag
+let firstCard = null; // First flipped card
+let secondCard = null; // Second flipped card
+let lockBoard = false; // Board locked state
+let moves = 0; // Move count
+let matchedPairs = 0; // Matched pairs count
+let started = false; // Game started flag
 
 // Timing
-let elapsed = 0;             // Elapsed time (seconds)
-let countdownLeft = 0;       // Countdown remaining
-let timerId = null;          // Timer ID
+let elapsed = 0; // Elapsed time (seconds)
+let countdownLeft = 0; // Countdown remaining
+let timerId = null; // Timer ID
 
 // Difficulty & Settings
 let currentDifficulty = 'easy';
@@ -233,21 +233,21 @@ let dailySeed = 0;
 
 ### Rendering Performance
 
-| Technique | Implementation | Benefit |
-|-----------|----------------|---------|
-| CSS Transforms | `transform: rotateY()` for card flip | GPU acceleration |
-| CSS Transitions | `transition: transform 0.3s` | Smooth 60fps animations |
-| Canvas 2D | `confetti.js` particle system | Efficient particle rendering |
-| Virtual List | N/A (fixed grid sizes) | Not needed for this scale |
+| Technique       | Implementation                       | Benefit                      |
+| --------------- | ------------------------------------ | ---------------------------- |
+| CSS Transforms  | `transform: rotateY()` for card flip | GPU acceleration             |
+| CSS Transitions | `transition: transform 0.3s`         | Smooth 60fps animations      |
+| Canvas 2D       | `confetti.js` particle system        | Efficient particle rendering |
+| Virtual List    | N/A (fixed grid sizes)               | Not needed for this scale    |
 
 ### Memory Management
 
-| Strategy | Implementation |
-|----------|----------------|
+| Strategy         | Implementation                             |
+| ---------------- | ------------------------------------------ |
 | Event Delegation | Single listeners on containers vs per-card |
-| Timer Cleanup | `clearInterval()` on game end/modal close |
-| DOM Caching | Elements cached in `ui.js`, not re-queried |
-| State Reset | All game state reset on `initGame()` |
+| Timer Cleanup    | `clearInterval()` on game end/modal close  |
+| DOM Caching      | Elements cached in `ui.js`, not re-queried |
+| State Reset      | All game state reset on `initGame()`       |
 
 ---
 
@@ -307,28 +307,28 @@ let dailySeed = 0;
 
 ### Future Improvements
 
-| Priority | Change | Impact |
-|----------|--------|--------|
-| P1 | ES Modules migration | Tree-shaking, modern imports |
-| P2 | Extract `nback.js` | Isolated N-back module |
-| P3 | Extract `recall.js` | Isolated recall test module |
-| P4 | Extract `daily.js` | Isolated daily challenge |
-| P5 | Extract `adaptive.js` | Isolated adaptive system |
+| Priority | Change                | Impact                       |
+| -------- | --------------------- | ---------------------------- |
+| P1       | ES Modules migration  | Tree-shaking, modern imports |
+| P2       | Extract `nback.js`    | Isolated N-back module       |
+| P3       | Extract `recall.js`   | Isolated recall test module  |
+| P4       | Extract `daily.js`    | Isolated daily challenge     |
+| P5       | Extract `adaptive.js` | Isolated adaptive system     |
 
 ---
 
 ## Browser Compatibility
 
-| Feature | Chrome | Firefox | Safari | Edge |
-|---------|--------|---------|--------|------|
-| Core Game | 90+ | 90+ | 14+ | 90+ |
-| Web Audio | 90+ | 90+ | 14+ | 90+ |
-| Vibration API | 90+ | 90+* | No | 90+ |
-| Service Worker | 90+ | 90+ | 14+ | 90+ |
-| localStorage | 90+ | 90+ | 14+ | 90+ |
+| Feature        | Chrome | Firefox | Safari | Edge |
+| -------------- | ------ | ------- | ------ | ---- |
+| Core Game      | 90+    | 90+     | 14+    | 90+  |
+| Web Audio      | 90+    | 90+     | 14+    | 90+  |
+| Vibration API  | 90+    | 90+\*   | No     | 90+  |
+| Service Worker | 90+    | 90+     | 14+    | 90+  |
+| localStorage   | 90+    | 90+     | 14+    | 90+  |
 
 \* Firefox mobile only
 
 ---
 
-*For implementation details of specific modes, see [Training Modes](./modes.md). For data structures, see [Storage Model](./storage.md).*
+_For implementation details of specific modes, see [Training Modes](./modes.md). For data structures, see [Storage Model](./storage.md)._

@@ -6,13 +6,13 @@ Complete specifications for all Mind Gym training modes and game mechanics.
 
 ## Mode Overview
 
-| Mode | Trigger | Primary Goal | Key Metrics |
-|------|---------|--------------|-------------|
-| **Classic Matching** | Default | Find matching pairs | Time, Moves |
-| **Countdown** | Settings toggle | Match within time limit | Completion before timeout |
-| **Daily Challenge** | "Daily" button | Fixed seed competition | Compare globally |
-| **Delayed Recall** | Post-win auto-trigger | Recognition memory | Precision, Recall |
-| **N-back** | "N-back" button | Working memory | Accuracy, RT |
+| Mode                 | Trigger               | Primary Goal            | Key Metrics               |
+| -------------------- | --------------------- | ----------------------- | ------------------------- |
+| **Classic Matching** | Default               | Find matching pairs     | Time, Moves               |
+| **Countdown**        | Settings toggle       | Match within time limit | Completion before timeout |
+| **Daily Challenge**  | "Daily" button        | Fixed seed competition  | Compare globally          |
+| **Delayed Recall**   | Post-win auto-trigger | Recognition memory      | Precision, Recall         |
+| **N-back**           | "N-back" button       | Working memory          | Accuracy, RT              |
 
 ---
 
@@ -24,30 +24,30 @@ Flip two cards per turn. Matching pairs remain locked; non-matching cards flip b
 
 ### Difficulty Levels
 
-| Level | Grid | Pairs | Default Hints | Target Time |
-|-------|------|-------|---------------|-------------|
-| Easy | 4×4 | 8 | 3 | 60s |
-| Medium | 4×5 | 10 | 2 | 120s |
-| Hard | 6×6 | 18 | 1 | 180s |
+| Level  | Grid | Pairs | Default Hints | Target Time |
+| ------ | ---- | ----- | ------------- | ----------- |
+| Easy   | 4×4  | 8     | 3             | 60s         |
+| Medium | 4×5  | 10    | 2             | 120s        |
+| Hard   | 6×6  | 18    | 1             | 180s        |
 
 ### Scoring Results
 
-| Metric | Description |
-|--------|-------------|
-| **Time** | From first flip to completion |
-| **Moves** | Each second-card flip counts as one move |
+| Metric          | Description                                   |
+| --------------- | --------------------------------------------- |
+| **Time**        | From first flip to completion                 |
+| **Moves**       | Each second-card flip counts as one move      |
 | **Star Rating** | 1-5 stars based on time, moves, hints, combos |
-| **Leaderboard** | Top 3 times per difficulty |
-| **Best Score** | Personal record per difficulty |
+| **Leaderboard** | Top 3 times per difficulty                    |
+| **Best Score**  | Personal record per difficulty                |
 
 ### Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `N` | New game |
-| `P` | Pause/Resume |
-| `H` | Use hint |
-| `↑↓←→` | Navigate cards |
+| Key               | Action             |
+| ----------------- | ------------------ |
+| `N`               | New game           |
+| `P`               | Pause/Resume       |
+| `H`               | Use hint           |
+| `↑↓←→`            | Navigate cards     |
 | `Enter` / `Space` | Flip selected card |
 
 ### State Machine
@@ -74,7 +74,7 @@ function onFlip(cardEl) {
   // Second card logic
   secondCard = cardEl;
   moves++;
-  
+
   // Check for match...
 }
 ```
@@ -92,10 +92,10 @@ Settings → Game Mode → "Countdown"
 Customize countdown seconds per difficulty (10-999s):
 
 | Difficulty | Default Time |
-|------------|--------------|
-| Easy | 90s |
-| Medium | 150s |
-| Hard | 240s |
+| ---------- | ------------ |
+| Easy       | 90s          |
+| Medium     | 150s         |
+| Hard       | 240s         |
 
 ### Mechanics
 
@@ -164,29 +164,29 @@ Automatically appears after winning a game (can be skipped).
 
 ### Test Content
 
-| Component | Description |
-|-----------|-------------|
-| **Targets** | Cards that appeared in the game ("true items") |
-| **Distractors** | Cards that did NOT appear ("false items") |
-| **Task** | Select all cards that appeared in the current game |
+| Component       | Description                                        |
+| --------------- | -------------------------------------------------- |
+| **Targets**     | Cards that appeared in the game ("true items")     |
+| **Distractors** | Cards that did NOT appear ("false items")          |
+| **Task**        | Select all cards that appeared in the current game |
 
 ### Item Generation
 
 ```javascript
 // src/modes.js
 function buildRecallItems(params) {
-  const truth = params.truthValues;    // Cards from current game
-  const pool = params.poolValues;       // All possible cards
+  const truth = params.truthValues; // Cards from current game
+  const pool = params.poolValues; // All possible cards
 
   const trueCount = Math.min(6, truth.length);
-  const falseCandidates = pool.filter((v) => !truth.includes(v));
+  const falseCandidates = pool.filter(v => !truth.includes(v));
 
   const trues = shuffle(truth).slice(0, trueCount);
   const falses = shuffle(falseCandidates).slice(0, 9 - trueCount);
 
   const items = [
-    ...trues.map((v) => ({ v, correct: true })),
-    ...falses.map((v) => ({ v, correct: false }))
+    ...trues.map(v => ({ v, correct: true })),
+    ...falses.map(v => ({ v, correct: false })),
   ];
   return { items: shuffle(items), correctSet: new Set(trues) };
 }
@@ -194,12 +194,13 @@ function buildRecallItems(params) {
 
 ### Scoring Metrics
 
-| Metric | Formula | Description |
-|--------|---------|-------------|
+| Metric        | Formula        | Description                              |
+| ------------- | -------------- | ---------------------------------------- |
 | **Precision** | TP / (TP + FP) | Of selected cards, how many were correct |
-| **Recall** | TP / (TP + FN) | Of correct cards, how many were selected |
+| **Recall**    | TP / (TP + FN) | Of correct cards, how many were selected |
 
 Where:
+
 - TP = True Positives (correct cards selected)
 - FP = False Positives (incorrect cards selected)
 - FN = False Negatives (correct cards missed)
@@ -218,11 +219,11 @@ Stimuli (emoji) presented sequentially. Player determines if current stimulus ma
 
 ### Configuration
 
-| Parameter | Options | Description |
-|-----------|---------|-------------|
-| N | 1, 2, 3 | Steps to look back |
-| Pace | 1200, 900, 700 ms | Stimulus presentation interval |
-| Length | 20, 30, 40 | Number of stimuli in sequence |
+| Parameter | Options           | Description                    |
+| --------- | ----------------- | ------------------------------ |
+| N         | 1, 2, 3           | Steps to look back             |
+| Pace      | 1200, 900, 700 ms | Stimulus presentation interval |
+| Length    | 20, 30, 40        | Number of stimuli in sequence  |
 
 ### Controls
 
@@ -231,21 +232,21 @@ Stimuli (emoji) presented sequentially. Player determines if current stimulus ma
 
 ### Scoring
 
-| Metric | Description |
-|--------|-------------|
-| **Accuracy** | Correct responses / Total targets |
+| Metric            | Description                                |
+| ----------------- | ------------------------------------------ |
+| **Accuracy**      | Correct responses / Total targets          |
 | **Reaction Time** | Time from stimulus to keypress (hits only) |
 
 ### Stats Tracking
 
 ```javascript
 // Tracked in app.js
-let nbackTargets = 0;       // Targets (stimuli matching N-back)
-let nbackHits = 0;          // Hits (correct J presses)
-let nbackMisses = 0;        // Misses (target not pressed)
-let nbackFalseAlarms = 0;   // False Alarms (non-target pressed)
-let nbackRtSum = 0;         // RT sum (ms)
-let nbackRtCount = 0;       // RT sample count
+let nbackTargets = 0; // Targets (stimuli matching N-back)
+let nbackHits = 0; // Hits (correct J presses)
+let nbackMisses = 0; // Misses (target not pressed)
+let nbackFalseAlarms = 0; // False Alarms (non-target pressed)
+let nbackRtSum = 0; // RT sum (ms)
+let nbackRtCount = 0; // RT sample count
 ```
 
 ### Implementation
@@ -290,20 +291,20 @@ Dynamically adjusts preview time and hint count based on player performance rati
 
 ### Rating Range
 
-| Statistic | Value |
-|-----------|-------|
-| Initial Rating | 1000 |
-| Minimum | 600 |
-| Maximum | 1600 |
+| Statistic      | Value |
+| -------------- | ----- |
+| Initial Rating | 1000  |
+| Minimum        | 600   |
+| Maximum        | 1600  |
 
 ### Adjustment Strategy
 
 | Rating Range | Preview Time | Hint Adjustment |
-|--------------|--------------|-----------------|
-| < 940 | ≥ 2s | +1 hint |
-| 940 - 1040 | ≥ 1s | No change |
-| 1040 - 1140 | ≤ 1s | No change |
-| > 1140 | 0s | -1 hint |
+| ------------ | ------------ | --------------- |
+| < 940        | ≥ 2s         | +1 hint         |
+| 940 - 1040   | ≥ 1s         | No change       |
+| 1040 - 1140  | ≤ 1s         | No change       |
+| > 1140       | 0s           | -1 hint         |
 
 ### Rating Update
 
@@ -314,12 +315,10 @@ function updateAdaptiveOnEnd(win, stars, diff) {
 
   const a = loadAdaptive();
   const exp = expectedStarsFor(diff); // easy:4, medium:3.5, hard:3
-  const perf = win ? stars : 1.5;     // Loss = poor performance
-  const k = 12;                       // ELO-like K-factor
+  const perf = win ? stars : 1.5; // Loss = poor performance
+  const k = 12; // ELO-like K-factor
 
-  a.rating = Math.max(600, Math.min(1600, 
-    Math.round(a.rating + k * (perf - exp))
-  ));
+  a.rating = Math.max(600, Math.min(1600, Math.round(a.rating + k * (perf - exp))));
   a.lastDiff = diff;
 
   saveAdaptive(a);
@@ -372,7 +371,7 @@ function pickWithSpaced(theme, pool, pairs) {
   // Take top 40% weighted cards
   const topN = Math.min(Math.floor(pairs * 0.4), copy.length);
   const picksTop = copy.slice(0, topN);
-  const rest = pool.filter((x) => !picksTop.some((y) => y.v === x.v));
+  const rest = pool.filter(x => !picksTop.some(y => y.v === x.v));
 
   shuffle(rest);
   return [...picksTop, ...rest.slice(0, pairs - picksTop.length)];
@@ -452,12 +451,12 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
 ### Rating Factors
 
-| Factor | Impact |
-|--------|--------|
-| Time | Proportional penalty for exceeding par |
-| Moves | 3 point penalty per move above minimum |
-| Hints | 10 point penalty per hint used |
-| Combos | +2 points per combo achieved |
+| Factor | Impact                                 |
+| ------ | -------------------------------------- |
+| Time   | Proportional penalty for exceeding par |
+| Moves  | 3 point penalty per move above minimum |
+| Hints  | 10 point penalty per hint used         |
+| Combos | +2 points per combo achieved           |
 
 ---
 
@@ -485,4 +484,4 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
 ---
 
-*For system architecture, see [Architecture Overview](./architecture.md). For data structures, see [Storage Model](./storage.md).*
+_For system architecture, see [Architecture Overview](./architecture.md). For data structures, see [Storage Model](./storage.md)._

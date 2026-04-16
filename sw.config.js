@@ -6,22 +6,13 @@
 const SW_CONFIG = {
   // Cache versioning - change to invalidate all caches
   CACHE_VERSION: 'mind-gym-v3-aggressive',
-  
+
   // Precache configuration
   PRECACHE: {
     // Core HTML and shell
-    shell: [
-      './',
-      './index.html',
-      './manifest.webmanifest',
-      './robots.txt',
-      './sitemap.xml',
-    ],
+    shell: ['./', './index.html', './manifest.webmanifest', './robots.txt', './sitemap.xml'],
     // Critical CSS and JS
-    critical: [
-      './assets/app.css',
-      './assets/js/main-*.js',
-    ],
+    critical: ['./assets/app.css', './assets/js/main-*.js'],
     // All source modules
     modules: [
       './src/keys.js',
@@ -40,7 +31,7 @@ const SW_CONFIG = {
       './src/ui-events.js',
     ],
   },
-  
+
   // Runtime caching strategies
   RUNTIME_CACHING: {
     // Images - Cache First with expiration
@@ -52,9 +43,9 @@ const SW_CONFIG = {
         maxEntries: 100,
         maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
         purgeOnQuotaError: true,
-      }
+      },
     },
-    
+
     // Fonts - Cache First, long expiration
     fonts: {
       strategy: 'CacheFirst',
@@ -63,9 +54,9 @@ const SW_CONFIG = {
         cacheName: 'fonts-cache',
         maxEntries: 20,
         maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-      }
+      },
     },
-    
+
     // Google Fonts stylesheets - Stale While Revalidate
     googleFontsStyles: {
       strategy: 'StaleWhileRevalidate',
@@ -73,9 +64,9 @@ const SW_CONFIG = {
       options: {
         cacheName: 'google-fonts-stylesheets',
         maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
-      }
+      },
     },
-    
+
     // Google Fonts webfonts - Cache First
     googleFontsWebfonts: {
       strategy: 'CacheFirst',
@@ -84,9 +75,9 @@ const SW_CONFIG = {
         cacheName: 'google-fonts-webfonts',
         maxEntries: 30,
         maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-      }
+      },
     },
-    
+
     // API calls - Network First with timeout
     api: {
       strategy: 'NetworkFirst',
@@ -96,9 +87,9 @@ const SW_CONFIG = {
         networkTimeoutSeconds: 3,
         maxEntries: 50,
         maxAgeSeconds: 24 * 60 * 60, // 1 day
-      }
+      },
     },
-    
+
     // JSON data - Stale While Revalidate
     json: {
       strategy: 'StaleWhileRevalidate',
@@ -107,39 +98,39 @@ const SW_CONFIG = {
         cacheName: 'json-cache',
         maxEntries: 50,
         maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
-      }
+      },
     },
   },
-  
+
   // Background sync configuration
   BACKGROUND_SYNC: {
     enabled: true,
     queueName: 'sync-queue',
     maxRetentionTime: 24 * 60, // 24 hours
   },
-  
+
   // Push notifications (prepared)
   PUSH_NOTIFICATIONS: {
     enabled: false, // Set to true when implementing
     options: {
       // Configuration for push notifications
-    }
+    },
   },
-  
+
   // Periodic background sync (prepared)
   PERIODIC_SYNC: {
     enabled: false,
     tag: 'content-sync',
     minInterval: 24 * 60 * 60 * 1000, // 24 hours
   },
-  
+
   // Offline fallback configuration
   OFFLINE_FALLBACK: {
     enabled: true,
     page: './offline.html',
     image: './assets/offline.svg',
   },
-  
+
   // Plugin configuration for workbox
   WORKBOX_PLUGINS: [
     // Clean old caches
@@ -154,8 +145,8 @@ const SW_CONFIG = {
           );
           await Promise.all(keysToDelete.map(key => oldCache.delete(key)));
         }
-      }
-    }
+      },
+    },
   ],
 };
 

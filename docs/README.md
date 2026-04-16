@@ -11,12 +11,12 @@
 
 ## 📚 Documentation Index
 
-| Document | Description | Audience |
-|----------|-------------|----------|
+| Document                          | Description                                           | Audience                 |
+| --------------------------------- | ----------------------------------------------------- | ------------------------ |
 | [Architecture](./architecture.md) | System design, data flow, and module responsibilities | Developers, Contributors |
-| [Training Modes](./modes.md) | Detailed mode specifications and game mechanics | Developers, Users |
-| [Storage Model](./storage.md) | Data structures, persistence, and import/export | Developers |
-| [PWA & Offline](./pwa.md) | Service Worker strategy and offline capabilities | Developers |
+| [Training Modes](./modes.md)      | Detailed mode specifications and game mechanics       | Developers, Users        |
+| [Storage Model](./storage.md)     | Data structures, persistence, and import/export       | Developers               |
+| [PWA & Offline](./pwa.md)         | Service Worker strategy and offline capabilities      | Developers               |
 
 ---
 
@@ -25,11 +25,13 @@
 ### For Developers
 
 **Getting Started**
+
 - New to the codebase? → [Architecture Overview](./architecture.md#system-architecture)
 - Want to understand data flow? → [Data Flow](./architecture.md#data-flow)
 - Need storage details? → [Storage Keys](./storage.md#key-conventions)
 
 **Contributing**
+
 - Adding a new game mode? → [Mode Development](./modes.md#extending-game-modes)
 - Modifying storage? → [Data Migration](./storage.md#data-migration)
 - Updating UI? → [Module Reference](./architecture.md#module-responsibilities)
@@ -37,6 +39,7 @@
 ### For Users
 
 **Understanding Features**
+
 - How does scoring work? → [Star Rating](./modes.md#star-rating-system)
 - What are the different modes? → [Mode Overview](./modes.md#mode-overview)
 - How is my data stored? → [Local Storage](./storage.md#localstorage-schema)
@@ -85,12 +88,12 @@
 
 ### Notation Standards
 
-| Notation | Meaning | Example |
-|----------|---------|---------|
-| `<variable>` | Placeholder | `<difficulty>` → `easy` \| `medium` \| `hard` |
-| `[optional]` | Optional parameter | `[theme]` |
-| `Type[]` | Array of type | `string[]` |
-| `{key: Type}` | Object structure | `{time: number, moves: number}` |
+| Notation      | Meaning            | Example                                       |
+| ------------- | ------------------ | --------------------------------------------- |
+| `<variable>`  | Placeholder        | `<difficulty>` → `easy` \| `medium` \| `hard` |
+| `[optional]`  | Optional parameter | `[theme]`                                     |
+| `Type[]`      | Array of type      | `string[]`                                    |
+| `{key: Type}` | Object structure   | `{time: number, moves: number}`               |
 
 ### Version Compatibility
 
@@ -118,4 +121,4 @@ If you can't find what you're looking for:
 
 ---
 
-*Last updated: 2026-04-16*
+_Last updated: 2026-04-16_

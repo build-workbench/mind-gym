@@ -130,10 +130,10 @@ jobs:
       - name: 🔧 Optimize build
         run: |
           echo "🔧 Running additional optimizations..."
-          
+
           # Create .nojekyll to disable Jekyll processing
           touch dist/.nojekyll
-          
+
           # Add security headers configuration
           cat > dist/_headers << 'EOF'
           /*
@@ -144,28 +144,28 @@ jobs:
             Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' fonts.gstatic.com; connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';
             Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
             X-XSS-Protection: 1; mode=block
-          
+
           /assets/*
             Cache-Control: public, max-age=31536000, immutable
-          
+
           /src/*.js
             Cache-Control: public, max-age=86400
-          
+
           /sw.js
             Cache-Control: public, max-age=0, must-revalidate
-          
+
           /index.html
             Cache-Control: public, max-age=0, must-revalidate
           EOF
-          
+
           echo "✅ Security headers configured"
-          
+
           # Create _redirects for SPAs
           cat > dist/_redirects << 'EOF'
           # Redirect rules for single page application
           /* /index.html 200
           EOF
-          
+
           echo "✅ Redirects configured"
 
       - name: 🔍 Verify dist contents
@@ -255,13 +255,13 @@ jobs:
           # Serve the dist folder
           npx serve dist -l 3000 &
           SERVER_PID=$!
-          
+
           # Wait for server
           sleep 3
-          
+
           # Run Lighthouse CI
           lhci autorun --config=lighthouserc.js || true
-          
+
           # Kill server
           kill $SERVER_PID || true
         env:
@@ -327,18 +327,18 @@ jobs:
           # Create a URL-friendly subdomain
           SUBDOMAIN=$(echo "${REPO}-${BRANCH}" | tr '/' '-' | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]-')
           PREVIEW_URL="https://${SUBDOMAIN}.surge.sh"
-          
+
           echo "Deploying to: $PREVIEW_URL"
-          
+
           # Install surge globally
           npm install -g surge
-          
+
           # Deploy
           surge dist "$PREVIEW_URL" --token "${{ secrets.SURGE_TOKEN }}" || {
             echo "Surge deployment failed - may need manual configuration"
             PREVIEW_URL=""
           }
-          
+
           echo "url=${PREVIEW_URL}" >> $GITHUB_OUTPUT
           echo "PREVIEW_URL=${PREVIEW_URL}" >> $GITHUB_ENV
         env:
@@ -352,15 +352,15 @@ jobs:
           script: |
             const previewUrl = '${{ steps.preview.outputs.url }}';
             const body = `## 🚀 PR Preview Deployed
-            
+
             | Item | Value |
             |------|-------|
             | 🔗 Preview URL | [${previewUrl}](${previewUrl}) |
             | 📅 Deployed | ${new Date().toISOString()} |
             | 🔨 Commit | ${{ github.event.pull_request.head.sha }} |
-            
+
             ⚠️ **Note:** This preview environment is temporary and will be removed when the PR is closed.`;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,

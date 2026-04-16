@@ -34,12 +34,12 @@
 
 ## 📁 Files Changed / 变更文件
 
-| Category | Files |
-|----------|-------|
-| Documentation | 10 new bilingual doc files |
-| Changelog | 11 archive files + templates |
-| README | 2 files (EN/ZH) enhanced |
-| Config | package.json version bump |
+| Category      | Files                        |
+| ------------- | ---------------------------- |
+| Documentation | 10 new bilingual doc files   |
+| Changelog     | 11 archive files + templates |
+| README        | 2 files (EN/ZH) enhanced     |
+| Config        | package.json version bump    |
 
 ---
 

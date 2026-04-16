@@ -1,184 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offline - Mind Gym</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    .offline-container {
-      text-align: center;
-      max-width: 480px;
-      padding: 40px;
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-    }
-    
-    .icon {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 24px;
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 64px;
-    }
-    
-    h1 {
-      font-size: 28px;
-      color: #0f172a;
-      margin-bottom: 12px;
-    }
-    
-    p {
-      color: #64748b;
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    
-    .retry-btn {
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      color: white;
-      border: none;
-      padding: 14px 32px;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .retry-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
-    }
-    
-    .tips {
-      margin-top: 32px;
-      padding-top: 32px;
-      border-top: 1px solid #e2e8f0;
-    }
-    
-    .tips h3 {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .tips ul {
-      list-style: none;
-      text-align: left;
-    }
-    
-    .tips li {
-      padding: 8px 0;
-      color: #475569;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .tips li::before {
-      content: "✓";
-      color: #10b981;
-      font-weight: bold;
-    }
-    
-    @media (prefers-color-scheme: dark) {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline - Mind Gym</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
-        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
       }
-      
+
       .offline-container {
-        background: #1e293b;
+        text-align: center;
+        max-width: 480px;
+        padding: 40px;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
       }
-      
+
+      .icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 24px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+      }
+
       h1 {
-        color: #f8fafc;
+        font-size: 28px;
+        color: #0f172a;
+        margin-bottom: 12px;
       }
-      
+
       p {
-        color: #94a3b8;
+        color: #64748b;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 24px;
       }
-      
+
+      .retry-btn {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .retry-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+      }
+
       .tips {
-        border-top-color: #334155;
+        margin-top: 32px;
+        padding-top: 32px;
+        border-top: 1px solid #e2e8f0;
       }
-      
+
       .tips h3 {
-        color: #94a3b8;
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
-      
+
+      .tips ul {
+        list-style: none;
+        text-align: left;
+      }
+
       .tips li {
-        color: #cbd5e1;
+        padding: 8px 0;
+        color: #475569;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="offline-container">
-    <div class="icon">🧠</div>
-    <h1>You're Offline</h1>
-    <p>
-      Mind Gym is available offline, but this page couldn't be loaded from cache.
-      Check your connection and try again.
-    </p>
-    <button class="retry-btn" onclick="location.reload()">
-      Retry Connection
-    </button>
-    
-    <div class="tips">
-      <h3>While you're waiting</h3>
-      <ul>
-        <li>Classic matching mode works offline</li>
-        <li>N-back training is available</li>
-        <li>Your progress is saved locally</li>
-        <li>Try the daily challenge</li>
-      </ul>
+
+      .tips li::before {
+        content: '✓';
+        color: #10b981;
+        font-weight: bold;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+
+        .offline-container {
+          background: #1e293b;
+        }
+
+        h1 {
+          color: #f8fafc;
+        }
+
+        p {
+          color: #94a3b8;
+        }
+
+        .tips {
+          border-top-color: #334155;
+        }
+
+        .tips h3 {
+          color: #94a3b8;
+        }
+
+        .tips li {
+          color: #cbd5e1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="offline-container">
+      <div class="icon">🧠</div>
+      <h1>You're Offline</h1>
+      <p>
+        Mind Gym is available offline, but this page couldn't be loaded from cache. Check your
+        connection and try again.
+      </p>
+      <button class="retry-btn" onclick="location.reload()">Retry Connection</button>
+
+      <div class="tips">
+        <h3>While you're waiting</h3>
+        <ul>
+          <li>Classic matching mode works offline</li>
+          <li>N-back training is available</li>
+          <li>Your progress is saved locally</li>
+          <li>Try the daily challenge</li>
+        </ul>
+      </div>
     </div>
-  </div>
-  
-  <script>
-    // Check for online status
-    window.addEventListener('online', () => {
-      location.reload();
-    });
-    
-    // Attempt to navigate back to main app
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.ready.then(() => {
-        caches.match('./index.html').then(response => {
-          if (response) {
-            // We have the app cached, redirect
-            setTimeout(() => {
-              window.location.href = './';
-            }, 3000);
-          }
-        });
+
+    <script>
+      // Check for online status
+      window.addEventListener('online', () => {
+        location.reload();
       });
-    }
-  </script>
-</body>
+
+      // Attempt to navigate back to main app
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.ready.then(() => {
+          caches.match('./index.html').then(response => {
+            if (response) {
+              // We have the app cached, redirect
+              setTimeout(() => {
+                window.location.href = './';
+              }, 3000);
+            }
+          });
+        });
+      }
+    </script>
+  </body>
 </html>

@@ -6,10 +6,10 @@ Complete guide to Progressive Web App implementation and offline capabilities in
 
 ## Component Overview
 
-| Component | File | Responsibility |
-|-----------|------|----------------|
+| Component            | File                   | Responsibility                        |
+| -------------------- | ---------------------- | ------------------------------------- |
 | **Web App Manifest** | `manifest.webmanifest` | Install metadata, icons, theme colors |
-| **Service Worker** | `sw.js` | Offline caching, request interception |
+| **Service Worker**   | `sw.js`                | Offline caching, request interception |
 
 ---
 
@@ -40,16 +40,16 @@ Complete guide to Progressive Web App implementation and offline capabilities in
 
 ### Field Reference
 
-| Field | Value | Description |
-|-------|-------|-------------|
-| `name` | Full name | Displayed in app stores and install prompts |
-| `short_name` | Short name | Shown under the home screen icon |
-| `start_url` | `./` | Entry point when launched |
-| `scope` | `./` | PWA scope boundary |
-| `display` | `standalone` | Independent window, no browser UI |
-| `background_color` | `#f8fafc` | Splash screen background |
-| `theme_color` | `#4f46e5` | Address bar/toolbar color |
-| `icons` | SVG icon | Scalable to any size |
+| Field              | Value        | Description                                 |
+| ------------------ | ------------ | ------------------------------------------- |
+| `name`             | Full name    | Displayed in app stores and install prompts |
+| `short_name`       | Short name   | Shown under the home screen icon            |
+| `start_url`        | `./`         | Entry point when launched                   |
+| `scope`            | `./`         | PWA scope boundary                          |
+| `display`          | `standalone` | Independent window, no browser UI           |
+| `background_color` | `#f8fafc`    | Splash screen background                    |
+| `theme_color`      | `#4f46e5`    | Address bar/toolbar color                   |
+| `icons`            | SVG icon     | Scalable to any size                        |
 
 ---
 
@@ -93,14 +93,14 @@ const ASSETS = [
 ```javascript
 if (url.pathname.endsWith('.css')) {
   event.respondWith(
-    caches.match(req).then((cached) => {
+    caches.match(req).then(cached => {
       if (cached) return cached;
-      return fetch(req).then((res) => {
+      return fetch(req).then(res => {
         const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
         return res;
       });
-    }),
+    })
   );
 }
 ```
@@ -113,14 +113,14 @@ Returns cached version immediately; fetches and caches only if missing.
 if (req.mode === 'navigate' || req.headers.get('accept')?.includes('text/html')) {
   event.respondWith(
     fetch(req)
-      .then((res) => {
+      .then(res => {
         const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
         return res;
       })
       .catch(() => {
-        return caches.match(req).then((res) => res || caches.match('./index.html'));
-      }),
+        return caches.match(req).then(res => res || caches.match('./index.html'));
+      })
   );
 }
 ```
@@ -132,14 +132,14 @@ Attempts network first for freshness; falls back to cache on failure.
 ```javascript
 if (req.method === 'GET') {
   event.respondWith(
-    caches.match(req).then((cached) => {
+    caches.match(req).then(cached => {
       if (cached) return cached;
-      return fetch(req).then((res) => {
+      return fetch(req).then(res => {
         const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
         return res;
       });
-    }),
+    })
   );
 }
 ```
@@ -151,12 +151,12 @@ if (req.method === 'GET') {
 ### Install Phase
 
 ```javascript
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting()),
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 ```
@@ -168,12 +168,12 @@ self.addEventListener('install', (event) => {
 ### Activate Phase
 
 ```javascript
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.map((k) => (k === CACHE_NAME ? null : caches.delete(k)))))
-      .then(() => self.clients.claim()),
+      .then(keys => Promise.all(keys.map(k => (k === CACHE_NAME ? null : caches.delete(k)))))
+      .then(() => self.clients.claim())
   );
 });
 ```
@@ -184,7 +184,7 @@ self.addEventListener('activate', (event) => {
 ### Fetch Interception
 
 ```javascript
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   const req = event.request;
   const url = new URL(req.url);
 
@@ -204,25 +204,25 @@ self.addEventListener('fetch', (event) => {
 
 ### Feature Matrix
 
-| Feature | Offline Status | Notes |
-|---------|---------------|-------|
-| Classic Matching | ✅ Full | Fully offline |
-| Countdown Mode | ✅ Full | Fully offline |
-| Daily Challenge | ⚠️ Partial | Requires online for first-time seed |
-| N-back | ✅ Full | Fully offline |
-| Delayed Recall | ✅ Full | Fully offline |
-| Statistics | ✅ Full | Local storage |
-| Achievements | ✅ Full | Local storage |
-| Settings | ✅ Full | Local storage |
-| Import/Export | ✅ Full | Local operations |
+| Feature          | Offline Status | Notes                               |
+| ---------------- | -------------- | ----------------------------------- |
+| Classic Matching | ✅ Full        | Fully offline                       |
+| Countdown Mode   | ✅ Full        | Fully offline                       |
+| Daily Challenge  | ⚠️ Partial     | Requires online for first-time seed |
+| N-back           | ✅ Full        | Fully offline                       |
+| Delayed Recall   | ✅ Full        | Fully offline                       |
+| Statistics       | ✅ Full        | Local storage                       |
+| Achievements     | ✅ Full        | Local storage                       |
+| Settings         | ✅ Full        | Local storage                       |
+| Import/Export    | ✅ Full        | Local operations                    |
 
 ### Offline Limitations
 
-| Limitation | Explanation |
-|------------|-------------|
-| First Visit | Requires online connection for initial asset download |
-| CDN Resources | Tailwind CSS CDN cached for offline use after first load |
-| Daily Challenge | Seed based on local date; no server validation |
+| Limitation      | Explanation                                              |
+| --------------- | -------------------------------------------------------- |
+| First Visit     | Requires online connection for initial asset download    |
+| CDN Resources   | Tailwind CSS CDN cached for offline use after first load |
+| Daily Challenge | Seed based on local date; no server validation           |
 
 ---
 
@@ -256,12 +256,12 @@ navigator.serviceWorker.getRegistrations().then(regs => {
 
 ## Browser Compatibility
 
-| Browser | PWA Support | Service Worker | Install Prompt |
-|---------|-------------|----------------|----------------|
-| Chrome 90+ | ✅ Full | ✅ | ✅ |
-| Firefox 90+ | ✅ Full | ✅ | ✅ (Android) |
-| Safari 14+ | ✅ Partial | ✅ | ⭐ "Add to Home Screen" |
-| Edge 90+ | ✅ Full | ✅ | ✅ |
+| Browser     | PWA Support | Service Worker | Install Prompt          |
+| ----------- | ----------- | -------------- | ----------------------- |
+| Chrome 90+  | ✅ Full     | ✅             | ✅                      |
+| Firefox 90+ | ✅ Full     | ✅             | ✅ (Android)            |
+| Safari 14+  | ✅ Partial  | ✅             | ⭐ "Add to Home Screen" |
+| Edge 90+    | ✅ Full     | ✅             | ✅                      |
 
 ### Safari Notes
 
@@ -277,12 +277,12 @@ navigator.serviceWorker.getRegistrations().then(regs => {
 
 ```javascript
 // List all cached resources
-caches.keys().then((names) => {
-  names.forEach((name) => {
-    caches.open(name).then((cache) => {
-      cache.keys().then((keys) => {
+caches.keys().then(names => {
+  names.forEach(name => {
+    caches.open(name).then(cache => {
+      cache.keys().then(keys => {
         console.log(`Cache: ${name}`);
-        keys.forEach((key) => console.log('  -', key.url));
+        keys.forEach(key => console.log('  -', key.url));
       });
     });
   });
@@ -292,8 +292,8 @@ caches.keys().then((names) => {
 ### Clear All Caches
 
 ```javascript
-caches.keys().then((names) => {
-  names.forEach((name) => caches.delete(name));
+caches.keys().then(names => {
+  names.forEach(name => caches.delete(name));
 });
 ```
 
@@ -318,27 +318,27 @@ caches.keys().then((names) => {
 
 ### Issue: App won't install
 
-| Check | Solution |
-|-------|----------|
-| HTTPS | PWA requires HTTPS (or localhost) |
-| Manifest | Validate at [PWABuilder](https://www.pwabuilder.com/) |
-| Service Worker | Check DevTools → Application → Service Workers |
+| Check          | Solution                                              |
+| -------------- | ----------------------------------------------------- |
+| HTTPS          | PWA requires HTTPS (or localhost)                     |
+| Manifest       | Validate at [PWABuilder](https://www.pwabuilder.com/) |
+| Service Worker | Check DevTools → Application → Service Workers        |
 
 ### Issue: Offline mode not working
 
-| Check | Solution |
-|-------|----------|
-| First visit | Must be online for initial cache |
-| Cache version | Increment `CACHE_NAME` after changes |
-| Asset list | Ensure `ASSETS` includes all required files |
+| Check         | Solution                                    |
+| ------------- | ------------------------------------------- |
+| First visit   | Must be online for initial cache            |
+| Cache version | Increment `CACHE_NAME` after changes        |
+| Asset list    | Ensure `ASSETS` includes all required files |
 
 ### Issue: Updates not appearing
 
-| Check | Solution |
-|-------|----------|
-| Hard refresh | Ctrl+Shift+R / Cmd+Shift+R |
+| Check         | Solution                                              |
+| ------------- | ----------------------------------------------------- |
+| Hard refresh  | Ctrl+Shift+R / Cmd+Shift+R                            |
 | SW unregister | DevTools → Application → Service Workers → Unregister |
-| Cache clear | DevTools → Application → Clear Storage |
+| Cache clear   | DevTools → Application → Clear Storage                |
 
 ---
 
@@ -359,4 +359,4 @@ caches.keys().then((names) => {
 
 ---
 
-*For architecture details, see [Architecture Overview](./architecture.md). For data persistence, see [Storage Model](./storage.md).*
+_For architecture details, see [Architecture Overview](./architecture.md). For data persistence, see [Storage Model](./storage.md)._

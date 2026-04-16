@@ -44,13 +44,13 @@
 
 ### Training Modes
 
-| Mode | Description | Cognitive Target |
-|------|-------------|------------------|
-| **Classic Matching** | Flip cards to find matching pairs (4×4, 4×5, 6×6) | Visual memory, attention |
-| **Countdown Mode** | Race against configurable time limits | Processing speed, stress handling |
-| **Daily Challenge** | Same card layout for all players worldwide | Consistency, competition |
-| **N-back Training** | Working memory exercise — match stimulus N-steps back | Working memory, focus |
-| **Delayed Recall** | Post-game recognition test | Long-term memory consolidation |
+| Mode                 | Description                                           | Cognitive Target                  |
+| -------------------- | ----------------------------------------------------- | --------------------------------- |
+| **Classic Matching** | Flip cards to find matching pairs (4×4, 4×5, 6×6)     | Visual memory, attention          |
+| **Countdown Mode**   | Race against configurable time limits                 | Processing speed, stress handling |
+| **Daily Challenge**  | Same card layout for all players worldwide            | Consistency, competition          |
+| **N-back Training**  | Working memory exercise — match stimulus N-steps back | Working memory, focus             |
+| **Delayed Recall**   | Post-game recognition test                            | Long-term memory consolidation    |
 
 ### Adaptive Intelligence
 
@@ -61,14 +61,14 @@
 
 ### User Experience
 
-| Feature | Description |
-|---------|-------------|
-| 🌍 **Full i18n** | Chinese & English with auto-detection |
-| 📲 **PWA Support** | Installable, works offline |
-| ⌨️ **Keyboard Shortcuts** | Complete keyboard navigation |
-| 📊 **Statistics Dashboard** | Track progress across all metrics |
-| 🏆 **Achievement System** | Unlock milestones |
-| 💾 **Data Backup** | Export/import all progress as JSON |
+| Feature                     | Description                           |
+| --------------------------- | ------------------------------------- |
+| 🌍 **Full i18n**            | Chinese & English with auto-detection |
+| 📲 **PWA Support**          | Installable, works offline            |
+| ⌨️ **Keyboard Shortcuts**   | Complete keyboard navigation          |
+| 📊 **Statistics Dashboard** | Track progress across all metrics     |
+| 🏆 **Achievement System**   | Unlock milestones                     |
+| 💾 **Data Backup**          | Export/import all progress as JSON    |
 
 ---
 
@@ -83,6 +83,7 @@ Visit **[https://lessup.github.io/mind-gym/](https://lessup.github.io/mind-gym/)
 #### Desktop
 
 **Chrome/Edge:**
+
 1. Visit the site
 2. Click the install icon (➕) in the address bar
 3. Launch from desktop
@@ -90,9 +91,11 @@ Visit **[https://lessup.github.io/mind-gym/](https://lessup.github.io/mind-gym/)
 #### Mobile
 
 **iOS Safari:**
+
 1. Tap Share → "Add to Home Screen"
 
 **Android Chrome:**
+
 1. Tap Menu → "Add to Home screen"
 
 ### Local Development
@@ -111,12 +114,12 @@ npx serve .
 
 ### Development Commands
 
-| Command | Purpose |
-|---------|---------|
-| `npm test` | Run Jest unit tests |
-| `npm run lint` | Check code formatting |
-| `npm run format` | Auto-format all files |
-| `npm run build:css` | Compile Tailwind CSS |
+| Command                  | Purpose               |
+| ------------------------ | --------------------- |
+| `npm test`               | Run Jest unit tests   |
+| `npm run lint`           | Check code formatting |
+| `npm run format`         | Auto-format all files |
+| `npm run build:css`      | Compile Tailwind CSS  |
 | `npm run prepare:deploy` | Build + copy to dist/ |
 
 ---
@@ -154,37 +157,37 @@ mind-gym/
 
 ## 🎮 Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `N` | New game |
-| `P` | Pause / Resume |
-| `H` | Use hint |
-| `J` | N-back match (during N-back) |
-| `↑↓←→` | Navigate cards |
-| `Enter` / `Space` | Flip selected card |
-| `Escape` | Close modal |
+| Key               | Action                       |
+| ----------------- | ---------------------------- |
+| `N`               | New game                     |
+| `P`               | Pause / Resume               |
+| `H`               | Use hint                     |
+| `J`               | N-back match (during N-back) |
+| `↑↓←→`            | Navigate cards               |
+| `Enter` / `Space` | Flip selected card           |
+| `Escape`          | Close modal                  |
 
 ---
 
 ## 🛠 Technology Stack
 
-| Layer | Technology |
-|-------|------------|
+| Layer       | Technology                                              |
+| ----------- | ------------------------------------------------------- |
 | **Runtime** | Vanilla JavaScript (ES2022) — zero runtime dependencies |
-| **Styling** | Tailwind CSS 3.4 (CLI compiled) |
-| **Storage** | localStorage for persistence |
-| **Testing** | Jest 30 + jsdom |
-| **CI/CD** | GitHub Actions |
-| **Hosting** | GitHub Pages |
+| **Styling** | Tailwind CSS 3.4 (CLI compiled)                         |
+| **Storage** | localStorage for persistence                            |
+| **Testing** | Jest 30 + jsdom                                         |
+| **CI/CD**   | GitHub Actions                                          |
+| **Hosting** | GitHub Pages                                            |
 
 ### Browser Support
 
 | Browser | Version | PWA Install |
-|---------|---------|-------------|
-| Chrome | 90+ | ✅ |
-| Firefox | 90+ | ✅ |
-| Safari | 14+ | ⚠️* |
-| Edge | 90+ | ✅ |
+| ------- | ------- | ----------- |
+| Chrome  | 90+     | ✅          |
+| Firefox | 90+     | ✅          |
+| Safari  | 14+     | ⚠️\*        |
+| Edge    | 90+     | ✅          |
 
 \* Safari: Use "Add to Home Screen" from share menu
 
@@ -194,14 +197,14 @@ mind-gym/
 
 All data is stored locally in `localStorage` with the `memory_match_` prefix:
 
-| Key | Data |
-|-----|------|
-| `_settings` | User preferences |
-| `_best_<difficulty>` | Best scores |
-| `_lb_<difficulty>` | Leaderboards |
-| `_stats` | Aggregate statistics |
-| `_achievements` | Unlocked achievements |
-| `_adaptive` | Adaptive rating (600-1600) |
+| Key                  | Data                       |
+| -------------------- | -------------------------- |
+| `_settings`          | User preferences           |
+| `_best_<difficulty>` | Best scores                |
+| `_lb_<difficulty>`   | Leaderboards               |
+| `_stats`             | Aggregate statistics       |
+| `_achievements`      | Unlocked achievements      |
+| `_adaptive`          | Adaptive rating (600-1600) |
 
 See [docs/storage.md](docs/storage.md) for complete data structures.
 
@@ -209,12 +212,12 @@ See [docs/storage.md](docs/storage.md) for complete data structures.
 
 ## 📖 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Architecture](docs/architecture.md) | System design and data flow |
-| [Training Modes](docs/modes.md) | Mode specifications and algorithms |
-| [Storage Model](docs/storage.md) | Data structures and persistence |
-| [PWA/Offline](docs/pwa.md) | Service Worker and caching |
+| Document                             | Description                        |
+| ------------------------------------ | ---------------------------------- |
+| [Architecture](docs/architecture.md) | System design and data flow        |
+| [Training Modes](docs/modes.md)      | Mode specifications and algorithms |
+| [Storage Model](docs/storage.md)     | Data structures and persistence    |
+| [PWA/Offline](docs/pwa.md)           | Service Worker and caching         |
 
 ---
 

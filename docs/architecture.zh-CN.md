@@ -6,13 +6,13 @@
 
 ## 项目形态
 
-| 特性 | 实现方式 |
-|------|----------|
-| **部署方式** | 纯静态前端，无需后端 |
+| 特性         | 实现方式                           |
+| ------------ | ---------------------------------- |
+| **部署方式** | 纯静态前端，无需后端               |
 | **构建工具** | 无打包器；仅 Tailwind CLI 编译 CSS |
-| **框架** | 无框架，原生 JavaScript (ES2022) |
-| **状态管理** | 内存变量 + localStorage |
-| **PWA** | Service Worker + Web App Manifest |
+| **框架**     | 无框架，原生 JavaScript (ES2022)   |
+| **状态管理** | 内存变量 + localStorage            |
+| **PWA**      | Service Worker + Web App Manifest  |
 
 ---
 
@@ -62,28 +62,28 @@
 
 ### 核心模块
 
-| 模块 | 文件 | 职责 |
-|------|------|------|
-| **编排器** | `app.js` | 游戏主循环、状态机、模式调度、UI 协调 |
-| **存储** | `src/storage.js` | localStorage CRUD，数据规范化 |
-| **统计** | `src/stats.js` | 统计数据累计与计算 |
-| **模式** | `src/modes.js` | N-back、回忆测验纯逻辑 |
-| **成就** | `src/achievements.js` | 成就定义与解锁检查 |
+| 模块       | 文件                  | 职责                                  |
+| ---------- | --------------------- | ------------------------------------- |
+| **编排器** | `app.js`              | 游戏主循环、状态机、模式调度、UI 协调 |
+| **存储**   | `src/storage.js`      | localStorage CRUD，数据规范化         |
+| **统计**   | `src/stats.js`        | 统计数据累计与计算                    |
+| **模式**   | `src/modes.js`        | N-back、回忆测验纯逻辑                |
+| **成就**   | `src/achievements.js` | 成就定义与解锁检查                    |
 
 ### 支撑模块
 
-| 模块 | 文件 | 职责 |
-|------|------|------|
-| **键名** | `src/keys.js` | localStorage 键名常量 |
-| **工具** | `src/utils.js` | 洗牌、种子随机、HTML 转义 |
-| **国际化** | `src/i18n.js` | 国际化词典与语言检测 |
-| **效果** | `src/effects.js` | 音效（Web Audio）与震动 |
-| **素材池** | `src/pools.js` | 卡面素材池 |
-| **计时器** | `src/timer.js` | 正计时/倒计时管理 |
-| **彩纸** | `src/confetti.js` | 胜利粒子动画 |
-| **UI** | `src/ui.js` | DOM 元素绑定 |
-| **UI 事件** | `src/ui-events.js` | 事件监听注册 |
-| **导入导出** | `src/import-export.js` | 备份数据规范化 |
+| 模块         | 文件                   | 职责                      |
+| ------------ | ---------------------- | ------------------------- |
+| **键名**     | `src/keys.js`          | localStorage 键名常量     |
+| **工具**     | `src/utils.js`         | 洗牌、种子随机、HTML 转义 |
+| **国际化**   | `src/i18n.js`          | 国际化词典与语言检测      |
+| **效果**     | `src/effects.js`       | 音效（Web Audio）与震动   |
+| **素材池**   | `src/pools.js`         | 卡面素材池                |
+| **计时器**   | `src/timer.js`         | 正计时/倒计时管理         |
+| **彩纸**     | `src/confetti.js`      | 胜利粒子动画              |
+| **UI**       | `src/ui.js`            | DOM 元素绑定              |
+| **UI 事件**  | `src/ui-events.js`     | 事件监听注册              |
+| **导入导出** | `src/import-export.js` | 备份数据规范化            |
 
 ---
 
@@ -182,17 +182,17 @@ onTimeUp()
 
 ```javascript
 // 游戏进度
-let firstCard = null;        // 第一张翻开的牌
-let secondCard = null;       // 第二张翻开的牌
-let lockBoard = false;       // 是否锁定棋盘
-let moves = 0;               // 步数
-let matchedPairs = 0;        // 已配对数
-let started = false;         // 游戏是否开始
+let firstCard = null; // 第一张翻开的牌
+let secondCard = null; // 第二张翻开的牌
+let lockBoard = false; // 是否锁定棋盘
+let moves = 0; // 步数
+let matchedPairs = 0; // 已配对数
+let started = false; // 游戏是否开始
 
 // 计时
-let elapsed = 0;             // 已用时间（秒）
-let countdownLeft = 0;       // 倒计时剩余
-let timerId = null;          // 定时器 ID
+let elapsed = 0; // 已用时间（秒）
+let countdownLeft = 0; // 倒计时剩余
+let timerId = null; // 定时器 ID
 
 // 难度与设置
 let currentDifficulty = 'easy';
@@ -233,21 +233,21 @@ let dailySeed = 0;
 
 ### 渲染性能
 
-| 技术 | 实现 | 收益 |
-|------|------|------|
-| CSS Transform | `transform: rotateY()` 翻牌动画 | GPU 加速 |
-| CSS Transition | `transition: transform 0.3s` | 流畅 60fps 动画 |
-| Canvas 2D | `confetti.js` 粒子系统 | 高效粒子渲染 |
-| 虚拟列表 | 不适用（固定网格尺寸） | 此规模无需优化 |
+| 技术           | 实现                            | 收益            |
+| -------------- | ------------------------------- | --------------- |
+| CSS Transform  | `transform: rotateY()` 翻牌动画 | GPU 加速        |
+| CSS Transition | `transition: transform 0.3s`    | 流畅 60fps 动画 |
+| Canvas 2D      | `confetti.js` 粒子系统          | 高效粒子渲染    |
+| 虚拟列表       | 不适用（固定网格尺寸）          | 此规模无需优化  |
 
 ### 内存管理
 
-| 策略 | 实现 |
-|------|------|
-| 事件委托 | 在容器上使用单一监听器，而非每张卡牌 |
+| 策略       | 实现                                  |
+| ---------- | ------------------------------------- |
+| 事件委托   | 在容器上使用单一监听器，而非每张卡牌  |
 | 定时器清理 | 游戏结束/弹窗关闭时 `clearInterval()` |
-| DOM 缓存 | 元素缓存在 `ui.js` 中，不重复查询 |
-| 状态重置 | `initGame()` 时重置所有游戏状态 |
+| DOM 缓存   | 元素缓存在 `ui.js` 中，不重复查询     |
+| 状态重置   | `initGame()` 时重置所有游戏状态       |
 
 ---
 
@@ -307,28 +307,28 @@ let dailySeed = 0;
 
 ### 未来改进
 
-| 优先级 | 变更 | 影响 |
-|--------|------|------|
-| P1 | ES Modules 迁移 | Tree-shaking，现代导入语法 |
-| P2 | 提取 `nback.js` | 独立的 N-back 模块 |
-| P3 | 提取 `recall.js` | 独立的回忆测验模块 |
-| P4 | 提取 `daily.js` | 独立的每日挑战模块 |
-| P5 | 提取 `adaptive.js` | 独立的自适应系统 |
+| 优先级 | 变更               | 影响                       |
+| ------ | ------------------ | -------------------------- |
+| P1     | ES Modules 迁移    | Tree-shaking，现代导入语法 |
+| P2     | 提取 `nback.js`    | 独立的 N-back 模块         |
+| P3     | 提取 `recall.js`   | 独立的回忆测验模块         |
+| P4     | 提取 `daily.js`    | 独立的每日挑战模块         |
+| P5     | 提取 `adaptive.js` | 独立的自适应系统           |
 
 ---
 
 ## 浏览器兼容性
 
-| 特性 | Chrome | Firefox | Safari | Edge |
-|------|--------|---------|--------|------|
-| 核心游戏 | 90+ | 90+ | 14+ | 90+ |
-| Web Audio | 90+ | 90+ | 14+ | 90+ |
-| Vibration API | 90+ | 90+* | 不支持 | 90+ |
-| Service Worker | 90+ | 90+ | 14+ | 90+ |
-| localStorage | 90+ | 90+ | 14+ | 90+ |
+| 特性           | Chrome | Firefox | Safari | Edge |
+| -------------- | ------ | ------- | ------ | ---- |
+| 核心游戏       | 90+    | 90+     | 14+    | 90+  |
+| Web Audio      | 90+    | 90+     | 14+    | 90+  |
+| Vibration API  | 90+    | 90+\*   | 不支持 | 90+  |
+| Service Worker | 90+    | 90+     | 14+    | 90+  |
+| localStorage   | 90+    | 90+     | 14+    | 90+  |
 
 \* 仅 Firefox 移动端支持
 
 ---
 
-*有关特定模式的实现细节，请参见 [训练模式](./modes.zh-CN.md)。有关数据结构，请参见 [存储模型](./storage.zh-CN.md)。*
+_有关特定模式的实现细节，请参见 [训练模式](./modes.zh-CN.md)。有关数据结构，请参见 [存储模型](./storage.zh-CN.md)。_

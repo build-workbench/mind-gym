@@ -12,17 +12,17 @@ All keys use `memory_match_` prefix to avoid conflicts.
 
 ### Key Reference
 
-| Key | Type | Description |
-|-----|------|-------------|
-| `memory_match_settings` | Object | User preferences |
-| `memory_match_best_<difficulty>` | Object | Best time/moves per difficulty |
-| `memory_match_lb_<difficulty>` | Array | Leaderboard (top 3) per difficulty |
-| `memory_match_achievements` | Object | Achievement unlock status |
-| `memory_match_stats` | Object | Aggregate statistics |
-| `memory_match_adaptive` | Object | Adaptive difficulty rating |
-| `memory_match_spaced_<theme>` | Object | Spaced repetition weights |
-| `memory_match_daily_<date>_<difficulty>` | Object | Daily challenge completion |
-| `memory_match_onboarding_v1` | String | Onboarding completion flag |
+| Key                                      | Type   | Description                        |
+| ---------------------------------------- | ------ | ---------------------------------- |
+| `memory_match_settings`                  | Object | User preferences                   |
+| `memory_match_best_<difficulty>`         | Object | Best time/moves per difficulty     |
+| `memory_match_lb_<difficulty>`           | Array  | Leaderboard (top 3) per difficulty |
+| `memory_match_achievements`              | Object | Achievement unlock status          |
+| `memory_match_stats`                     | Object | Aggregate statistics               |
+| `memory_match_adaptive`                  | Object | Adaptive difficulty rating         |
+| `memory_match_spaced_<theme>`            | Object | Spaced repetition weights          |
+| `memory_match_daily_<date>_<difficulty>` | Object | Daily challenge completion         |
+| `memory_match_onboarding_v1`             | String | Onboarding completion flag         |
 
 ### Parameter Values
 
@@ -38,24 +38,24 @@ All keys use `memory_match_` prefix to avoid conflicts.
 
 ```typescript
 interface Settings {
-  sound: boolean;              // Sound effects enabled
-  vibrate: boolean;            // Haptic feedback enabled
-  previewSeconds: number;      // Preview time at start (0-5)
-  accent: 'indigo' | 'emerald' | 'rose';  // Theme accent color
-  theme: 'auto' | 'light' | 'dark';       // Color scheme
-  motion: 'auto' | 'on' | 'off';          // Animation preference
-  volume: number;              // Volume level (0-1)
+  sound: boolean; // Sound effects enabled
+  vibrate: boolean; // Haptic feedback enabled
+  previewSeconds: number; // Preview time at start (0-5)
+  accent: 'indigo' | 'emerald' | 'rose'; // Theme accent color
+  theme: 'auto' | 'light' | 'dark'; // Color scheme
+  motion: 'auto' | 'on' | 'off'; // Animation preference
+  volume: number; // Volume level (0-1)
   soundPack: 'clear' | 'electro' | 'soft'; // Sound pack
   cardFace: 'emoji' | 'numbers' | 'letters' | 'shapes' | 'colors';
   gameMode: 'classic' | 'countdown';
   countdown: {
-    easy: number;              // Easy countdown seconds (10-999)
-    medium: number;            // Medium countdown seconds
-    hard: number;              // Hard countdown seconds
+    easy: number; // Easy countdown seconds (10-999)
+    medium: number; // Medium countdown seconds
+    hard: number; // Hard countdown seconds
   };
   language: 'auto' | 'zh' | 'en';
-  adaptive: boolean;           // Adaptive assist enabled
-  spaced: boolean;             // Spaced repetition enabled
+  adaptive: boolean; // Adaptive assist enabled
+  spaced: boolean; // Spaced repetition enabled
 }
 ```
 
@@ -84,8 +84,8 @@ interface Settings {
 
 ```typescript
 interface BestScore {
-  time: number;    // Time in seconds
-  moves: number;   // Number of moves
+  time: number; // Time in seconds
+  moves: number; // Number of moves
 }
 ```
 
@@ -104,9 +104,9 @@ interface BestScore {
 type Leaderboard = LeaderboardEntry[];
 
 interface LeaderboardEntry {
-  time: number;    // Time in seconds
-  moves: number;   // Number of moves
-  at: number;      // Timestamp (Date.now())
+  time: number; // Time in seconds
+  moves: number; // Number of moves
+  at: number; // Timestamp (Date.now())
 }
 ```
 
@@ -129,21 +129,21 @@ interface LeaderboardEntry {
 interface Achievements {
   [achievementId: string]: {
     unlocked: true;
-    at: number;      // Unlock timestamp
+    at: number; // Unlock timestamp
   };
 }
 ```
 
 **Achievement IDs**:
 
-| ID | Condition |
-|----|-----------|
-| `first_win` | Complete any game |
-| `easy_under_60` | Easy difficulty under 60s |
+| ID                 | Condition                    |
+| ------------------ | ---------------------------- |
+| `first_win`        | Complete any game            |
+| `easy_under_60`    | Easy difficulty under 60s    |
 | `medium_under_120` | Medium difficulty under 120s |
-| `hard_under_180` | Hard difficulty under 180s |
-| `no_hint_win` | Complete without hints |
-| `perfect_moves` | Perfect game (moves = pairs) |
+| `hard_under_180`   | Hard difficulty under 180s   |
+| `no_hint_win`      | Complete without hints       |
+| `perfect_moves`    | Perfect game (moves = pairs) |
 
 **Example**:
 
@@ -158,43 +158,43 @@ interface Achievements {
 
 ```typescript
 interface Stats {
-  games: number;           // Total games played
-  wins: number;            // Total wins
-  timeSum: number;         // Total time (seconds)
-  movesSum: number;        // Total moves
-  hintsSum: number;        // Total hints used
-  comboSum: number;        // Sum of max combos
-  bestCombo: number;       // Best combo ever
-  recallAttempts: number;  // Recall test attempts
-  precisionSum: number;    // Precision sum (for average)
-  recallSum: number;       // Recall sum (for average)
-  nbackAttempts: number;   // N-back attempts
-  nbackAccSum: number;     // N-back accuracy sum
-  nbackRtSum: number;      // N-back RT sum (ms)
-  nbackRtCount: number;    // N-back RT sample count
+  games: number; // Total games played
+  wins: number; // Total wins
+  timeSum: number; // Total time (seconds)
+  movesSum: number; // Total moves
+  hintsSum: number; // Total hints used
+  comboSum: number; // Sum of max combos
+  bestCombo: number; // Best combo ever
+  recallAttempts: number; // Recall test attempts
+  precisionSum: number; // Precision sum (for average)
+  recallSum: number; // Recall sum (for average)
+  nbackAttempts: number; // N-back attempts
+  nbackAccSum: number; // N-back accuracy sum
+  nbackRtSum: number; // N-back RT sum (ms)
+  nbackRtCount: number; // N-back RT sample count
 }
 ```
 
 **Derived Metrics**:
 
-| Metric | Calculation |
-|--------|-------------|
-| Win Rate | `wins / games` |
-| Avg Time | `timeSum / wins` |
-| Avg Moves | `movesSum / wins` |
-| Avg Hints | `hintsSum / wins` |
-| Avg Combo | `comboSum / wins` |
-| Avg Precision | `precisionSum / recallAttempts` |
-| Avg Recall | `recallSum / recallAttempts` |
-| Avg N-back Accuracy | `nbackAccSum / nbackAttempts` |
-| Avg N-back RT | `nbackRtSum / nbackRtCount` |
+| Metric              | Calculation                     |
+| ------------------- | ------------------------------- |
+| Win Rate            | `wins / games`                  |
+| Avg Time            | `timeSum / wins`                |
+| Avg Moves           | `movesSum / wins`               |
+| Avg Hints           | `hintsSum / wins`               |
+| Avg Combo           | `comboSum / wins`               |
+| Avg Precision       | `precisionSum / recallAttempts` |
+| Avg Recall          | `recallSum / recallAttempts`    |
+| Avg N-back Accuracy | `nbackAccSum / nbackAttempts`   |
+| Avg N-back RT       | `nbackRtSum / nbackRtCount`     |
 
 ### Adaptive Data
 
 ```typescript
 interface AdaptiveData {
-  rating: number;              // Rating (600-1600)
-  lastDiff: 'easy' | 'medium' | 'hard';  // Last difficulty played
+  rating: number; // Rating (600-1600)
+  lastDiff: 'easy' | 'medium' | 'hard'; // Last difficulty played
 }
 ```
 
@@ -208,7 +208,7 @@ interface AdaptiveData {
 
 ```typescript
 interface SpacedData {
-  [cardValue: string]: number;    // Card value → weight
+  [cardValue: string]: number; // Card value → weight
 }
 ```
 
@@ -233,7 +233,7 @@ interface SpacedData {
 ```typescript
 interface DailyData {
   done: true;
-  at: number;      // Completion timestamp
+  at: number; // Completion timestamp
 }
 ```
 
@@ -414,13 +414,13 @@ function normalizeImportData(raw, defaults) {
 ```javascript
 // List all memory_match_ keys
 Object.keys(localStorage)
-  .filter((k) => k.startsWith('memory_match_'))
-  .forEach((k) => console.log(k, localStorage.getItem(k)));
+  .filter(k => k.startsWith('memory_match_'))
+  .forEach(k => console.log(k, localStorage.getItem(k)));
 
 // Clear all game data
 Object.keys(localStorage)
-  .filter((k) => k.startsWith('memory_match_'))
-  .forEach((k) => localStorage.removeItem(k));
+  .filter(k => k.startsWith('memory_match_'))
+  .forEach(k => localStorage.removeItem(k));
 ```
 
 ### Export Current State
@@ -433,4 +433,4 @@ console.log(JSON.stringify(data, null, 2));
 
 ---
 
-*For game modes and logic, see [Training Modes](./modes.md). For system architecture, see [Architecture Overview](./architecture.md).*
+_For game modes and logic, see [Training Modes](./modes.md). For system architecture, see [Architecture Overview](./architecture.md)._

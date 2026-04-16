@@ -1,7 +1,7 @@
 /**
  * Mind Gym Service Worker v3 - Aggressive Performance Optimization
  * Advanced caching with Workbox patterns
- * 
+ *
  * @version 1.6.1
  * @license MIT
  */
@@ -37,11 +37,11 @@ const PRECACHE_ASSETS = [
 ];
 
 // Install event - precache critical assets
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
-      .then((cache) => {
+      .then(cache => {
         console.log('[SW] Precaching static assets...');
         return cache.addAll(PRECACHE_ASSETS);
       })
@@ -49,25 +49,31 @@ self.addEventListener('install', (event) => {
         console.log('[SW] Precache complete');
         return self.skipWaiting();
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('[SW] Precache failed:', err);
       })
   );
 });
 
 // Activate event - cleanup old caches
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(
     caches
       .keys()
-      .then((cacheNames) => {
+      .then(cacheNames => {
         return Promise.all(
           cacheNames
-            .filter((name) => {
+            .filter(name => {
               // Keep current cache version
-              return name.startsWith('mind-gym-') && name !== STATIC_CACHE && name !== IMAGE_CACHE && name !== FONT_CACHE && name !== RUNTIME_CACHE;
+              return (
+                name.startsWith('mind-gym-') &&
+                name !== STATIC_CACHE &&
+                name !== IMAGE_CACHE &&
+                name !== FONT_CACHE &&
+                name !== RUNTIME_CACHE
+              );
             })
-            .map((name) => {
+            .map(name => {
               console.log('[SW] Deleting old cache:', name);
               return caches.delete(name);
             })
@@ -81,7 +87,7 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event - advanced caching strategies
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
@@ -111,7 +117,11 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(cacheFirstWithTimeout(request, STATIC_CACHE, 2000));
   } else if (/\.(png|jpg|jpeg|svg|gif|webp|ico)$/i.test(url.pathname)) {
     event.respondWith(cacheFirstWithExpiration(request, IMAGE_CACHE, 100, 30 * 24 * 60 * 60));
-  } else if (url.pathname.endsWith('.woff2') || url.pathname.endsWith('.woff') || url.pathname.endsWith('.ttf')) {
+  } else if (
+    url.pathname.endsWith('.woff2') ||
+    url.pathname.endsWith('.woff') ||
+    url.pathname.endsWith('.ttf')
+  ) {
     event.respondWith(cacheFirstWithExpiration(request, FONT_CACHE, 20, 365 * 24 * 60 * 60));
   } else if (url.pathname === '/' || url.pathname === '/index.html') {
     event.respondWith(networkFirstWithFallback(request, STATIC_CACHE));
@@ -126,11 +136,11 @@ self.addEventListener('fetch', (event) => {
 async function cacheFirstWithTimeout(request, cacheName, timeout = 2000) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-  
+
   if (cached) {
     // Return cached immediately, update in background
     fetchWithTimeout(request, timeout)
-      .then((networkResponse) => {
+      .then(networkResponse => {
         if (networkResponse && networkResponse.ok) {
           cache.put(request, networkResponse.clone());
         }
@@ -138,7 +148,7 @@ async function cacheFirstWithTimeout(request, cacheName, timeout = 2000) {
       .catch(() => {});
     return cached;
   }
-  
+
   // No cache - fetch and store
   try {
     const networkResponse = await fetchWithTimeout(request, timeout);
@@ -155,7 +165,7 @@ async function cacheFirstWithTimeout(request, cacheName, timeout = 2000) {
 async function cacheFirstWithExpiration(request, cacheName, maxEntries, maxAgeSeconds) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-  
+
   if (cached) {
     // Check expiration
     const headers = cached.headers;
@@ -169,22 +179,22 @@ async function cacheFirstWithExpiration(request, cacheName, maxEntries, maxAgeSe
       return cached;
     }
   }
-  
+
   // Fetch and cache with timestamp
   try {
     const networkResponse = await fetch(request);
     if (networkResponse && networkResponse.ok) {
       const headers = new Headers(networkResponse.headers);
       headers.set('sw-cached-time', Date.now().toString());
-      
+
       const responseToCache = new Response(networkResponse.body, {
         status: networkResponse.status,
         statusText: networkResponse.statusText,
         headers: headers,
       });
-      
+
       await cache.put(request, responseToCache);
-      
+
       // Cleanup old entries if over limit
       await cleanupCache(cacheName, maxEntries);
     }
@@ -197,7 +207,7 @@ async function cacheFirstWithExpiration(request, cacheName, maxEntries, maxAgeSe
 // Network First with fallback
 async function networkFirstWithFallback(request, cacheName) {
   const cache = await caches.open(cacheName);
-  
+
   try {
     const networkResponse = await fetch(request);
     if (networkResponse && networkResponse.ok) {
@@ -207,12 +217,12 @@ async function networkFirstWithFallback(request, cacheName) {
   } catch (error) {
     console.log('[SW] Network failed, serving from cache');
   }
-  
+
   const cached = await cache.match(request);
   if (cached) {
     return cached;
   }
-  
+
   // Ultimate fallback
   return cache.match('./index.html');
 }
@@ -221,30 +231,31 @@ async function networkFirstWithFallback(request, cacheName) {
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-  
+
   const fetchPromise = fetch(request)
-    .then((networkResponse) => {
+    .then(networkResponse => {
       if (networkResponse && networkResponse.ok) {
         cache.put(request, networkResponse.clone());
       }
       return networkResponse;
     })
     .catch(() => cached);
-  
+
   return cached || fetchPromise;
 }
 
 // Google Fonts special handling
 async function handleGoogleFonts(request) {
-  const cacheName = request.url.includes('fonts.googleapis.com') ? 
-    'google-fonts-stylesheets' : 'google-fonts-webfonts';
+  const cacheName = request.url.includes('fonts.googleapis.com')
+    ? 'google-fonts-stylesheets'
+    : 'google-fonts-webfonts';
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-  
+
   if (cached) {
     return cached;
   }
-  
+
   const networkResponse = await fetch(request);
   if (networkResponse && networkResponse.ok) {
     cache.put(request, networkResponse.clone());
@@ -256,9 +267,7 @@ async function handleGoogleFonts(request) {
 function fetchWithTimeout(request, timeout) {
   return Promise.race([
     fetch(request),
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Timeout')), timeout)
-    )
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout)),
   ]);
 }
 
@@ -268,7 +277,7 @@ async function cleanupCache(cacheName, maxEntries) {
   const keys = await cache.keys();
   if (keys.length > maxEntries) {
     const keysToDelete = keys.slice(0, keys.length - maxEntries);
-    await Promise.all(keysToDelete.map((key) => cache.delete(key)));
+    await Promise.all(keysToDelete.map(key => cache.delete(key)));
   }
 }
 
@@ -276,7 +285,7 @@ async function cleanupCache(cacheName, maxEntries) {
 defineBGSync(self);
 
 function defineBGSync(self) {
-  self.addEventListener('sync', (event) => {
+  self.addEventListener('sync', event => {
     if (event.tag === 'sync-stats') {
       event.waitUntil(syncStats());
     }
@@ -289,25 +298,28 @@ async function syncStats() {
 }
 
 // Message handling for app communication
-self.addEventListener('message', (event) => {
+self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data && event.data.type === 'CLEAR_CACHES') {
     event.waitUntil(
-      caches.keys().then((names) => {
-        return Promise.all(names.map((name) => caches.delete(name)));
-      }).then(() => {
-        event.ports[0].postMessage({ type: 'CACHES_CLEARED' });
-      })
+      caches
+        .keys()
+        .then(names => {
+          return Promise.all(names.map(name => caches.delete(name)));
+        })
+        .then(() => {
+          event.ports[0].postMessage({ type: 'CACHES_CLEARED' });
+        })
     );
   }
 });
 
 // Periodic sync (if supported)
 if ('periodicSync' in self.registration) {
-  self.addEventListener('periodicsync', (event) => {
+  self.addEventListener('periodicsync', event => {
     if (event.tag === 'content-sync') {
       event.waitUntil(syncContent());
     }

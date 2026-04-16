@@ -6,13 +6,13 @@ Mind Gym 所有训练模式及游戏机制的完整规格说明。
 
 ## 模式概览
 
-| 模式 | 触发方式 | 主要目标 | 核心指标 |
-|------|----------|----------|----------|
-| **经典配对** | 默认模式 | 翻牌配对 | 时间、步数 |
-| **限时模式** | 设置切换 | 限时配对 | 时间限制内完成 |
-| **每日挑战** | 点击「每日」按钮 | 固定种子挑战 | 与全球玩家比较 |
-| **回忆测验** | 通关后自动触发 | 再认记忆 | 精确率、召回率 |
-| **N-back** | 点击「N-back」按钮 | 工作记忆 | 准确率、反应时 |
+| 模式         | 触发方式           | 主要目标     | 核心指标       |
+| ------------ | ------------------ | ------------ | -------------- |
+| **经典配对** | 默认模式           | 翻牌配对     | 时间、步数     |
+| **限时模式** | 设置切换           | 限时配对     | 时间限制内完成 |
+| **每日挑战** | 点击「每日」按钮   | 固定种子挑战 | 与全球玩家比较 |
+| **回忆测验** | 通关后自动触发     | 再认记忆     | 精确率、召回率 |
+| **N-back**   | 点击「N-back」按钮 | 工作记忆     | 准确率、反应时 |
 
 ---
 
@@ -25,29 +25,29 @@ Mind Gym 所有训练模式及游戏机制的完整规格说明。
 ### 难度配置
 
 | 难度 | 网格 | 配对数 | 默认提示数 | 目标时间 |
-|------|------|--------|------------|----------|
-| 简单 | 4×4 | 8 对 | 3 | 60秒 |
-| 中等 | 4×5 | 10 对 | 2 | 120秒 |
-| 困难 | 6×6 | 18 对 | 1 | 180秒 |
+| ---- | ---- | ------ | ---------- | -------- |
+| 简单 | 4×4  | 8 对   | 3          | 60秒     |
+| 中等 | 4×5  | 10 对  | 2          | 120秒    |
+| 困难 | 6×6  | 18 对  | 1          | 180秒    |
 
 ### 结算内容
 
-| 指标 | 说明 |
-|------|------|
-| **用时** | 从第一次翻牌到完成 |
-| **步数** | 翻开第二张牌计为一步 |
+| 指标         | 说明                               |
+| ------------ | ---------------------------------- |
+| **用时**     | 从第一次翻牌到完成                 |
+| **步数**     | 翻开第二张牌计为一步               |
 | **星级评分** | 1-5 星，基于时间、步数、提示、连击 |
-| **排行榜** | 各难度前 3 名 |
-| **最佳成绩** | 各难度个人历史最佳 |
+| **排行榜**   | 各难度前 3 名                      |
+| **最佳成绩** | 各难度个人历史最佳                 |
 
 ### 快捷键
 
-| 按键 | 功能 |
-|------|------|
-| `N` | 新开一局 |
-| `P` | 暂停/继续 |
-| `H` | 使用提示 |
-| `↑↓←→` | 导航卡牌 |
+| 按键              | 功能         |
+| ----------------- | ------------ |
+| `N`               | 新开一局     |
+| `P`               | 暂停/继续    |
+| `H`               | 使用提示     |
+| `↑↓←→`            | 导航卡牌     |
 | `Enter` / `Space` | 翻开选中卡牌 |
 
 ### 状态机实现
@@ -74,7 +74,7 @@ function onFlip(cardEl) {
   // 第二张牌逻辑
   secondCard = cardEl;
   moves++;
-  
+
   // 检查匹配...
 }
 ```
@@ -92,10 +92,10 @@ function onFlip(cardEl) {
 可自定义各难度的倒计时秒数（10-999 秒）：
 
 | 难度 | 默认时限 |
-|------|----------|
-| 简单 | 90 秒 |
-| 中等 | 150 秒 |
-| 困难 | 240 秒 |
+| ---- | -------- |
+| 简单 | 90 秒    |
+| 中等 | 150 秒   |
+| 困难 | 240 秒   |
 
 ### 机制说明
 
@@ -164,10 +164,10 @@ function seedFromDate(dateStr, diff, theme) {
 
 ### 测试内容
 
-| 组件 | 说明 |
-|------|------|
-| **真项** | 本局出现的卡牌 |
-| **伪项** | 本局未出现的卡牌 |
+| 组件     | 说明                     |
+| -------- | ------------------------ |
+| **真项** | 本局出现的卡牌           |
+| **伪项** | 本局未出现的卡牌         |
 | **任务** | 选择本局出现过的所有卡牌 |
 
 ### 构造算法
@@ -175,18 +175,18 @@ function seedFromDate(dateStr, diff, theme) {
 ```javascript
 // src/modes.js
 function buildRecallItems(params) {
-  const truth = params.truthValues;    // 本局出现过的卡面
-  const pool = params.poolValues;       // 所有可选卡面
+  const truth = params.truthValues; // 本局出现过的卡面
+  const pool = params.poolValues; // 所有可选卡面
 
   const trueCount = Math.min(6, truth.length);
-  const falseCandidates = pool.filter((v) => !truth.includes(v));
+  const falseCandidates = pool.filter(v => !truth.includes(v));
 
   const trues = shuffle(truth).slice(0, trueCount);
   const falses = shuffle(falseCandidates).slice(0, 9 - trueCount);
 
   const items = [
-    ...trues.map((v) => ({ v, correct: true })),
-    ...falses.map((v) => ({ v, correct: false }))
+    ...trues.map(v => ({ v, correct: true })),
+    ...falses.map(v => ({ v, correct: false })),
   ];
   return { items: shuffle(items), correctSet: new Set(trues) };
 }
@@ -194,12 +194,13 @@ function buildRecallItems(params) {
 
 ### 评分指标
 
-| 指标 | 公式 | 说明 |
-|------|------|------|
+| 指标       | 公式           | 说明                 |
+| ---------- | -------------- | -------------------- |
 | **精确率** | TP / (TP + FP) | 选中的有多少是正确的 |
-| **召回率** | TP / (TP + FN) | 正确的有多少被选中 |
+| **召回率** | TP / (TP + FN) | 正确的有多少被选中   |
 
 其中：
+
 - TP = 真正例（正确选择的卡牌）
 - FP = 假正例（错误选择的卡牌）
 - FN = 假负例（漏选的卡牌）
@@ -218,11 +219,11 @@ function buildRecallItems(params) {
 
 ### 配置选项
 
-| 参数 | 可选值 | 说明 |
-|------|--------|------|
-| N | 1, 2, 3 | 回溯步数 |
+| 参数 | 可选值            | 说明         |
+| ---- | ----------------- | ------------ |
+| N    | 1, 2, 3           | 回溯步数     |
 | 节奏 | 1200, 900, 700 ms | 刺激呈现间隔 |
-| 长度 | 20, 30, 40 | 刺激序列长度 |
+| 长度 | 20, 30, 40        | 刺激序列长度 |
 
 ### 操作方式
 
@@ -231,21 +232,21 @@ function buildRecallItems(params) {
 
 ### 评分指标
 
-| 指标 | 说明 |
-|------|------|
-| **准确率** | 正确响应 / 目标总数 |
+| 指标       | 说明                                   |
+| ---------- | -------------------------------------- |
+| **准确率** | 正确响应 / 目标总数                    |
 | **反应时** | 从刺激呈现到按键的时间（仅命中时统计） |
 
 ### 统计数据
 
 ```javascript
 // app.js 中统计
-let nbackTargets = 0;       // 目标数（与 N 步前相同的刺激）
-let nbackHits = 0;          // 命中数（正确按 J）
-let nbackMisses = 0;        // 漏报数（目标未按 J）
-let nbackFalseAlarms = 0;   // 虚报数（非目标按 J）
-let nbackRtSum = 0;         // 反应时累计（ms）
-let nbackRtCount = 0;       // 反应时样本数
+let nbackTargets = 0; // 目标数（与 N 步前相同的刺激）
+let nbackHits = 0; // 命中数（正确按 J）
+let nbackMisses = 0; // 漏报数（目标未按 J）
+let nbackFalseAlarms = 0; // 虚报数（非目标按 J）
+let nbackRtSum = 0; // 反应时累计（ms）
+let nbackRtCount = 0; // 反应时样本数
 ```
 
 ### 实现要点
@@ -290,20 +291,20 @@ function tickNBack(N, speed) {
 
 ### 评分范围
 
-| 统计 | 数值 |
-|------|------|
+| 统计     | 数值 |
+| -------- | ---- |
 | 初始评分 | 1000 |
-| 最低 | 600 |
-| 最高 | 1600 |
+| 最低     | 600  |
+| 最高     | 1600 |
 
 ### 调整策略
 
-| 评分范围 | 预览时间 | 提示调整 |
-|----------|----------|----------|
-| < 940 | ≥ 2 秒 | +1 |
-| 940 - 1040 | ≥ 1 秒 | 不变 |
-| 1040 - 1140 | ≤ 1 秒 | 不变 |
-| > 1140 | 0 秒 | -1 |
+| 评分范围    | 预览时间 | 提示调整 |
+| ----------- | -------- | -------- |
+| < 940       | ≥ 2 秒   | +1       |
+| 940 - 1040  | ≥ 1 秒   | 不变     |
+| 1040 - 1140 | ≤ 1 秒   | 不变     |
+| > 1140      | 0 秒     | -1       |
 
 ### 评分更新
 
@@ -314,12 +315,10 @@ function updateAdaptiveOnEnd(win, stars, diff) {
 
   const a = loadAdaptive();
   const exp = expectedStarsFor(diff); // 简单:4, 中等:3.5, 困难:3
-  const perf = win ? stars : 1.5;     // 失败视为较差表现
-  const k = 12;                       // 类 ELO K 因子
+  const perf = win ? stars : 1.5; // 失败视为较差表现
+  const k = 12; // 类 ELO K 因子
 
-  a.rating = Math.max(600, Math.min(1600, 
-    Math.round(a.rating + k * (perf - exp))
-  ));
+  a.rating = Math.max(600, Math.min(1600, Math.round(a.rating + k * (perf - exp))));
   a.lastDiff = diff;
 
   saveAdaptive(a);
@@ -372,7 +371,7 @@ function pickWithSpaced(theme, pool, pairs) {
   // 取前 40% 高权重卡
   const topN = Math.min(Math.floor(pairs * 0.4), copy.length);
   const picksTop = copy.slice(0, topN);
-  const rest = pool.filter((x) => !picksTop.some((y) => y.v === x.v));
+  const rest = pool.filter(x => !picksTop.some(y => y.v === x.v));
 
   shuffle(rest);
   return [...picksTop, ...rest.slice(0, pairs - picksTop.length)];
@@ -452,12 +451,12 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
 ### 评分因素
 
-| 因素 | 影响 |
-|------|------|
-| 时间 | 超时按比例扣分 |
+| 因素 | 影响                  |
+| ---- | --------------------- |
+| 时间 | 超时按比例扣分        |
 | 步数 | 超出配对数每步扣 3 分 |
-| 提示 | 每次扣 10 分 |
-| 连击 | 每次加 2 分 |
+| 提示 | 每次扣 10 分          |
+| 连击 | 每次加 2 分           |
 
 ---
 
@@ -485,4 +484,4 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
 ---
 
-*有关系统架构，请参见 [架构概览](./architecture.zh-CN.md)。有关数据结构，请参见 [存储模型](./storage.zh-CN.md)。*
+_有关系统架构，请参见 [架构概览](./architecture.zh-CN.md)。有关数据结构，请参见 [存储模型](./storage.zh-CN.md)。_

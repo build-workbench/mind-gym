@@ -41,10 +41,10 @@ Brief description of this release in English.
 
 ## Fixed / 修复
 
-| Issue / 问题 | Fix / 修复 |
-|--------------|------------|
-| Bug 1 | Description / 描述 |
-| Bug 2 | Description / 描述 |
+| Issue / 问题 | Fix / 修复         |
+| ------------ | ------------------ |
+| Bug 1        | Description / 描述 |
+| Bug 2        | Description / 描述 |
 
 ## Security / 安全
 

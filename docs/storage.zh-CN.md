@@ -12,17 +12,17 @@ Mind Gym 的 localStorage 数据结构、键名约定和持久化机制的详细
 
 ### 完整键列表
 
-| 键名 | 类型 | 说明 |
-|------|------|------|
-| `memory_match_settings` | Object | 用户偏好设置 |
-| `memory_match_best_<difficulty>` | Object | 各难度最佳成绩 |
-| `memory_match_lb_<difficulty>` | Array | 各难度排行榜 |
-| `memory_match_achievements` | Object | 成就解锁状态 |
-| `memory_match_stats` | Object | 累计统计数据 |
-| `memory_match_adaptive` | Object | 自适应难度评分 |
-| `memory_match_spaced_<theme>` | Object | 间隔复现权重 |
+| 键名                                     | 类型   | 说明             |
+| ---------------------------------------- | ------ | ---------------- |
+| `memory_match_settings`                  | Object | 用户偏好设置     |
+| `memory_match_best_<difficulty>`         | Object | 各难度最佳成绩   |
+| `memory_match_lb_<difficulty>`           | Array  | 各难度排行榜     |
+| `memory_match_achievements`              | Object | 成就解锁状态     |
+| `memory_match_stats`                     | Object | 累计统计数据     |
+| `memory_match_adaptive`                  | Object | 自适应难度评分   |
+| `memory_match_spaced_<theme>`            | Object | 间隔复现权重     |
 | `memory_match_daily_<date>_<difficulty>` | Object | 每日挑战完成状态 |
-| `memory_match_onboarding_v1` | String | 新手引导完成标记 |
+| `memory_match_onboarding_v1`             | String | 新手引导完成标记 |
 
 ### 参数取值
 
@@ -38,24 +38,24 @@ Mind Gym 的 localStorage 数据结构、键名约定和持久化机制的详细
 
 ```typescript
 interface Settings {
-  sound: boolean;              // 是否启用音效
-  vibrate: boolean;            // 是否启用震动
-  previewSeconds: number;      // 开局预览秒数 (0-5)
-  accent: 'indigo' | 'emerald' | 'rose';  // 主题强调色
-  theme: 'auto' | 'light' | 'dark';       // 配色方案
-  motion: 'auto' | 'on' | 'off';          // 动画偏好
-  volume: number;              // 音量 (0-1)
+  sound: boolean; // 是否启用音效
+  vibrate: boolean; // 是否启用震动
+  previewSeconds: number; // 开局预览秒数 (0-5)
+  accent: 'indigo' | 'emerald' | 'rose'; // 主题强调色
+  theme: 'auto' | 'light' | 'dark'; // 配色方案
+  motion: 'auto' | 'on' | 'off'; // 动画偏好
+  volume: number; // 音量 (0-1)
   soundPack: 'clear' | 'electro' | 'soft'; // 音效包
   cardFace: 'emoji' | 'numbers' | 'letters' | 'shapes' | 'colors';
   gameMode: 'classic' | 'countdown';
   countdown: {
-    easy: number;              // 简单限时 (10-999 秒)
-    medium: number;            // 中等限时
-    hard: number;              // 困难限时
+    easy: number; // 简单限时 (10-999 秒)
+    medium: number; // 中等限时
+    hard: number; // 困难限时
   };
   language: 'auto' | 'zh' | 'en';
-  adaptive: boolean;           // 自适应辅助
-  spaced: boolean;             // 间隔复现
+  adaptive: boolean; // 自适应辅助
+  spaced: boolean; // 间隔复现
 }
 ```
 
@@ -84,8 +84,8 @@ interface Settings {
 
 ```typescript
 interface BestScore {
-  time: number;    // 用时（秒）
-  moves: number;   // 步数
+  time: number; // 用时（秒）
+  moves: number; // 步数
 }
 ```
 
@@ -104,9 +104,9 @@ interface BestScore {
 type Leaderboard = LeaderboardEntry[];
 
 interface LeaderboardEntry {
-  time: number;    // 用时（秒）
-  moves: number;   // 步数
-  at: number;      // 完成时间戳
+  time: number; // 用时（秒）
+  moves: number; // 步数
+  at: number; // 完成时间戳
 }
 ```
 
@@ -129,21 +129,21 @@ interface LeaderboardEntry {
 interface Achievements {
   [achievementId: string]: {
     unlocked: true;
-    at: number;      // 解锁时间戳
+    at: number; // 解锁时间戳
   };
 }
 ```
 
 **成就 ID 列表**:
 
-| ID | 条件 |
-|----|------|
-| `first_win` | 完成任意一局 |
-| `easy_under_60` | 简单难度 60 秒内通关 |
-| `medium_under_120` | 中等难度 120 秒内通关 |
-| `hard_under_180` | 困难难度 180 秒内通关 |
-| `no_hint_win` | 不使用提示完成一局 |
-| `perfect_moves` | 零失误（步数 = 配对数） |
+| ID                 | 条件                    |
+| ------------------ | ----------------------- |
+| `first_win`        | 完成任意一局            |
+| `easy_under_60`    | 简单难度 60 秒内通关    |
+| `medium_under_120` | 中等难度 120 秒内通关   |
+| `hard_under_180`   | 困难难度 180 秒内通关   |
+| `no_hint_win`      | 不使用提示完成一局      |
+| `perfect_moves`    | 零失误（步数 = 配对数） |
 
 **示例**:
 
@@ -158,43 +158,43 @@ interface Achievements {
 
 ```typescript
 interface Stats {
-  games: number;           // 总局数
-  wins: number;            // 胜局数
-  timeSum: number;         // 累计用时（秒）
-  movesSum: number;        // 累计步数
-  hintsSum: number;        // 累计提示次数
-  comboSum: number;        // 最高连击累计
-  bestCombo: number;       // 历史最高连击
-  recallAttempts: number;  // 回忆测验次数
-  precisionSum: number;    // 精确率累计
-  recallSum: number;       // 召回率累计
-  nbackAttempts: number;   // N-back 尝试次数
-  nbackAccSum: number;     // N-back 准确率累计
-  nbackRtSum: number;      // N-back 反应时累计（ms）
-  nbackRtCount: number;    // N-back 反应时样本数
+  games: number; // 总局数
+  wins: number; // 胜局数
+  timeSum: number; // 累计用时（秒）
+  movesSum: number; // 累计步数
+  hintsSum: number; // 累计提示次数
+  comboSum: number; // 最高连击累计
+  bestCombo: number; // 历史最高连击
+  recallAttempts: number; // 回忆测验次数
+  precisionSum: number; // 精确率累计
+  recallSum: number; // 召回率累计
+  nbackAttempts: number; // N-back 尝试次数
+  nbackAccSum: number; // N-back 准确率累计
+  nbackRtSum: number; // N-back 反应时累计（ms）
+  nbackRtCount: number; // N-back 反应时样本数
 }
 ```
 
 **派生指标**:
 
-| 指标 | 计算方式 |
-|------|----------|
-| 胜率 | `wins / games` |
-| 平均用时 | `timeSum / wins` |
-| 平均步数 | `movesSum / wins` |
-| 平均提示 | `hintsSum / wins` |
-| 平均连击 | `comboSum / wins` |
-| 平均精确率 | `precisionSum / recallAttempts` |
-| 平均召回率 | `recallSum / recallAttempts` |
-| N-back 平均准确率 | `nbackAccSum / nbackAttempts` |
-| N-back 平均反应时 | `nbackRtSum / nbackRtCount` |
+| 指标              | 计算方式                        |
+| ----------------- | ------------------------------- |
+| 胜率              | `wins / games`                  |
+| 平均用时          | `timeSum / wins`                |
+| 平均步数          | `movesSum / wins`               |
+| 平均提示          | `hintsSum / wins`               |
+| 平均连击          | `comboSum / wins`               |
+| 平均精确率        | `precisionSum / recallAttempts` |
+| 平均召回率        | `recallSum / recallAttempts`    |
+| N-back 平均准确率 | `nbackAccSum / nbackAttempts`   |
+| N-back 平均反应时 | `nbackRtSum / nbackRtCount`     |
 
 ### Adaptive Data（自适应数据）
 
 ```typescript
 interface AdaptiveData {
-  rating: number;              // 评分 (600-1600)
-  lastDiff: 'easy' | 'medium' | 'hard';  // 上局难度
+  rating: number; // 评分 (600-1600)
+  lastDiff: 'easy' | 'medium' | 'hard'; // 上局难度
 }
 ```
 
@@ -208,7 +208,7 @@ interface AdaptiveData {
 
 ```typescript
 interface SpacedData {
-  [cardValue: string]: number;    // 卡面值 → 权重
+  [cardValue: string]: number; // 卡面值 → 权重
 }
 ```
 
@@ -233,7 +233,7 @@ interface SpacedData {
 ```typescript
 interface DailyData {
   done: true;
-  at: number;      // 完成时间戳
+  at: number; // 完成时间戳
 }
 ```
 
@@ -418,13 +418,13 @@ function normalizeImportData(raw, defaults) {
 ```javascript
 // 列出所有 memory_match_ 键
 Object.keys(localStorage)
-  .filter((k) => k.startsWith('memory_match_'))
-  .forEach((k) => console.log(k, localStorage.getItem(k)));
+  .filter(k => k.startsWith('memory_match_'))
+  .forEach(k => console.log(k, localStorage.getItem(k)));
 
 // 清空所有数据
 Object.keys(localStorage)
-  .filter((k) => k.startsWith('memory_match_'))
-  .forEach((k) => localStorage.removeItem(k));
+  .filter(k => k.startsWith('memory_match_'))
+  .forEach(k => localStorage.removeItem(k));
 ```
 
 ### 导出当前状态
@@ -437,4 +437,4 @@ console.log(JSON.stringify(data, null, 2));
 
 ---
 
-*有关游戏模式和逻辑，请参见 [训练模式](./modes.zh-CN.md)。有关系统架构，请参见 [架构概览](./architecture.zh-CN.md)。*
+_有关游戏模式和逻辑，请参见 [训练模式](./modes.zh-CN.md)。有关系统架构，请参见 [架构概览](./architecture.zh-CN.md)。_

@@ -9,7 +9,7 @@ export default defineConfig({
     target: 'es2022',
     outDir: 'dist',
     assetsDir: 'assets',
-    
+
     // Aggressive optimization
     minify: 'terser',
     terserOptions: {
@@ -23,7 +23,7 @@ export default defineConfig({
         if_return: true,
         join_vars: true,
         cascade: true,
-        warnings: false
+        warnings: false,
       },
       mangle: {
         properties: {
@@ -35,7 +35,7 @@ export default defineConfig({
         beautify: false,
       },
     },
-    
+
     // Code splitting for optimal caching
     rollupOptions: {
       input: {
@@ -44,25 +44,25 @@ export default defineConfig({
         ...Object.fromEntries(
           globSync('src/**/*.js').map(file => [
             file.replace(/^src\//, '').replace(/\.js$/, ''),
-            resolve(__dirname, file)
+            resolve(__dirname, file),
           ])
         ),
       },
       output: {
         manualChunks: {
           // Vendor chunks for optimal caching
-          'vendor': [],
+          vendor: [],
           // Core game logic
           'game-core': ['./src/storage.js', './src/stats.js', './src/utils.js'],
           // UI components
-          'ui': ['./src/ui.js', './src/ui-events.js', './src/effects.js'],
+          ui: ['./src/ui.js', './src/ui-events.js', './src/effects.js'],
           // Advanced modes
-          'modes': ['./src/modes.js', './src/achievements.js'],
+          modes: ['./src/modes.js', './src/achievements.js'],
           // Visual effects
-          'fx': ['./src/confetti.js', './src/timer.js'],
+          fx: ['./src/confetti.js', './src/timer.js'],
         },
         // Asset optimization
-        assetFileNames: (assetInfo) => {
+        assetFileNames: assetInfo => {
           const info = assetInfo.name.split('.');
           const ext = info[info.length - 1];
           if (/\.(jpg|jpeg|png|gif|svg|webp|ico)$/i.test(assetInfo.name)) {
@@ -80,22 +80,22 @@ export default defineConfig({
         entryFileNames: 'assets/js/[name]-[hash].js',
       },
     },
-    
+
     // Asset optimization
     assetsInlineLimit: 4096,
     cssCodeSplit: true,
     sourcemap: false,
-    
+
     // Preload optimization
     modulePreload: {
       polyfill: false,
     },
-    
+
     // Report bundle size
     reportCompressedSize: true,
     chunkSizeWarningLimit: 500,
   },
-  
+
   // Development server optimization
   server: {
     port: 3000,
@@ -108,14 +108,14 @@ export default defineConfig({
       'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
   },
-  
+
   // Preview server (for testing production build)
   preview: {
     port: 4173,
     strictPort: true,
     open: true,
   },
-  
+
   // Path resolution
   resolve: {
     alias: {
@@ -123,7 +123,7 @@ export default defineConfig({
       '@assets': resolve(__dirname, 'assets'),
     },
   },
-  
+
   // CSS optimization
   css: {
     devSourcemap: false,
@@ -131,7 +131,7 @@ export default defineConfig({
       config: './postcss.config.js',
     },
   },
-  
+
   // Plugin configuration
   plugins: [
     // Production optimizations
@@ -141,10 +141,9 @@ export default defineConfig({
         // Inject critical CSS
         // Preconnect to CDNs
         // Add resource hints
-        return html
-          .replace(
-            '<head>',
-            `<head>
+        return html.replace(
+          '<head>',
+          `<head>
     <!-- Critical resource hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -157,11 +156,11 @@ export default defineConfig({
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">`
-          );
+        );
       },
     },
   ],
-  
+
   // Optimizations for dependencies
   optimizeDeps: {
     include: [],
@@ -172,14 +171,14 @@ export default defineConfig({
       treeShaking: true,
     },
   },
-  
+
   // Environment variables
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
     __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
     __MODE__: JSON.stringify(process.env.NODE_ENV || 'production'),
   },
-  
+
   // Experimental features for maximum performance
   experimental: {
     // Enable advanced optimizations
@@ -188,7 +187,7 @@ export default defineConfig({
       return { relative: true };
     },
   },
-  
+
   // Worker optimization
   worker: {
     format: 'es',

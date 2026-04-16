@@ -11,15 +11,15 @@ module.exports = {
       outputDir: './lhci-reports',
       reportFilenamePattern: '%%PATHNAME%%-%%DATETIME%%-report.%%EXTENSION%%',
     },
-    
+
     // Collection settings
     collect: {
       // Number of runs to average
       numberOfRuns: 3,
-      
+
       // URL to test
       url: ['http://localhost:3000/'],
-      
+
       // Chrome flags for consistent results
       chromeFlags: [
         '--headless',
@@ -29,7 +29,7 @@ module.exports = {
         '--disable-setuid-sandbox',
         '--disable-software-rasterizer',
       ],
-      
+
       // Settings
       settings: {
         preset: 'desktop',
@@ -50,37 +50,38 @@ module.exports = {
           deviceScaleFactor: 1,
           disabled: false,
         },
-        emulatedUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        emulatedUserAgent:
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
     },
-    
+
     // Assertion settings - aggressive targets
     assert: {
       preset: 'lighthouse:no-pwa',
-      
+
       // Performance assertions
       assertions: {
         // Core Web Vitals
-        'categories:performance': ['warn', { minScore: 0.90 }],
+        'categories:performance': ['warn', { minScore: 0.9 }],
         'categories:accessibility': ['error', { minScore: 0.95 }],
-        'categories:best-practices': ['warn', { minScore: 0.90 }],
-        'categories:seo': ['warn', { minScore: 0.90 }],
-        'categories:pwa': ['warn', { minScore: 0.80 }],
-        
+        'categories:best-practices': ['warn', { minScore: 0.9 }],
+        'categories:seo': ['warn', { minScore: 0.9 }],
+        'categories:pwa': ['warn', { minScore: 0.8 }],
+
         // Performance metrics
         'first-contentful-paint': ['warn', { maxNumericValue: 1800 }],
         'largest-contentful-paint': ['warn', { maxNumericValue: 2500 }],
         'first-meaningful-paint': ['warn', { maxNumericValue: 2000 }],
         'speed-index': ['warn', { maxNumericValue: 3000 }],
         'total-blocking-time': ['warn', { maxNumericValue: 200 }],
-        'interactive': ['warn', { maxNumericValue: 3500 }],
+        interactive: ['warn', { maxNumericValue: 3500 }],
         'cumulative-layout-shift': ['warn', { maxNumericValue: 0.1 }],
-        
+
         // Resource budgets
         'total-byte-weight': ['warn', { maxNumericValue: 500000 }], // 500KB
         'uses-long-cache-ttl': 'warn',
         'dom-size': ['warn', { maxNumericValue: 1500 }],
-        
+
         // Best practices
         'uses-passive-event-listeners': 'error',
         'no-document-write': 'error',
@@ -88,9 +89,9 @@ module.exports = {
         'geolocation-on-start': 'error',
         'notification-on-start': 'error',
         'no-vulnerable-libraries': 'error',
-        
+
         // Accessibility
-        'accesskeys': 'error',
+        accesskeys: 'error',
         'aria-allowed-attr': 'error',
         'aria-required-attr': 'error',
         'aria-required-children': 'error',
@@ -99,10 +100,10 @@ module.exports = {
         'aria-valid-attr-value': 'error',
         'aria-valid-attr': 'error',
         'button-name': 'error',
-        'bypass': 'error',
+        bypass: 'error',
         'color-contrast': 'warn',
         'definition-list': 'error',
-        'dlitem': 'error',
+        dlitem: 'error',
         'document-title': 'error',
         'duplicate-id': 'error',
         'frame-title': 'error',
@@ -110,15 +111,15 @@ module.exports = {
         'html-lang-valid': 'error',
         'image-alt': 'error',
         'input-image-alt': 'error',
-        'label': 'error',
+        label: 'error',
         'layout-table': 'error',
         'link-name': 'error',
-        'list': 'error',
-        'listitem': 'error',
+        list: 'error',
+        listitem: 'error',
         'meta-refresh': 'error',
         'meta-viewport': 'error',
         'object-alt': 'error',
-        'tabindex': 'error',
+        tabindex: 'error',
         'td-headers-attr': 'error',
         'th-has-data-cells': 'error',
         'valid-lang': 'error',
@@ -126,12 +127,12 @@ module.exports = {
         'video-description': 'error',
       },
     },
-    
+
     // Server settings
     server: {
       // Don't start a server - we use the collect.url directly
     },
-    
+
     // Wizard settings
     wizard: {
       serverCommand: 'npx serve dist -p 3000',
