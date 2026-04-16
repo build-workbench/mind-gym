@@ -1,0 +1,80 @@
+# Gimbal Configuration - Performance Budgets
+# Additional performance monitoring
+
+configs:
+  # Performance budgets
+  perf:
+    budget:
+      # Size budgets by type
+      - path: "**/*.js"
+        maxSize: 100 KB
+      - path: "**/*.css"
+        maxSize: 50 KB
+      - path: "**/*.html"
+        maxSize: 20 KB
+      - path: "**
+        maxSize: 500 KB
+    
+    # Lighthouse thresholds
+    lighthouse:
+      performance: 90
+      accessibility: 95
+      bestPractices: 90
+      seo: 90
+      pwa: 80
+    
+    # Heap snapshot thresholds
+    heapSnapshot:
+      size: 10 MB
+      
+    # Resource budgets
+    resources:
+      # Max number of requests
+      requests:
+        total: 50
+        thirdParty: 10
+      
+      # Script budgets
+      scripts:
+        total: 20
+        thirdParty: 5
+      
+      # Style budgets
+      styles:
+        total: 5
+        thirdParty: 2
+      
+      # Image budgets
+      images:
+        total: 20
+      
+      # Font budgets
+      fonts:
+        total: 5
+
+# Output configuration
+outputs:
+  # CLI output
+  cli:
+    threshold:
+      pass: 90
+      fail: 70
+  
+  # Markdown report
+  markdown:
+    path: ./gimbal-artifacts/performance-report.md
+  
+  # JSON output
+  json:
+    path: ./gimbal-artifacts/performance-data.json
+
+# Plugins
+plugins:
+  # Local storage checks
+  - plugin: '@modus/gimbal-plugin-local-storage'
+    thresholds:
+      count: 10
+      size: 1 MB
+  
+  # Source map verification
+  - plugin: '@modus/gimbal-plugin-source-map-explorer'

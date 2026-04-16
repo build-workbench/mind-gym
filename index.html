@@ -1,710 +1,294 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="轻量级记忆力训练网页游戏，包含翻牌配对、N-back、每日挑战、统计与成就系统。" />
-    <meta name="theme-color" content="#4f46e5" />
+    <!-- Critical: Character encoding must be first -->
+    <meta charset="UTF-8" />
+    
+    <!-- Critical: Viewport for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://github.com" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Mind Gym - Memory Training Game | Boost Your Cognitive Skills</title>
+    <meta name="title" content="Mind Gym - Memory Training Game | Boost Your Cognitive Skills" />
+    <meta name="description" content="Train your memory with Mind Gym! A browser-based memory game featuring classic matching, N-back training, daily challenges, and adaptive difficulty. Play free, no install needed." />
+    <meta name="keywords" content="memory game, brain training, cognitive training, memory exercise, N-back, card matching, mental workout, memory improvement" />
+    <meta name="author" content="LessUp" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://lessup.github.io/mind-gym/" />
+    
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="记忆力训练 - 翻牌配对" />
-    <meta
-      property="og:description"
-      content="轻量级记忆力训练网页游戏，包含翻牌配对、N-back、每日挑战、统计与成就系统。"
-    />
     <meta property="og:url" content="https://lessup.github.io/mind-gym/" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="记忆力训练 - 翻牌配对" />
-    <meta
-      name="twitter:description"
-      content="轻量级记忆力训练网页游戏，包含翻牌配对、N-back、每日挑战、统计与成就系统。"
-    />
-    <title>记忆力训练 - 翻牌配对</title>
-    <link rel="stylesheet" href="./assets/app.css" />
+    <meta property="og:title" content="Mind Gym - Memory Training Game" />
+    <meta property="og:description" content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!" />
+    <meta property="og:image" content="https://lessup.github.io/mind-gym/assets/og-image.png" />
+    <meta property="og:site_name" content="Mind Gym" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://lessup.github.io/mind-gym/" />
+    <meta property="twitter:title" content="Mind Gym - Memory Training Game" />
+    <meta property="twitter:description" content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!" />
+    <meta property="twitter:image" content="https://lessup.github.io/mind-gym/assets/og-image.png" />
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.webmanifest" />
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="./assets/icon.svg" />
+    <link rel="apple-touch-icon" href="./assets/icon.svg" />
+    <link rel="mask-icon" href="./assets/icon.svg" color="#4f46e5" />
+    
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1e1b4b" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    
+    <!-- Mobile App Capable -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Mind Gym" />
+    <meta name="application-name" content="Mind Gym" />
+    <meta name="msapplication-TileColor" content="#4f46e5" />
+    <meta name="msapplication-config" content="./browserconfig.xml" />
+    
+    <!-- Performance: Preload critical CSS -->
+    <link rel="preload" href="./assets/app.css" as="style" />
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./assets/app.css" />
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mind Gym",
+      "description": "Browser-based memory training game with multiple modes including classic matching, N-back training, and daily challenges.",
+      "url": "https://lessup.github.io/mind-gym/",
+      "applicationCategory": "GameApplication",
+      "genre": ["Puzzle", "Brain Training", "Memory"],
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "featureList": [
+        "Classic card matching",
+        "N-back working memory training",
+        "Daily challenges",
+        "Adaptive difficulty",
+        "Progress tracking",
+        "Achievement system",
+        "Offline support"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "LessUp",
+        "url": "https://github.com/LessUp"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "LessUp"
+      },
+      "license": "https://github.com/LessUp/mind-gym/blob/master/LICENSE",
+      "sourceOrganization": {
+        "@type": "Organization",
+        "name": "LessUp"
+      },
+      "programmingLanguage": ["JavaScript", "HTML", "CSS"],
+      "inLanguage": ["en", "zh"],
+      "isAccessibleForFree": true,
+      "hasPart": [
+        {
+          "@type": "VideoGame",
+          "name": "Classic Matching Mode"
+        },
+        {
+          "@type": "VideoGame",
+          "name": "N-back Training Mode"
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Inline Critical CSS for Above-the-Fold Content -->
     <style>
-      .card {
-        perspective: 1000px;
+      /* Critical loading styles */
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: #f8fafc;
+        color: #0f172a;
       }
-      .card-inner {
-        transform-style: preserve-3d;
-        transition: transform 0.4s ease;
+      
+      /* Prevent FOUC */
+      .loading {
+        opacity: 0;
+        animation: fadeIn 0.3s ease-in forwards;
       }
-      .flipped .card-inner {
-        transform: rotateY(180deg);
+      
+      @keyframes fadeIn {
+        to { opacity: 1; }
       }
-      .card-face {
-        position: absolute;
-        inset: 0;
-        backface-visibility: hidden;
+      
+      /* Critical layout styles */
+      #app {
+        min-height: 100vh;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
       }
-      .card-back {
-        transform: rotateY(180deg);
+      
+      /* Loading spinner */
+      .initial-loader {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 48px;
+        height: 48px;
+        border: 4px solid #e2e8f0;
+        border-top-color: #4f46e5;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
       }
-      .card {
-        transition: transform 0.15s ease;
+      
+      @keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
       }
-      .card:hover {
-        transform: translateY(-2px);
-      }
-      @keyframes matchPulse {
-        0% {
-          transform: scale(1);
+      
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #0f172a;
+          color: #f8fafc;
         }
-        50% {
-          transform: scale(1.04);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      .match-pulse {
-        animation: matchPulse 0.45s ease;
-      }
-      .no-anim * {
-        transition: none !important;
-        animation: none !important;
       }
     </style>
+    
+    <!-- Preconnect to required origins -->
+    <link rel="prefetch" href="./app.js" />
+    <link rel="prefetch" href="./src/storage.js" />
   </head>
-  <body
-    class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-800 dark:from-slate-900 dark:to-slate-950 dark:text-slate-100"
-  >
-    <div class="max-w-5xl mx-auto p-4 sm:p-6">
-      <header class="mb-4 sm:mb-6">
-        <h1 id="pageTitle" class="text-2xl sm:text-3xl font-bold">记忆力训练 · 翻牌配对</h1>
-        <p id="pageSubtitle" class="text-slate-500 mt-1 text-sm">
-          选择难度，开始翻牌配对训练记忆。完成后将记录你的最佳成绩。
-        </p>
-      </header>
-
-      <section class="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <div class="flex items-center gap-2">
-          <label id="difficultyLabel" for="difficulty" class="text-sm text-slate-600">难度</label>
-          <select id="difficulty" class="px-2 py-1.5 rounded-md border border-slate-300 bg-white text-sm">
-            <option id="difficultyEasy" value="easy">简单 4×4</option>
-            <option id="difficultyMedium" value="medium">中等 4×5</option>
-            <option id="difficultyHard" value="hard">困难 6×6</option>
-          </select>
+  
+  <body class="loading">
+    <!-- Initial Loading State -->
+    <div id="initial-loader" class="initial-loader" aria-hidden="true"></div>
+    
+    <!-- Main Application Container -->
+    <div id="app" role="application" aria-label="Mind Gym Memory Training Game">
+      <!-- Content will be dynamically loaded by app.js -->
+      <noscript>
+        <div style="padding: 2rem; text-align: center;">
+          <h1>JavaScript Required</h1>
+          <p>Mind Gym requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+          <p>需要使用 JavaScript。请启用浏览器的 JavaScript 设置。</p>
         </div>
-        <!-- N-back Modal -->
-        <div
-          id="nbackModal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="nbackTitle"
-          tabindex="-1"
-          class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-        >
-          <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-            <h2 id="nbackTitle" class="text-lg font-semibold mb-2">N-back 训练</h2>
-            <div class="grid grid-cols-3 gap-2 text-sm mb-3">
-              <label class="flex items-center justify-between">
-                <span id="nbackNLabel" class="text-slate-700">N 值</span>
-                <select id="nbackNSelect" class="px-2 py-1 rounded-md border border-slate-300">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                </select>
-              </label>
-              <label class="flex items-center justify-between">
-                <span id="nbackSpeedLabel" class="text-slate-700">节奏(ms)</span>
-                <select id="nbackSpeedSelect" class="px-2 py-1 rounded-md border border-slate-300">
-                  <option value="1200">1200</option>
-                  <option value="900">900</option>
-                  <option value="700">700</option>
-                </select>
-              </label>
-              <label class="flex items-center justify-between">
-                <span id="nbackLenLabel" class="text-slate-700">长度</span>
-                <select id="nbackLenSelect" class="px-2 py-1 rounded-md border border-slate-300">
-                  <option value="20">20</option>
-                  <option value="30">30</option>
-                  <option value="40">40</option>
-                </select>
-              </label>
-            </div>
-            <div class="mb-3 text-center">
-              <div
-                id="nbackStim"
-                class="inline-flex items-center justify-center w-24 h-24 rounded-xl bg-slate-100 text-3xl"
-              >
-                —
-              </div>
-            </div>
-            <p id="nbackHint" class="text-xs text-slate-500 mb-3">按 J 判定“与 N 步前相同”</p>
-            <div class="flex justify-end gap-3">
-              <button
-                id="nbackClose"
-                class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
-              >
-                关闭
-              </button>
-              <button
-                id="nbackStart"
-                class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-              >
-                开始
-              </button>
-            </div>
-          </div>
-        </div>
-        <div
-          id="dailyModal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="dailyTitle"
-          tabindex="-1"
-          class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-        >
-          <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-            <h2 id="dailyTitle" class="text-lg font-semibold mb-2">每日挑战</h2>
-            <p id="dailyInfo" class="text-sm text-slate-600 dark:text-slate-300 mb-3"></p>
-            <div class="mt-2 flex justify-end gap-3">
-              <button
-                id="dailyClose"
-                class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
-              >
-                关闭
-              </button>
-              <button
-                id="dailyStart"
-                class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-              >
-                开始挑战
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <button
-            id="newGameBtn"
-            class="px-3 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 active:bg-indigo-800"
-          >
-            开始/重开
-          </button>
-          <button
-            id="pauseBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            暂停
-          </button>
-          <button
-            id="hintBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            提示 <span id="hintLeft" class="ml-1">0</span>
-          </button>
-          <button
-            id="settingsBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            设置
-          </button>
-          <button
-            id="guideBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            指南
-          </button>
-          <button
-            id="achievementsBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            成就
-          </button>
-          <button
-            id="statsBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            统计
-          </button>
-          <button
-            id="dailyBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            每日
-          </button>
-          <button
-            id="nbackBtn"
-            class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
-          >
-            N-back
-          </button>
-        </div>
-        <div class="flex-1"></div>
-        <div class="flex items-center gap-4 text-sm">
-          <div>
-            <span id="timeLabel">用时</span>
-            <span id="time" class="font-semibold" role="status" aria-live="polite" aria-atomic="true">00:00</span>
-          </div>
-          <div>
-            <span id="movesLabel">步数</span>
-            <span id="moves" class="font-semibold" role="status" aria-live="polite" aria-atomic="true">0</span>
-          </div>
-          <div class="text-slate-500 dark:text-slate-400">
-            <span id="bestLabel">最佳</span>
-            <span id="best" class="font-semibold text-slate-700 dark:text-slate-200">—</span>
-          </div>
-        </div>
-      </section>
-      <div class="mb-3">
-        <div class="flex items-center justify-between text-xs text-slate-500">
-          <span>进度</span><span><span id="pairsLeft">0</span> 对剩余</span>
-        </div>
-        <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-          <div id="progressBar" class="h-full bg-indigo-500" style="width: 0%"></div>
-        </div>
-      </div>
-
-      <main>
-        <div id="grid" class="grid gap-3 sm:gap-4"></div>
-      </main>
-      <section class="mt-4 sm:mt-6">
-        <h3 id="leaderboardTitle" class="text-sm font-semibold text-slate-600">排行榜（当前难度）</h3>
-        <ul id="leaderboardList" class="mt-2 text-sm text-slate-700 space-y-1"></ul>
-      </section>
+      </noscript>
     </div>
-
-    <div
-      id="winModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="winTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-        <div class="text-center">
-          <div
-            class="mx-auto mb-3 h-12 w-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl"
-          >
-            🎉
-          </div>
-          <h2 id="winTitle" class="text-xl font-semibold mb-2">太棒了！全部配对完成</h2>
-          <div id="ratingStars" class="mb-1 text-lg"></div>
-          <p id="winStats" class="text-slate-600 dark:text-slate-300 mb-4 text-sm"></p>
-          <div class="flex items-center justify-center gap-3">
-            <button
-              id="playAgain"
-              class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-            >
-              再来一局
-            </button>
-            <button
-              id="shareBtn"
-              class="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
-            >
-              分享战绩
-            </button>
-            <button
-              id="closeModal"
-              class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 dark:text-slate-200 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
-            >
-              返回
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      id="loseModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="loseTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-        <div class="text-center">
-          <div
-            class="mx-auto mb-3 h-12 w-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center text-2xl"
-          >
-            ⏳
-          </div>
-          <h2 id="loseTitle" class="text-xl font-semibold mb-2">时间到，挑战失败</h2>
-          <p id="loseDesc" class="text-slate-600 dark:text-slate-300 mb-4 text-sm">
-            可在设置中调整“限时时长”，或重试本局。
-          </p>
-          <div class="flex items-center justify-center gap-3">
-            <button
-              id="failRetry"
-              class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-            >
-              重试
-            </button>
-            <button
-              id="failClose"
-              class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 dark:text-slate-200 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
-            >
-              返回
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div
-      id="pauseOverlay"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="pauseTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6 text-center">
-        <div
-          class="mx-auto mb-3 h-12 w-12 rounded-full bg-yellow-100 text-yellow-700 flex items-center justify-center text-2xl"
-        >
-          ⏸️
-        </div>
-        <h2 id="pauseTitle" class="text-xl font-semibold mb-2">已暂停</h2>
-        <p class="text-slate-600 mb-4 text-sm">点击继续恢复游戏</p>
-        <button
-          id="resumeBtn"
-          class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-        >
-          继续
-        </button>
-      </div>
-    </div>
-
-    <div
-      id="settingsModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="settingsTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-        <h2 id="settingsTitle" class="text-lg font-semibold mb-4">设置</h2>
-        <div class="space-y-4">
-          <label class="flex items-center justify-between">
-            <span id="settingSoundLabel" class="text-sm text-slate-700">声音</span>
-            <input id="settingSound" type="checkbox" class="h-4 w-4" />
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingVibrateLabel" class="text-sm text-slate-700">震动</span>
-            <input id="settingVibrate" type="checkbox" class="h-4 w-4" />
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingPreviewLabel" class="text-sm text-slate-700">开局预览秒数</span>
-            <input
-              id="settingPreview"
-              type="number"
-              min="0"
-              max="5"
-              step="1"
-              class="px-2 py-1 w-20 rounded-md border border-slate-300"
-            />
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingAccentLabel" class="text-sm text-slate-700">主题色</span>
-            <select id="settingAccent" class="px-2 py-1 rounded-md border border-slate-300">
-              <option id="accentIndigo" value="indigo">靛蓝</option>
-              <option id="accentEmerald" value="emerald">翡翠绿</option>
-              <option id="accentRose" value="rose">玫瑰红</option>
-            </select>
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingThemeLabel" class="text-sm text-slate-700">暗色模式</span>
-            <select id="settingTheme" class="px-2 py-1 rounded-md border border-slate-300">
-              <option id="themeAuto" value="auto">自动</option>
-              <option id="themeLight" value="light">浅色</option>
-              <option id="themeDark" value="dark">深色</option>
-            </select>
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingMotionLabel" class="text-sm text-slate-700">减少动画</span>
-            <select id="settingMotion" class="px-2 py-1 rounded-md border border-slate-300">
-              <option id="motionAuto" value="auto">自动</option>
-              <option id="motionOn" value="on">开启</option>
-              <option id="motionOff" value="off">关闭</option>
-            </select>
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingVolumeLabel" class="text-sm text-slate-700">音量</span>
-            <div class="flex items-center gap-2">
-              <input id="settingVolume" type="range" min="0" max="100" step="1" class="w-40" />
-              <span id="settingVolumeValue" class="text-xs text-slate-500">50%</span>
-            </div>
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingSoundPackLabel" class="text-sm text-slate-700">音效风格</span>
-            <select id="settingSoundPack" class="px-2 py-1 rounded-md border border-slate-300">
-              <option id="soundPackClear" value="clear">清亮</option>
-              <option id="soundPackElectro" value="electro">电子</option>
-              <option id="soundPackSoft" value="soft">柔和</option>
-            </select>
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingAdaptiveLabel" class="text-sm text-slate-700">自适应训练</span>
-            <input id="settingAdaptive" type="checkbox" class="h-4 w-4" />
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingSpacedLabel" class="text-sm text-slate-700">间隔复现（易错卡）</span>
-            <input id="settingSpaced" type="checkbox" class="h-4 w-4" />
-          </label>
-          <label class="flex items-center justify-between">
-            <span id="settingLanguageLabel" class="text-sm text-slate-700">语言</span>
-            <select id="settingLanguage" class="px-2 py-1 rounded-md border border-slate-300">
-              <option id="languageAuto" value="auto">自动</option>
-              <option id="languageZh" value="zh">中文</option>
-              <option id="languageEn" value="en">English</option>
-            </select>
-          </label>
-          <div class="h-px bg-slate-200"></div>
-          <label class="flex items-center justify-between">
-            <span id="settingGameModeLabel" class="text-sm text-slate-700">玩法</span>
-            <select id="settingGameMode" class="px-2 py-1 rounded-md border border-slate-300">
-              <option id="gameModeClassic" value="classic">经典</option>
-              <option id="gameModeCountdown" value="countdown">限时</option>
-            </select>
-          </label>
-          <div id="countdownConfig" class="grid grid-cols-3 gap-2 text-sm">
-            <label class="flex items-center justify-between col-span-1">
-              <span id="countdownEasyLabel" class="text-slate-700">简单(s)</span>
-              <input
-                id="settingCountdownEasy"
-                type="number"
-                min="10"
-                max="999"
-                step="1"
-                class="w-20 px-2 py-1 rounded-md border border-slate-300"
-              />
-            </label>
-            <label class="flex items-center justify-between col-span-1">
-              <span id="countdownMediumLabel" class="text-slate-700">中等(s)</span>
-              <input
-                id="settingCountdownMedium"
-                type="number"
-                min="10"
-                max="999"
-                step="1"
-                class="w-20 px-2 py-1 rounded-md border border-slate-300"
-              />
-            </label>
-            <label class="flex items-center justify-between col-span-1">
-              <span id="countdownHardLabel" class="text-slate-700">困难(s)</span>
-              <input
-                id="settingCountdownHard"
-                type="number"
-                min="10"
-                max="999"
-                step="1"
-                class="w-20 px-2 py-1 rounded-md border border-slate-300"
-              />
-            </label>
-          </div>
-          <div class="h-px bg-slate-200"></div>
-          <label class="flex items-center justify-between">
-            <span id="settingCardFaceLabel" class="text-sm text-slate-700">卡面主题</span>
-            <select id="settingCardFace" class="px-2 py-1 rounded-md border border-slate-300">
-              <option id="cardFaceEmoji" value="emoji">Emoji</option>
-              <option id="cardFaceNumbers" value="numbers">数字</option>
-              <option id="cardFaceLetters" value="letters">字母</option>
-              <option id="cardFaceShapes" value="shapes">形状</option>
-              <option id="cardFaceColors" value="colors">颜色</option>
-            </select>
-          </label>
-          <div class="h-px bg-slate-200"></div>
-          <div class="flex items-center justify-between">
-            <span id="backupLabel" class="text-sm text-slate-700">数据备份</span>
-            <div class="flex items-center gap-2">
-              <button
-                id="exportBtn"
-                class="px-2 py-1 rounded-md border border-slate-300 text-sm bg-white hover:bg-slate-50"
-              >
-                导出
-              </button>
-              <button
-                id="importBtn"
-                class="px-2 py-1 rounded-md border border-slate-300 text-sm bg-white hover:bg-slate-50"
-              >
-                导入
-              </button>
-              <input id="importFile" type="file" accept="application/json" class="hidden" />
-            </div>
-          </div>
-        </div>
-        <div class="mt-5 flex justify-end gap-3">
-          <button
-            id="settingsCancel"
-            class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
-          >
-            取消
-          </button>
-          <button
-            id="settingsSave"
-            class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-          >
-            保存
-          </button>
-          <button
-            id="resetData"
-            class="px-4 py-2 rounded-md border border-rose-300 text-rose-700 text-sm bg-white hover:bg-rose-50"
-          >
-            重置数据
-          </button>
-        </div>
-      </div>
-    </div>
-    <div
-      id="guideModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="guideTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-        <div class="flex items-start justify-between mb-4">
-          <div>
-            <h2 id="guideTitle" class="text-lg font-semibold">快速上手指南</h2>
-            <p id="guideIntro" class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              第一次游玩？按照下面的步骤开始训练。
-            </p>
-          </div>
-          <span class="text-2xl" aria-hidden="true">🧭</span>
-        </div>
-        <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
-          <span class="hidden dark:bg-slate-700"></span>
-          <section>
-            <h3 id="guideBasicsTitle" class="text-sm font-semibold text-slate-700 dark:text-slate-200">基础操作</h3>
-            <ul id="guideBasicsList" class="mt-2 list-disc pl-5 space-y-1"></ul>
-          </section>
-          <section>
-            <h3 id="guideAdvancedTitle" class="text-sm font-semibold text-slate-700 dark:text-slate-200">进阶技巧</h3>
-            <ul id="guideAdvancedList" class="mt-2 list-disc pl-5 space-y-1"></ul>
-          </section>
-          <section>
-            <h3 id="guideShortcutsTitle" class="text-sm font-semibold text-slate-700 dark:text-slate-200">
-              常用快捷键
-            </h3>
-            <ul id="guideShortcutsList" class="mt-2 space-y-1"></ul>
-          </section>
-        </div>
-        <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <label class="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-            <input id="guideNoShow" type="checkbox" class="h-4 w-4" />
-            <span id="guideNoShowLabel">下次不再显示</span>
-          </label>
-          <div class="flex items-center gap-3">
-            <span id="guideOpenHint" class="text-xs text-slate-400">随时可点击上方“指南”查看</span>
-            <button
-              id="guideClose"
-              class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-            >
-              开始训练
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none hidden"></canvas>
-    <div
-      id="comboToast"
-      class="fixed top-24 left-1/2 -translate-x-1/2 z-40 hidden px-3 py-1 rounded-full bg-amber-500/90 text-white text-sm shadow-lg"
-    ></div>
-    <div
-      id="statsModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="statsTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-        <h2 id="statsTitle" class="text-lg font-semibold mb-2">统计</h2>
-        <ul id="statsList" class="space-y-2 text-sm"></ul>
-        <div class="mt-5 flex justify-end">
-          <button
-            id="statsClose"
-            class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
-          >
-            关闭
-          </button>
-        </div>
-      </div>
-    </div>
-    <div
-      id="achievementsModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="achievementsTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-        <h2 id="achievementsTitle" class="text-lg font-semibold mb-2">成就</h2>
-        <p id="achievementsNew" class="text-sm text-emerald-600 mb-2 hidden"></p>
-        <ul id="achievementsList" class="space-y-2 text-sm"></ul>
-        <div class="mt-5 flex justify-end">
-          <button
-            id="achievementsClose"
-            class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
-          >
-            关闭
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- Recall Test Modal -->
-    <div
-      id="recallModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="recallTitle"
-      tabindex="-1"
-      class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
-    >
-      <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-        <h2 id="recallTitle" class="text-lg font-semibold mb-2">回忆测验</h2>
-        <p id="recallDesc" class="text-sm text-slate-600 dark:text-slate-300 mb-3">
-          请从下列选项中勾选本局中出现过的卡面。
-        </p>
-        <div id="recallChoices" class="grid grid-cols-3 gap-2 mb-4"></div>
-        <div class="mt-2 flex justify-end gap-3">
-          <button
-            id="recallSkip"
-            class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
-          >
-            跳过
-          </button>
-          <button
-            id="recallSubmit"
-            class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-          >
-            提交
-          </button>
-        </div>
-      </div>
-    </div>
-    <div
-      id="toast"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden px-3 py-2 rounded-md bg-black/80 text-white text-sm shadow-lg"
-    ></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      // Remove loader when app starts
+      window.addEventListener('DOMContentLoaded', function() {
+        const loader = document.getElementById('initial-loader');
+        if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(function() {
+            loader.remove();
+            document.body.classList.remove('loading');
+          }, 300);
+        }
+      });
+      
+      // Register Service Worker with aggressive caching
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('./sw.js')
+            .then(function(registration) {
+              console.log('[SW] Registered:', registration.scope);
+              
+              // Check for updates
+              registration.addEventListener('updatefound', function() {
+                const newWorker = registration.installing;
+                console.log('[SW] Update found, installing...');
+                
+                newWorker.addEventListener('statechange', function() {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New content available
+                    console.log('[SW] Update ready');
+                    // Optionally show update notification to user
+                  }
+                });
+              });
+            })
+            .catch(function(error) {
+              console.log('[SW] Registration failed:', error);
+            });
+          
+          // Listen for messages from SW
+          navigator.serviceWorker.addEventListener('message', function(event) {
+            console.log('[SW] Message:', event.data);
+          });
+        });
+      }
+    </script>
+    
+    <!-- Module Scripts - Loaded with optimal order -->
+    <!-- Critical modules first -->
     <script src="./src/keys.js"></script>
     <script src="./src/utils.js"></script>
+    
+    <!-- Core functionality -->
     <script src="./src/stats.js"></script>
     <script src="./src/achievements.js"></script>
     <script src="./src/modes.js"></script>
     <script src="./src/import-export.js"></script>
+    
+    <!-- Storage and data -->
     <script src="./src/storage.js"></script>
+    
+    <!-- UI and features -->
     <script src="./src/i18n.js"></script>
     <script src="./src/effects.js"></script>
     <script src="./src/pools.js"></script>
     <script src="./src/timer.js"></script>
     <script src="./src/confetti.js"></script>
+    
+    <!-- Event handling -->
     <script src="./src/ui-events.js"></script>
     <script src="./src/ui.js"></script>
+    
+    <!-- Main application (last) -->
     <script src="./app.js"></script>
+    
+    <!-- Deferred non-critical scripts -->
+    <script defer>
+      // Analytics placeholder (if needed in future)
+      // Performance monitoring
+      if ('performance' in window) {
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            if (perfData) {
+              console.log('[Perf] DOM loaded:', perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart, 'ms');
+              console.log('[Perf] Full load:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
+            }
+          }, 0);
+        });
+      }
+    </script>
   </body>
 </html>

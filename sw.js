@@ -1,27 +1,29 @@
 /**
- * Mind Gym Service Worker
- * Provides offline support and caching for the PWA
+ * Mind Gym Service Worker v3 - Aggressive Performance Optimization
+ * Advanced caching with Workbox patterns
+ * 
+ * @version 1.6.1
+ * @license MIT
  */
 
-const CACHE_NAME = 'mind-gym-v4';
-const RUNTIME_CACHE = 'mind-gym-runtime-v1';
+const CACHE_NAME = 'mind-gym-v3-aggressive';
+const STATIC_CACHE = `${CACHE_NAME}-static`;
+const IMAGE_CACHE = `${CACHE_NAME}-images`;
+const FONT_CACHE = `${CACHE_NAME}-fonts`;
+const RUNTIME_CACHE = `${CACHE_NAME}-runtime`;
 
-// Core assets to cache on install
-const CORE_ASSETS = [
+// Precache list - critical assets
+const PRECACHE_ASSETS = [
   './',
   './index.html',
   './app.js',
-  './manifest.webmanifest',
-  './assets/icon.svg',
-  './assets/app.css',
-  // Source modules
   './src/keys.js',
   './src/utils.js',
+  './src/storage.js',
   './src/stats.js',
   './src/achievements.js',
   './src/modes.js',
   './src/import-export.js',
-  './src/storage.js',
   './src/i18n.js',
   './src/effects.js',
   './src/pools.js',
@@ -29,162 +31,289 @@ const CORE_ASSETS = [
   './src/confetti.js',
   './src/ui-events.js',
   './src/ui.js',
+  './manifest.webmanifest',
+  './assets/icon.svg',
+  './assets/app.css',
 ];
 
-// Install event - cache core assets
+// Install event - precache critical assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
-      .open(CACHE_NAME)
+      .open(STATIC_CACHE)
       .then((cache) => {
-        console.log('[SW] Caching core assets');
-        return cache.addAll(CORE_ASSETS);
+        console.log('[SW] Precaching static assets...');
+        return cache.addAll(PRECACHE_ASSETS);
       })
       .then(() => {
-        console.log('[SW] Core assets cached successfully');
+        console.log('[SW] Precache complete');
         return self.skipWaiting();
       })
-      .catch((error) => {
-        console.error('[SW] Failed to cache core assets:', error);
-      }),
+      .catch((err) => {
+        console.error('[SW] Precache failed:', err);
+      })
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - cleanup old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
       .then((cacheNames) => {
         return Promise.all(
-          cacheNames.map((cacheName) => {
-            // Delete old caches, keep current and runtime cache
-            if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-              console.log('[SW] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
-          }),
+          cacheNames
+            .filter((name) => {
+              // Keep current cache version
+              return name.startsWith('mind-gym-') && name !== STATIC_CACHE && name !== IMAGE_CACHE && name !== FONT_CACHE && name !== RUNTIME_CACHE;
+            })
+            .map((name) => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
         );
       })
       .then(() => {
-        console.log('[SW] Activated and controlling');
+        console.log('[SW] Activation complete');
         return self.clients.claim();
-      }),
+      })
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - advanced caching strategies
 self.addEventListener('fetch', (event) => {
-  const request = event.request;
+  const { request } = event;
   const url = new URL(request.url);
 
-  // Only handle GET requests
+  // Only handle same-origin requests
+  if (url.origin !== self.location.origin) {
+    // Handle external requests (fonts, APIs)
+    if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+      event.respondWith(handleGoogleFonts(request));
+    }
+    return;
+  }
+
+  // Skip non-GET requests
   if (request.method !== 'GET') {
     return;
   }
 
-  // Skip non-http(s) requests
-  if (!url.protocol.startsWith('http')) {
-    return;
-  }
-
-  // Skip service worker itself
+  // Skip sw.js itself
   if (url.pathname.endsWith('/sw.js')) {
     return;
   }
 
-  // Handle CSS files - cache first
+  // Route to appropriate strategy based on file type
   if (url.pathname.endsWith('.css')) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) {
-          return cached;
-        }
-        return fetch(request)
-          .then((response) => {
-            if (response.ok) {
-              const clone = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-            }
-            return response;
-          })
-          .catch(() => caches.match(request));
-      }),
-    );
-    return;
+    event.respondWith(cacheFirstWithTimeout(request, STATIC_CACHE, 2000));
+  } else if (url.pathname.endsWith('.js')) {
+    event.respondWith(cacheFirstWithTimeout(request, STATIC_CACHE, 2000));
+  } else if (/\.(png|jpg|jpeg|svg|gif|webp|ico)$/i.test(url.pathname)) {
+    event.respondWith(cacheFirstWithExpiration(request, IMAGE_CACHE, 100, 30 * 24 * 60 * 60));
+  } else if (url.pathname.endsWith('.woff2') || url.pathname.endsWith('.woff') || url.pathname.endsWith('.ttf')) {
+    event.respondWith(cacheFirstWithExpiration(request, FONT_CACHE, 20, 365 * 24 * 60 * 60));
+  } else if (url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(networkFirstWithFallback(request, STATIC_CACHE));
+  } else if (request.mode === 'navigate') {
+    event.respondWith(networkFirstWithFallback(request, STATIC_CACHE));
+  } else {
+    event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE));
   }
-
-  // Handle navigation requests - network first, cache fallback
-  if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache successful responses
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch(() => {
-          // Fallback to cache
-          return caches.match(request).then((cached) => {
-            return cached || caches.match('./index.html');
-          });
-        }),
-    );
-    return;
-  }
-
-  // Handle other requests - cache first, network fallback
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) {
-        // Return cached, but update cache in background
-        fetch(request)
-          .then((response) => {
-            if (response.ok) {
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, response));
-            }
-          })
-          .catch(() => {});
-        return cached;
-      }
-
-      // Not in cache, fetch from network
-      return fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch((error) => {
-          console.error('[SW] Fetch failed:', url.pathname, error);
-          throw error;
-        });
-    }),
-  );
 });
 
-// Handle messages from the main thread
+// Cache First with timeout strategy
+async function cacheFirstWithTimeout(request, cacheName, timeout = 2000) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  
+  if (cached) {
+    // Return cached immediately, update in background
+    fetchWithTimeout(request, timeout)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.ok) {
+          cache.put(request, networkResponse.clone());
+        }
+      })
+      .catch(() => {});
+    return cached;
+  }
+  
+  // No cache - fetch and store
+  try {
+    const networkResponse = await fetchWithTimeout(request, timeout);
+    if (networkResponse && networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    return new Response('Network error', { status: 408 });
+  }
+}
+
+// Cache First with expiration and limit
+async function cacheFirstWithExpiration(request, cacheName, maxEntries, maxAgeSeconds) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  
+  if (cached) {
+    // Check expiration
+    const headers = cached.headers;
+    const cachedTime = headers.get('sw-cached-time');
+    if (cachedTime) {
+      const age = (Date.now() - parseInt(cachedTime)) / 1000;
+      if (age < maxAgeSeconds) {
+        return cached;
+      }
+    } else {
+      return cached;
+    }
+  }
+  
+  // Fetch and cache with timestamp
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.ok) {
+      const headers = new Headers(networkResponse.headers);
+      headers.set('sw-cached-time', Date.now().toString());
+      
+      const responseToCache = new Response(networkResponse.body, {
+        status: networkResponse.status,
+        statusText: networkResponse.statusText,
+        headers: headers,
+      });
+      
+      await cache.put(request, responseToCache);
+      
+      // Cleanup old entries if over limit
+      await cleanupCache(cacheName, maxEntries);
+    }
+    return networkResponse;
+  } catch (error) {
+    return cached || new Response('Network error', { status: 408 });
+  }
+}
+
+// Network First with fallback
+async function networkFirstWithFallback(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+      return networkResponse;
+    }
+  } catch (error) {
+    console.log('[SW] Network failed, serving from cache');
+  }
+  
+  const cached = await cache.match(request);
+  if (cached) {
+    return cached;
+  }
+  
+  // Ultimate fallback
+  return cache.match('./index.html');
+}
+
+// Stale While Revalidate
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  
+  const fetchPromise = fetch(request)
+    .then((networkResponse) => {
+      if (networkResponse && networkResponse.ok) {
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    })
+    .catch(() => cached);
+  
+  return cached || fetchPromise;
+}
+
+// Google Fonts special handling
+async function handleGoogleFonts(request) {
+  const cacheName = request.url.includes('fonts.googleapis.com') ? 
+    'google-fonts-stylesheets' : 'google-fonts-webfonts';
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  
+  if (cached) {
+    return cached;
+  }
+  
+  const networkResponse = await fetch(request);
+  if (networkResponse && networkResponse.ok) {
+    cache.put(request, networkResponse.clone());
+  }
+  return networkResponse;
+}
+
+// Utility: Fetch with timeout
+function fetchWithTimeout(request, timeout) {
+  return Promise.race([
+    fetch(request),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Timeout')), timeout)
+    )
+  ]);
+}
+
+// Utility: Cleanup cache to max entries
+async function cleanupCache(cacheName, maxEntries) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length > maxEntries) {
+    const keysToDelete = keys.slice(0, keys.length - maxEntries);
+    await Promise.all(keysToDelete.map((key) => cache.delete(key)));
+  }
+}
+
+// Background sync
+defineBGSync(self);
+
+function defineBGSync(self) {
+  self.addEventListener('sync', (event) => {
+    if (event.tag === 'sync-stats') {
+      event.waitUntil(syncStats());
+    }
+  });
+}
+
+async function syncStats() {
+  // Background stats sync implementation
+  console.log('[SW] Background sync executed');
+}
+
+// Message handling for app communication
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-
-  if (event.data && event.data.type === 'GET_VERSION') {
-    event.ports[0].postMessage({ version: CACHE_NAME });
+  
+  if (event.data && event.data.type === 'CLEAR_CACHES') {
+    event.waitUntil(
+      caches.keys().then((names) => {
+        return Promise.all(names.map((name) => caches.delete(name)));
+      }).then(() => {
+        event.ports[0].postMessage({ type: 'CACHES_CLEARED' });
+      })
+    );
   }
 });
 
-// Background sync for offline actions (future use)
-self.addEventListener('sync', (event) => {
-  console.log('[SW] Background sync:', event.tag);
-});
+// Periodic sync (if supported)
+if ('periodicSync' in self.registration) {
+  self.addEventListener('periodicsync', (event) => {
+    if (event.tag === 'content-sync') {
+      event.waitUntil(syncContent());
+    }
+  });
+}
 
-// Push notifications (future use)
-self.addEventListener('push', (event) => {
-  console.log('[SW] Push received:', event);
-});
+async function syncContent() {
+  console.log('[SW] Periodic sync executed');
+}
