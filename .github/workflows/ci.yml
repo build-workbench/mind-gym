@@ -6,23 +6,52 @@ on:
   pull_request:
     branches: [master, main]
 
-permissions:
-  contents: read
-
+# Prevent concurrent CI runs on the same branch
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
+env:
+  # Supported Node.js versions
+  NODE_VERSIONS: '[20, 22]'
+
 jobs:
-  test:
-    name: Test on Node.js ${{ matrix.node-version }}
+  # Lint and basic checks
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Run Prettier check
+        run: npm run lint
+
+  # Test on multiple Node.js versions
+  test:
+    name: Test (Node ${{ matrix.node-version }})
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         node-version: [20, 22]
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js ${{ matrix.node-version }}
@@ -31,14 +60,110 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+            ${{ runner.os }}-node-
 
-      - name: Run lint
-        run: npm run lint
+      - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
 
       - name: Run tests
-        run: npm test -- --runInBand
+        run: npm test -- --runInBand --coverage
 
-      - name: Validate deploy bundle
+      - name: Upload coverage report
+        if: matrix.node-version == 22
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # Build verification
+  build:
+    name: Build verification
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Build CSS
+        run: npm run build:css
+
+      - name: Verify build output
+        run: |
+          echo "📦 Verifying CSS build..."
+          if [ -f "assets/app.css" ]; then
+            SIZE=$(wc -c < assets/app.css)
+            echo "✅ assets/app.css exists (${SIZE} bytes)"
+          else
+            echo "❌ assets/app.css missing"
+            exit 1
+          fi
+
+      - name: Prepare deployment bundle
         run: npm run prepare:deploy
+
+      - name: Verify dist directory
+        run: |
+          echo "📦 Verifying dist directory..."
+          ls -la dist/
+
+          # Check required files
+          REQUIRED_FILES="index.html app.js sw.js manifest.webmanifest"
+          for file in $REQUIRED_FILES; do
+            if [ -f "dist/$file" ]; then
+              echo "✅ $file"
+            else
+              echo "❌ Missing: $file"
+              exit 1
+            fi
+          done
+
+          # Check directories
+          for dir in src assets; do
+            if [ -d "dist/$dir" ]; then
+              echo "✅ $dir/ directory"
+            else
+              echo "❌ Missing: $dir/ directory"
+              exit 1
+            fi
+          done
+
+          echo ""
+          echo "✅ Build verification complete!"
+
+  # Summary job for branch protection rules
+  ci-passed:
+    name: CI Passed
+    needs: [lint, test, build]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check CI status
+        run: |
+          if [[ "${{ needs.lint.result }}" != "success" || \
+                "${{ needs.test.result }}" != "success" || \
+                "${{ needs.build.result }}" != "success" ]]; then
+            echo "❌ CI checks failed"
+            exit 1
+          fi
+          echo "✅ All CI checks passed"

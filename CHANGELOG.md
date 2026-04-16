@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 For detailed changelogs, see the [changelog/](./changelog/) directory.
 
+## [v1.6.0] - 2026-04-16
+
+### Added
+
+- `.github/workflows/dependency-review.yml` for dependency auditing
+- Issue templates: bug_report, feature_request, documentation
+- Enhanced Service Worker with message handling and sync support
+- Build verification steps in CI workflow
+- Coverage report upload in CI
+
+### Changed
+
+- Optimized pages.yml with timeouts, caching, and dist verification
+- Split ci.yml into lint, test, build jobs with ci-passed summary
+- Enhanced pr-title.yml with auto-labeling
+- Improved manifest.webmanifest with shortcuts and metadata
+- Updated pull_request_template.md with emojis and expanded scopes
+
+[View details](./changelog/2026-04-16_workflow-enhancement.md)
+
 ## [v1.5.0] - 2026-04-16
 
 ### Added
@@ -150,7 +170,8 @@ For detailed changelogs, see the [changelog/](./changelog/) directory.
 
 ---
 
-[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.6.0...HEAD
+[v1.6.0]: https://github.com/LessUp/mind-gym/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/LessUp/mind-gym/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/LessUp/mind-gym/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/LessUp/mind-gym/compare/v1.2.1...v1.3.0

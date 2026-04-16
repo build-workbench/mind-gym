@@ -6,28 +6,33 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
-  lint:
-    name: Validate PR title
+  validate:
+    name: Validate PR Title
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
-      - name: Validate PR title
+      - name: Validate PR title format
         uses: amannn/action-semantic-pull-request@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          # Valid commit types based on Conventional Commits
           types: |
             feat
             fix
             docs
             style
             refactor
-            test
-            chore
-            ci
             perf
+            test
+            build
+            ci
+            chore
             revert
+          # Valid scopes for this project
           scopes: |
             ci
             deps
@@ -35,8 +40,50 @@ jobs:
             ui
             gameplay
             tooling
+            storage
+            i18n
+            pwa
+            test
+          # Scope is optional
           requireScope: false
-          subjectPattern: ^[A-Z].+$
+          # Subject must start with capital letter and be descriptive
+          subjectPattern: ^[A-ZÀ-Ž][a-zÀ-ž\s\w]+$
           subjectPatternError: |
-            Subject must start with a capital letter.
-            Example: "feat: Add new game mode"
+            The subject must start with a capital letter and be descriptive.
+
+            Examples:
+              ✅ "feat: Add new game mode"
+              ✅ "fix(ui): Resolve card flip animation issue"
+              ✅ "docs: Update README with installation steps"
+              ❌ "feat: add feature" (lowercase start)
+              ❌ "fix: bug" (too short)
+              ❌ "update code" (missing type)
+
+      - name: Add label based on PR type
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const type = title.split(':')[0].split('(')[0];
+
+            const labelMap = {
+              'feat': 'enhancement',
+              'fix': 'bug',
+              'docs': 'documentation',
+              'test': 'testing',
+              'refactor': 'refactor',
+              'perf': 'performance',
+              'ci': 'ci',
+              'chore': 'maintenance'
+            };
+
+            const label = labelMap[type];
+            if (label) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                labels: [label]
+              });
+            }
