@@ -51,7 +51,7 @@
     "preview": "npm run build && npx serve dist -p 4173",
     "analyze": "npm run build && du -sh dist/ && find dist -type f -exec du -h {} \\; | sort -rh",
     "lighthouse": "npx lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html",
-    "lighthouse:ci": "npx lhci autorun --config=lighthouserc.js",
+    "lighthouse:ci": "npx lhci autorun --config=lighthouserc.cjs",
     "audit:perf": "npm run build && npm run preview & npx lighthouse http://localhost:4173 --preset=desktop --chrome-flags='--headless' --output=json --output-path=./audit.json",
     "clean": "rm -rf dist coverage lhci-reports .nyc_output",
     "typecheck": "echo 'No TypeScript files to check'",

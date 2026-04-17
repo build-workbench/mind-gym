@@ -71,7 +71,7 @@ jobs:
           fi
 
           # Run Lighthouse CI
-          lhci autorun --config=lighthouserc.js || true
+          lhci autorun --config=lighthouserc.cjs || true
 
           # Stop server
           kill $SERVER_PID || true

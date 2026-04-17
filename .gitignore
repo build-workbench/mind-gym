@@ -15,8 +15,6 @@ pnpm-debug.log*
 .idea/
 *.swp
 *.swo
-.vscode/settings.json
-.vscode/launch.json
 
 # Coverage
 coverage/

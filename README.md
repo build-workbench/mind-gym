@@ -35,7 +35,7 @@
   <a href="https://lessup.github.io/mind-gym/">🎮 Play Online</a> •
   <a href="#installation">📱 Install</a> •
   <a href="#documentation">📖 Docs</a> •
-  <a href="#contribute">🤝 Contribute</a>
+  <a href="#contributing">🤝 Contribute</a>
 </p>
 
 ---
@@ -128,29 +128,27 @@ npx serve .
 
 ```
 mind-gym/
-├── index.html              # Main SPA entry
-├── app.js                  # Game orchestrator (state machine, modes)
-├── sw.js                   # Service Worker (offline caching)
-├── manifest.webmanifest    # PWA manifest
-│
-├── src/                    # Modular source (UMD)
-│   ├── storage.js          # localStorage CRUD
-│   ├── stats.js            # Statistics aggregation
-│   ├── achievements.js     # Achievement logic
-│   ├── modes.js            # N-back & recall logic
-│   ├── i18n.js             # Internationalization
-│   ├── timer.js            # Timer management
-│   └── ...                 # Additional modules
-│
-├── __tests__/              # Jest tests
-├── docs/                   # Technical documentation
-│   ├── README.md
-│   ├── architecture.md
-│   ├── modes.md
-│   ├── storage.md
-│   └── pwa.md
-├── changelog/              # Version history
-└── assets/                 # Icons, CSS, static files
+├── specs/                # Spec-Driven Development documents
+│   ├── product/          # Product feature specifications
+│   ├── rfc/              # Technical design documents
+│   ├── db/               # Data model definitions
+│   └── testing/          # Test specifications
+├── docs/                 # User guides and tutorials
+├── changelog/            # Version history
+├── index.html            # Main SPA entry
+├── app.js                # Game orchestrator (state machine, modes)
+├── sw.js                 # Service Worker (offline caching)
+├── manifest.webmanifest  # PWA manifest
+├── src/                  # Modular source (UMD)
+│   ├── storage.js        # localStorage CRUD
+│   ├── stats.js          # Statistics aggregation
+│   ├── achievements.js   # Achievement logic
+│   ├── modes.js          # N-back & recall logic
+│   ├── i18n.js           # Internationalization
+│   ├── timer.js          # Timer management
+│   └── ...               # Additional modules
+├── __tests__/            # Jest tests
+└── assets/               # Icons, CSS, static files
 ```
 
 ---
@@ -212,12 +210,22 @@ See [docs/storage.md](docs/storage.md) for complete data structures.
 
 ## 📖 Documentation
 
+### User Documentation
+
+| Document                             | Description                        |
+| ------------------------------------ | ---------------------------------- |
+| [Training Modes](docs/modes.md)      | Mode specifications and algorithms |
+| [PWA/Offline](docs/pwa.md)           | Service Worker and caching         |
+
+### Developer Documentation
+
 | Document                             | Description                        |
 | ------------------------------------ | ---------------------------------- |
 | [Architecture](docs/architecture.md) | System design and data flow        |
-| [Training Modes](docs/modes.md)      | Mode specifications and algorithms |
 | [Storage Model](docs/storage.md)     | Data structures and persistence    |
-| [PWA/Offline](docs/pwa.md)           | Service Worker and caching         |
+| [Product Specs](specs/product/)      | Feature definitions & acceptance criteria |
+| [Technical RFCs](specs/rfc/)         | Architecture decisions             |
+| [Database Schema](specs/db/)         | Data model specifications          |
 
 ---
 
@@ -229,10 +237,11 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make changes following our code style
-4. Run tests (`npm test`)
-5. Commit with clear messages
-6. Push and open a Pull Request
+3. **Review or create relevant Spec documents** in `/specs/`
+4. Make changes following our code style
+5. Run tests (`npm test`)
+6. Commit with clear messages
+7. Push and open a Pull Request
 
 ---
 

@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) for working with this codebase.
+This file provides guidance for AI coding assistants (Claude Code, Cursor, GitHub Copilot, etc.) working with this codebase.
 
 ---
 
@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) for working with thi
 
 This project strictly follows the **Spec-Driven Development** paradigm. All code implementations must use the `/specs` directory as the Single Source of Truth.
 
-### Directory Context
+## Directory Context
 
 | Directory                  | Purpose                                        |
 | -------------------------- | ---------------------------------------------- |
@@ -20,36 +20,38 @@ This project strictly follows the **Spec-Driven Development** paradigm. All code
 | `/docs/`                   | User guides, tutorials, and architecture overview |
 | `/changelog/`              | Version history and release notes              |
 
-### AI Agent Workflow Instructions
+---
 
-When asked to develop a new feature, modify existing functionality, or fix a bug, **follow this workflow strictly. Do not skip any steps.**
+## AI Agent Workflow Instructions
 
-#### Step 1: Review Specs (审查与分析)
+When asked to develop a new feature, modify existing functionality, or fix a bug, **you MUST follow this workflow strictly. Do not skip any steps.**
+
+### Step 1: Review Specs (审查与分析)
 
 Before writing any code, first read the relevant product documents, RFCs, and API definitions in `/specs`.
 
 - If the user's instruction conflicts with an existing Spec, **STOP immediately** and point out the conflict. Ask the user if the Spec needs to be updated first.
 - 如果用户指令与现有 Spec 冲突，**立即停止编码**，指出冲突点，询问用户是否需要先更新 Spec。
 
-#### Step 2: Spec-First Update (规范优先)
+### Step 2: Spec-First Update (规范优先)
 
 If this is a new feature or requires changes to existing interfaces/database structures:
 
-1. **First propose modifications or create the corresponding Spec document** (e.g., in `/specs/product/` or `/specs/rfc/`).
+1. **First propose modifications or create the corresponding Spec document** (e.g., `openapi.yaml` or RFC document).
 2. Wait for user confirmation of the Spec changes before proceeding to the code writing phase.
 3. 如果是新功能或需要修改现有接口/数据库结构，**必须首先提议修改或创建相应的 Spec 文档**。
 4. 等待用户确认 Spec 的修改后，才能进入代码编写阶段。
 
-#### Step 3: Implementation (代码实现)
+### Step 3: Implementation (代码实现)
 
 When writing code:
 
 - **100% compliance with the Spec definitions** (including variable naming, API paths, data types, status codes, etc.).
 - Do not add features not defined in the Spec (No Gold-Plating).
-- 编写代码时，必须 100% 遵守 Spec 中的定义。
+- 编写代码时，必须 100% 遵守 Spec 中的定义（包括变量命名、API 路径、数据类型、状态码等）。
 - 不要在代码中擅自添加 Spec 中未定义的功能。
 
-#### Step 4: Test against Spec (测试验证)
+### Step 4: Test against Spec (测试验证)
 
 - Write unit tests and integration tests based on Acceptance Criteria in `/specs`.
 - Ensure test cases cover all boundary cases described in the Spec.
@@ -62,14 +64,14 @@ When writing code:
 
 | Rule                                      | Description                                                    |
 | ----------------------------------------- | -------------------------------------------------------------- |
-| New Features                              | Must have corresponding `/specs/product/` document             |
-| Database Changes                          | Schema changes must sync with `/specs/db/`                     |
 | API Changes                               | Any external API changes must sync with `/specs/api/`          |
+| Database Changes                          | Schema changes must sync with `/specs/db/`                     |
+| New Features                              | Must have corresponding `/specs/product/` document             |
 | Uncertain Technical Details               | Check `/specs/rfc/` for architecture conventions               |
 
 ---
 
-## Commands
+## Project Commands
 
 ```bash
 npm test                  # Run Jest unit tests
@@ -87,9 +89,9 @@ npx jest __tests__/helpers.test.js
 
 ---
 
-## Architecture
+## Architecture Summary
 
-**Mind Gym** is a zero-dependency browser-based memory training game (Vanilla JS + Tailwind CSS). No bundler — static files are served directly.
+**Mind Gym** is a browser-based memory training game with zero runtime dependencies (Vanilla JS + Tailwind CSS). No bundler — static files are served directly.
 
 ### Module Loading Order (index.html script tags)
 
@@ -155,14 +157,28 @@ GitHub Actions (`pages.yml`) runs lint → test → `prepare:deploy` → upload 
 ## Code Style
 
 - **Prettier**: Single quotes, trailing commas, 120 character line width, 2-space indent, LF
-- **Commit Format**: Conventional Commits (`feat:`, `fix:`, `docs:`, `style:`, `test:`, `chore:`, `ci:`, `spec:`)
-- **Allowed PR Scopes**: `ci`, `deps`, `docs`, `ui`, `gameplay`, `tooling`, `storage`, `i18n`, `pwa`
+- **Commit Format**: Conventional Commits (`feat:`, `fix:`, `docs:`, `style:`, `test:`, `chore:`, `ci:`)
+- **Allowed PR Scopes**: `ci`, `deps`, `docs`, `ui`, `gameplay`, `tooling`
 
 ---
 
 ## Changelog
 
 All changes are recorded in the `changelog/` directory.
+
+---
+
+## Language
+
+This project uses **English** as the primary language for:
+- Code comments
+- Technical documentation
+- Commit messages
+- Variable/function names
+
+**Chinese** translations are provided for:
+- User-facing documentation (README.zh-CN.md)
+- UI elements (via i18n system)
 
 ---
 

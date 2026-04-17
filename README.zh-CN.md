@@ -128,29 +128,27 @@ npx serve .
 
 ```
 mind-gym/
-├── index.html              # 主入口（单页应用）
-├── app.js                  # 游戏编排器（状态机、模式）
-├── sw.js                   # Service Worker（离线缓存）
-├── manifest.webmanifest    # PWA 清单
-│
-├── src/                    # 模块化源码（UMD）
-│   ├── storage.js          # localStorage CRUD
-│   ├── stats.js            # 统计聚合
-│   ├── achievements.js     # 成就逻辑
-│   ├── modes.js            # N-back 和回忆逻辑
-│   ├── i18n.js             # 国际化
-│   ├── timer.js            # 计时器管理
-│   └── ...                 # 其他模块
-│
-├── __tests__/              # Jest 测试
-├── docs/                   # 技术文档
-│   ├── README.md
-│   ├── architecture.md
-│   ├── modes.md
-│   ├── storage.md
-│   └── pwa.md
-├── changelog/              # 版本历史
-└── assets/                 # 图标、CSS、静态文件
+├── specs/                # 规范驱动开发文档
+│   ├── product/          # 产品功能规范
+│   ├── rfc/              # 技术设计文档
+│   ├── db/               # 数据模型定义
+│   └── testing/          # 测试规范
+├── docs/                 # 用户指南和教程
+├── changelog/            # 版本历史
+├── index.html            # 主入口（单页应用）
+├── app.js                # 游戏编排器（状态机、模式）
+├── sw.js                 # Service Worker（离线缓存）
+├── manifest.webmanifest  # PWA 清单
+├── src/                  # 模块化源码（UMD）
+│   ├── storage.js        # localStorage CRUD
+│   ├── stats.js          # 统计聚合
+│   ├── achievements.js   # 成就逻辑
+│   ├── modes.js          # N-back 和回忆逻辑
+│   ├── i18n.js           # 国际化
+│   ├── timer.js          # 计时器管理
+│   └── ...               # 其他模块
+├── __tests__/            # Jest 测试
+└── assets/               # 图标、CSS、静态文件
 ```
 
 ---
@@ -212,16 +210,26 @@ mind-gym/
 
 ## 📖 文档
 
+### 用户文档
+
+| 文档                                   | 说明                  |
+| -------------------------------------- | --------------------- |
+| [训练模式](docs/modes.zh-CN.md)        | 模式规格与算法        |
+| [PWA/离线](docs/pwa.zh-CN.md)          | Service Worker 与缓存 |
+
+### 开发者文档
+
 | 文档                                   | 说明                  |
 | -------------------------------------- | --------------------- |
 | [架构概览](docs/architecture.zh-CN.md) | 系统设计与数据流      |
-| [训练模式](docs/modes.zh-CN.md)        | 模式规格与算法        |
 | [存储模型](docs/storage.zh-CN.md)      | 数据结构与持久化      |
-| [PWA/离线](docs/pwa.zh-CN.md)          | Service Worker 与缓存 |
+| [产品规范](specs/product/)             | 功能定义与验收标准    |
+| [技术 RFC](specs/rfc/)                 | 架构决策文档          |
+| [数据库 Schema](specs/db/)             | 数据模型规范          |
 
 ---
 
-## <a name="贡献"></a>🤝 贡献指南
+## 🤝 贡献指南
 
 欢迎贡献！请参见 [CONTRIBUTING.md](CONTRIBUTING.md) 了解详细指南。
 
@@ -229,10 +237,11 @@ mind-gym/
 
 1. Fork 仓库
 2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
-3. 按代码规范进行修改
-4. 运行测试 (`npm test`)
-5. 提交清晰的提交信息
-6. 推送并发起 Pull Request
+3. **审查或创建相关的 Spec 文档**（在 `/specs/` 目录中）
+4. 按代码规范进行修改
+5. 运行测试 (`npm test`)
+6. 提交清晰的提交信息
+7. 推送并发起 Pull Request
 
 ---
 
