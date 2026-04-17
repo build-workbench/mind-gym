@@ -29,20 +29,20 @@ N-back Training is a continuous performance task designed to improve working mem
 
 ### Difficulty Presets
 
-| Preset   | N   | Pace  | Length |
-| -------- | --- | ----- | ------ |
-| Easy     | 1   | 1200  | 20     |
-| Medium   | 2   | 900   | 30     |
-| Hard     | 3   | 700   | 40     |
+| Preset | N   | Pace | Length |
+| ------ | --- | ---- | ------ |
+| Easy   | 1   | 1200 | 20     |
+| Medium | 2   | 900  | 30     |
+| Hard   | 3   | 700  | 40     |
 
 ## Gameplay
 
 ### Controls
 
-| Input        | Action                    |
-| ------------ | ------------------------- |
-| `J` key      | "Current matches N-back"  |
-| No keypress  | "Does not match"          |
+| Input       | Action                   |
+| ----------- | ------------------------ |
+| `J` key     | "Current matches N-back" |
+| No keypress | "Does not match"         |
 
 ### Stimulus Sequence
 
@@ -68,10 +68,10 @@ const isTarget = (index, sequence, N) => {
 
 ### Accuracy
 
-| Metric        | Formula                           |
-| ------------- | --------------------------------- |
-| Accuracy      | `hits / total_targets`            |
-| Hit Rate      | `hits / (hits + misses)`          |
+| Metric           | Formula                        |
+| ---------------- | ------------------------------ |
+| Accuracy         | `hits / total_targets`         |
+| Hit Rate         | `hits / (hits + misses)`       |
 | False Alarm Rate | `false_alarms / (non_targets)` |
 
 ### Reaction Time (RT)
@@ -86,18 +86,18 @@ const isTarget = (index, sequence, N) => {
 
 ```javascript
 // Tracked in app.js
-let nbackRunning = false;     // Session active flag
-let nbackTimer = null;        // Interval timer
-let nbackSeq = [];            // Stimulus sequence
-let nbackIdx = 0;             // Current index
-let nbackTargets = 0;         // Targets count
-let nbackHits = 0;            // Correct responses
-let nbackMisses = 0;          // Missed targets
-let nbackFalseAlarms = 0;     // Incorrect J presses
-let nbackRtSum = 0;           // RT sum (ms)
-let nbackRtCount = 0;         // RT sample count
-let nbackResponded = false;   // Response flag for current stimulus
-let nbackStepStart = 0;       // Stimulus display timestamp
+let nbackRunning = false; // Session active flag
+let nbackTimer = null; // Interval timer
+let nbackSeq = []; // Stimulus sequence
+let nbackIdx = 0; // Current index
+let nbackTargets = 0; // Targets count
+let nbackHits = 0; // Correct responses
+let nbackMisses = 0; // Missed targets
+let nbackFalseAlarms = 0; // Incorrect J presses
+let nbackRtSum = 0; // RT sum (ms)
+let nbackRtCount = 0; // RT sample count
+let nbackResponded = false; // Response flag for current stimulus
+let nbackStepStart = 0; // Stimulus display timestamp
 ```
 
 ### Main Loop
@@ -189,47 +189,48 @@ function onNBackKeyPress() {
 ```typescript
 interface Stats {
   // ... other stats
-  nbackAttempts: number;    // Total sessions
-  nbackAccSum: number;      // Accuracy sum (for average)
-  nbackRtSum: number;       // RT sum (ms)
-  nbackRtCount: number;     // RT sample count
+  nbackAttempts: number; // Total sessions
+  nbackAccSum: number; // Accuracy sum (for average)
+  nbackRtSum: number; // RT sum (ms)
+  nbackRtCount: number; // RT sample count
 }
 ```
 
 ### Derived Metrics
 
-| Metric               | Calculation                    |
-| -------------------- | ------------------------------ |
-| Avg N-back Accuracy  | `nbackAccSum / nbackAttempts`  |
-| Avg N-back RT        | `nbackRtSum / nbackRtCount`    |
+| Metric              | Calculation                   |
+| ------------------- | ----------------------------- |
+| Avg N-back Accuracy | `nbackAccSum / nbackAttempts` |
+| Avg N-back RT       | `nbackRtSum / nbackRtCount`   |
 
 ## Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| Start N-back session        | Sequence generated, timer starts       |
-| Correct J press on target   | Hit recorded, RT captured              |
-| J press on non-target       | False alarm recorded                   |
-| No press on target          | Miss recorded                          |
-| Complete session            | Stats updated, results shown           |
-| Early exit                  | Session ends, partial stats recorded   |
-| Adjust N parameter          | Difficulty changes for next session    |
-| Adjust pace                 | Presentation speed changes             |
+| Scenario                  | Expected Behavior                    |
+| ------------------------- | ------------------------------------ |
+| Start N-back session      | Sequence generated, timer starts     |
+| Correct J press on target | Hit recorded, RT captured            |
+| J press on non-target     | False alarm recorded                 |
+| No press on target        | Miss recorded                        |
+| Complete session          | Stats updated, results shown         |
+| Early exit                | Session ends, partial stats recorded |
+| Adjust N parameter        | Difficulty changes for next session  |
+| Adjust pace               | Presentation speed changes           |
 
 ## Cognitive Science Background
 
 N-back training targets working memory, which is responsible for:
+
 - Temporary storage and manipulation of information
 - Cognitive control and attention
 - Fluid intelligence (correlated but debated)
 
 ### Training Recommendations
 
-| N Level | Target User             | Recommended Sessions/Week |
-| ------- | ----------------------- | ------------------------- |
-| 1-back  | Beginners               | 3-4                       |
-| 2-back  | Intermediate            | 3-4                       |
-| 3-back  | Advanced                | 2-3                       |
+| N Level | Target User  | Recommended Sessions/Week |
+| ------- | ------------ | ------------------------- |
+| 1-back  | Beginners    | 3-4                       |
+| 2-back  | Intermediate | 3-4                       |
+| 3-back  | Advanced     | 2-3                       |
 
 ## Related Specifications
 

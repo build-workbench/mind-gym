@@ -212,20 +212,20 @@ See [docs/storage.md](docs/storage.md) for complete data structures.
 
 ### User Documentation
 
-| Document                             | Description                        |
-| ------------------------------------ | ---------------------------------- |
-| [Training Modes](docs/modes.md)      | Mode specifications and algorithms |
-| [PWA/Offline](docs/pwa.md)           | Service Worker and caching         |
+| Document                        | Description                        |
+| ------------------------------- | ---------------------------------- |
+| [Training Modes](docs/modes.md) | Mode specifications and algorithms |
+| [PWA/Offline](docs/pwa.md)      | Service Worker and caching         |
 
 ### Developer Documentation
 
-| Document                             | Description                        |
-| ------------------------------------ | ---------------------------------- |
-| [Architecture](docs/architecture.md) | System design and data flow        |
-| [Storage Model](docs/storage.md)     | Data structures and persistence    |
+| Document                             | Description                               |
+| ------------------------------------ | ----------------------------------------- |
+| [Architecture](docs/architecture.md) | System design and data flow               |
+| [Storage Model](docs/storage.md)     | Data structures and persistence           |
 | [Product Specs](specs/product/)      | Feature definitions & acceptance criteria |
-| [Technical RFCs](specs/rfc/)         | Architecture decisions             |
-| [Database Schema](specs/db/)         | Data model specifications          |
+| [Technical RFCs](specs/rfc/)         | Architecture decisions                    |
+| [Database Schema](specs/db/)         | Data model specifications                 |
 
 ---
 

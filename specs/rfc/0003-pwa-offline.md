@@ -1,9 +1,9 @@
 # RFC-0003: PWA & Offline Strategy
 
-| Status    | Accepted     |
-| --------- | ------------ |
-| Created   | 2025-12-18   |
-| Updated   | 2026-04-17   |
+| Status  | Accepted   |
+| ------- | ---------- |
+| Created | 2025-12-18 |
+| Updated | 2026-04-17 |
 
 ## Summary
 
@@ -67,22 +67,24 @@ Located at `sw.js`
 
 ### Strategy Matrix
 
-| Resource Type          | Strategy      | Rationale                          |
-| ---------------------- | ------------- | ---------------------------------- |
-| Core HTML              | Network First | Fresh content, fallback to cache   |
-| JavaScript modules     | Cache First   | Rarely changes, fast loading       |
-| CSS files              | Cache First   | Static after build                 |
-| Static assets (icons)  | Cache First   | Never changes                      |
-| CDN resources (Tailwind)| Cache First  | Cached by browser                  |
+| Resource Type            | Strategy      | Rationale                        |
+| ------------------------ | ------------- | -------------------------------- |
+| Core HTML                | Network First | Fresh content, fallback to cache |
+| JavaScript modules       | Cache First   | Rarely changes, fast loading     |
+| CSS files                | Cache First   | Static after build               |
+| Static assets (icons)    | Cache First   | Never changes                    |
+| CDN resources (Tailwind) | Cache First   | Cached by browser                |
 
 ### Implementation
 
 #### Cache First (CSS, JS, Assets)
 
 ```javascript
-if (url.pathname.endsWith('.css') ||
-    url.pathname.endsWith('.js') ||
-    url.pathname.endsWith('.svg')) {
+if (
+  url.pathname.endsWith('.css') ||
+  url.pathname.endsWith('.js') ||
+  url.pathname.endsWith('.svg')
+) {
   event.respondWith(
     caches.match(req).then(cached => {
       if (cached) return cached;
@@ -99,8 +101,7 @@ if (url.pathname.endsWith('.css') ||
 #### Network First (Navigation)
 
 ```javascript
-if (req.mode === 'navigate' ||
-    req.headers.get('accept')?.includes('text/html')) {
+if (req.mode === 'navigate' || req.headers.get('accept')?.includes('text/html')) {
   event.respondWith(
     fetch(req)
       .then(res => {
@@ -287,22 +288,22 @@ caches.keys().then(names => {
 
 ## Testing Checklist
 
-| Test                         | Expected Result            |
-| ---------------------------- | -------------------------- |
-| First visit                  | Assets cached              |
-| Offline after first visit    | App loads and works        |
-| New Service Worker version   | Old cache deleted          |
-| PWA install prompt           | Appears on supported browsers |
-| Launch from home screen      | Opens in standalone mode   |
-| Offline gameplay             | All features work          |
+| Test                       | Expected Result               |
+| -------------------------- | ----------------------------- |
+| First visit                | Assets cached                 |
+| Offline after first visit  | App loads and works           |
+| New Service Worker version | Old cache deleted             |
+| PWA install prompt         | Appears on supported browsers |
+| Launch from home screen    | Opens in standalone mode      |
+| Offline gameplay           | All features work             |
 
 ## Future Considerations
 
-| Priority | Feature                  | Description                              |
-| -------- | ------------------------ | ---------------------------------------- |
-| P2       | Background sync          | Sync progress across devices             |
-| P3       | Push notifications       | Daily reminder notifications             |
-| P4       | Periodic background sync | Pre-cache daily challenges               |
+| Priority | Feature                  | Description                  |
+| -------- | ------------------------ | ---------------------------- |
+| P2       | Background sync          | Sync progress across devices |
+| P3       | Push notifications       | Daily reminder notifications |
+| P4       | Periodic background sync | Pre-cache daily challenges   |
 
 ## References
 

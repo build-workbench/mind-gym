@@ -10,15 +10,15 @@ This project strictly follows the **Spec-Driven Development** paradigm. All code
 
 ## Directory Context
 
-| Directory                  | Purpose                                        |
-| -------------------------- | ---------------------------------------------- |
-| `/specs/product/`          | Product feature definitions & Acceptance Criteria |
-| `/specs/rfc/`              | Technical design documents (Request for Comments) |
-| `/specs/api/`              | API interface definitions (if applicable)      |
-| `/specs/db/`               | Data model definitions & Schema specifications |
-| `/specs/testing/`          | BDD test case specifications                   |
-| `/docs/`                   | User guides, tutorials, and architecture overview |
-| `/changelog/`              | Version history and release notes              |
+| Directory         | Purpose                                           |
+| ----------------- | ------------------------------------------------- |
+| `/specs/product/` | Product feature definitions & Acceptance Criteria |
+| `/specs/rfc/`     | Technical design documents (Request for Comments) |
+| `/specs/api/`     | API interface definitions (if applicable)         |
+| `/specs/db/`      | Data model definitions & Schema specifications    |
+| `/specs/testing/` | BDD test case specifications                      |
+| `/docs/`          | User guides, tutorials, and architecture overview |
+| `/changelog/`     | Version history and release notes                 |
 
 ---
 
@@ -62,12 +62,12 @@ When writing code:
 
 ## Code Generation Rules
 
-| Rule                                      | Description                                                    |
-| ----------------------------------------- | -------------------------------------------------------------- |
-| API Changes                               | Any external API changes must sync with `/specs/api/`          |
-| Database Changes                          | Schema changes must sync with `/specs/db/`                     |
-| New Features                              | Must have corresponding `/specs/product/` document             |
-| Uncertain Technical Details               | Check `/specs/rfc/` for architecture conventions               |
+| Rule                        | Description                                           |
+| --------------------------- | ----------------------------------------------------- |
+| API Changes                 | Any external API changes must sync with `/specs/api/` |
+| Database Changes            | Schema changes must sync with `/specs/db/`            |
+| New Features                | Must have corresponding `/specs/product/` document    |
+| Uncertain Technical Details | Check `/specs/rfc/` for architecture conventions      |
 
 ---
 
@@ -105,21 +105,21 @@ Each `src/` module exposes a global object (e.g., `window.RememberStorage`, `win
 
 ### Key Files
 
-| File                   | Responsibility                                          |
-| ---------------------- | ------------------------------------------------------- |
-| `app.js`               | Game main loop, state machine, all mode logic (~2500 lines) |
-| `src/storage.js`       | localStorage CRUD — settings, scores, stats, achievements   |
-| `src/stats.js`         | Statistics normalization and aggregation logic              |
-| `src/achievements.js`  | Achievement definitions and check logic                     |
-| `src/modes.js`         | Pure logic for N-back and recall tests                      |
-| `src/import-export.js` | Backup/restore data normalization                           |
-| `src/i18n.js`          | zh/en dictionary; auto-detect browser language              |
-| `src/ui.js`            | DOM element bindings (single source of truth for elements)  |
-| `src/ui-events.js`     | Event listener registration                                 |
-| `src/pools.js`         | Card face asset pools (emoji, numbers, letters, shapes, colors) |
-| `src/timer.js`         | Countdown and timer management                              |
-| `src/effects.js`       | Web Audio API sound effects and Vibration API               |
-| `src/confetti.js`      | Canvas 2D victory animation                                 |
+| File                   | Responsibility                                                          |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `app.js`               | Game main loop, state machine, all mode logic (~2500 lines)             |
+| `src/storage.js`       | localStorage CRUD — settings, scores, stats, achievements               |
+| `src/stats.js`         | Statistics normalization and aggregation logic                          |
+| `src/achievements.js`  | Achievement definitions and check logic                                 |
+| `src/modes.js`         | Pure logic for N-back and recall tests                                  |
+| `src/import-export.js` | Backup/restore data normalization                                       |
+| `src/i18n.js`          | zh/en dictionary; auto-detect browser language                          |
+| `src/ui.js`            | DOM element bindings (single source of truth for elements)              |
+| `src/ui-events.js`     | Event listener registration                                             |
+| `src/pools.js`         | Card face asset pools (emoji, numbers, letters, shapes, colors)         |
+| `src/timer.js`         | Countdown and timer management                                          |
+| `src/effects.js`       | Web Audio API sound effects and Vibration API                           |
+| `src/confetti.js`      | Canvas 2D victory animation                                             |
 | `sw.js`                | Service Worker: cache-first for resources, network-first for navigation |
 
 ### Game Modes
@@ -171,12 +171,14 @@ All changes are recorded in the `changelog/` directory.
 ## Language
 
 This project uses **English** as the primary language for:
+
 - Code comments
 - Technical documentation
 - Commit messages
 - Variable/function names
 
 **Chinese** translations are provided for:
+
 - User-facing documentation (README.zh-CN.md)
 - UI elements (via i18n system)
 

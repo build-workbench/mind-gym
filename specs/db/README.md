@@ -6,10 +6,10 @@ This directory contains all data model and storage specifications for Mind Gym.
 
 ## Documents
 
-| Document                            | Description                          |
-| ----------------------------------- | ------------------------------------ |
-| [schema.md](./schema.md)            | Data structures and TypeScript types |
-| [storage-spec.md](./storage-spec.md)| CRUD operations and normalization    |
+| Document                             | Description                          |
+| ------------------------------------ | ------------------------------------ |
+| [schema.md](./schema.md)             | Data structures and TypeScript types |
+| [storage-spec.md](./storage-spec.md) | CRUD operations and normalization    |
 
 ---
 
@@ -28,23 +28,23 @@ Mind Gym uses **localStorage** for all data persistence. This provides:
 
 ### User Preferences
 
-| Key        | Description              |
-| ---------- | ------------------------ |
-| `settings` | User configuration options|
+| Key        | Description                |
+| ---------- | -------------------------- |
+| `settings` | User configuration options |
 
 ### Game Records
 
-| Key           | Description                    |
-| ------------- | ------------------------------ |
-| `best`        | Personal best per difficulty   |
-| `leaderboard` | Top 3 scores per difficulty    |
+| Key           | Description                  |
+| ------------- | ---------------------------- |
+| `best`        | Personal best per difficulty |
+| `leaderboard` | Top 3 scores per difficulty  |
 
 ### Progress Tracking
 
-| Key           | Description                    |
-| ------------- | ------------------------------ |
-| `stats`       | Aggregate statistics           |
-| `achievements`| Unlocked achievements          |
+| Key            | Description           |
+| -------------- | --------------------- |
+| `stats`        | Aggregate statistics  |
+| `achievements` | Unlocked achievements |
 
 ### Adaptive Systems
 
@@ -79,6 +79,7 @@ User Action
 Current export version: **1**
 
 Future schema changes must:
+
 1. Increment version number
 2. Add migration logic
 3. Update changelog

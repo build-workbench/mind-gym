@@ -94,25 +94,25 @@ function startTimer(params) {
 
 ## State Changes
 
-| State Variable   | Classic Mode | Countdown Mode          |
-| ---------------- | ------------ | ----------------------- |
-| `isCountdown`    | `false`      | `true`                  |
-| `countdownLeft`  | `0`          | Configured time limit   |
-| Timer behavior   | Count up     | Count down              |
-| End condition    | All matched  | All matched OR time = 0 |
+| State Variable  | Classic Mode | Countdown Mode          |
+| --------------- | ------------ | ----------------------- |
+| `isCountdown`   | `false`      | `true`                  |
+| `countdownLeft` | `0`          | Configured time limit   |
+| Timer behavior  | Count up     | Count down              |
+| End condition   | All matched  | All matched OR time = 0 |
 
 ## Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| Start countdown game        | Timer counts down from configured time |
-| Match all pairs in time     | Win! Normal win flow                   |
-| Timer reaches zero          | Loss, failure modal shown              |
-| Pause during countdown      | Timer pauses                           |
-| Resume after pause          | Timer continues from paused value      |
-| Change time configuration   | New limit applies to next game         |
-| Countdown reaches 30s       | Visual warning (color change)          |
-| Countdown reaches 10s       | Pulse effect on timer                  |
+| Scenario                  | Expected Behavior                      |
+| ------------------------- | -------------------------------------- |
+| Start countdown game      | Timer counts down from configured time |
+| Match all pairs in time   | Win! Normal win flow                   |
+| Timer reaches zero        | Loss, failure modal shown              |
+| Pause during countdown    | Timer pauses                           |
+| Resume after pause        | Timer continues from paused value      |
+| Change time configuration | New limit applies to next game         |
+| Countdown reaches 30s     | Visual warning (color change)          |
+| Countdown reaches 10s     | Pulse effect on timer                  |
 
 ## Related Specifications
 

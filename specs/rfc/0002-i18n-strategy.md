@@ -1,9 +1,9 @@
 # RFC-0002: Internationalization (i18n) Strategy
 
-| Status    | Accepted     |
-| --------- | ------------ |
-| Created   | 2025-12-19   |
-| Updated   | 2026-04-17   |
+| Status  | Accepted   |
+| ------- | ---------- |
+| Created | 2025-12-19 |
+| Updated | 2026-04-17 |
 
 ## Summary
 
@@ -19,10 +19,10 @@ This RFC defines the internationalization strategy for Mind Gym, supporting Engl
 
 ### Supported Languages
 
-| Code  | Language        | Native Name  |
-| ----- | --------------- | ------------ |
-| `en`  | English         | English      |
-| `zh`  | Chinese (Simplified) | 简体中文 |
+| Code | Language             | Native Name |
+| ---- | -------------------- | ----------- |
+| `en` | English              | English     |
+| `zh` | Chinese (Simplified) | 简体中文    |
 
 ### Default Behavior
 
@@ -57,7 +57,7 @@ const DICT = {
     game_pause: '暂停',
     game_hint: '提示',
     // ...
-  }
+  },
 };
 ```
 
@@ -68,6 +68,7 @@ const DICT = {
 ```
 
 Examples:
+
 - `settings_title` — Settings category, title item
 - `game_new` — Game category, new game action
 - `mode_nback` — Mode category, N-back mode
@@ -152,7 +153,7 @@ function applyToDOM() {
 <button data-i18n="game_new">New Game</button>
 
 <!-- Placeholder -->
-<input data-i18n-placeholder="search_placeholder" placeholder="Search...">
+<input data-i18n-placeholder="search_placeholder" placeholder="Search..." />
 
 <!-- Title tooltip -->
 <span data-i18n-title="help_tooltip" title="Help">?</span>
@@ -194,7 +195,7 @@ const DICT = {
   zh: {
     achievement_first_win: '初次胜利',
     achievement_first_win_desc: '完成第一局游戏',
-  }
+  },
 };
 ```
 
@@ -232,25 +233,25 @@ src/i18n.js
 
 ### Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| Auto-detect with zh browser | Language set to zh                     |
-| Auto-detect with en browser | Language set to en                     |
-| User sets language          | Override auto-detection                |
-| Missing translation key     | Return key name as fallback            |
-| Switch language             | DOM updates immediately                |
-| Interpolation               | Variables replaced correctly           |
+| Scenario                    | Expected Behavior            |
+| --------------------------- | ---------------------------- |
+| Auto-detect with zh browser | Language set to zh           |
+| Auto-detect with en browser | Language set to en           |
+| User sets language          | Override auto-detection      |
+| Missing translation key     | Return key name as fallback  |
+| Switch language             | DOM updates immediately      |
+| Interpolation               | Variables replaced correctly |
 
 ## Future Considerations
 
 ### Potential Additions
 
-| Priority | Feature                  | Description                              |
-| -------- | ------------------------ | ---------------------------------------- |
-| P2       | Pluralization            | Handle singular/plural forms             |
-| P3       | More languages           | Add Japanese, Korean, etc.               |
-| P4       | RTL support              | Right-to-left language support           |
-| P5       | Date/number formatting   | Locale-specific formatting               |
+| Priority | Feature                | Description                    |
+| -------- | ---------------------- | ------------------------------ |
+| P2       | Pluralization          | Handle singular/plural forms   |
+| P3       | More languages         | Add Japanese, Korean, etc.     |
+| P4       | RTL support            | Right-to-left language support |
+| P5       | Date/number formatting | Locale-specific formatting     |
 
 ### Pluralization (Future)
 

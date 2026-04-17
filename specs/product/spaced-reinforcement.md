@@ -43,8 +43,8 @@ function applySpacedAfterWin(theme) {
 
 ### Decay Factor
 
-| Parameter | Value | Description                    |
-| --------- | ----- | ------------------------------ |
+| Parameter | Value | Description                      |
+| --------- | ----- | -------------------------------- |
 | Decay     | 0.8   | Each game, weights reduce by 20% |
 
 ### Weight Calculation
@@ -74,10 +74,10 @@ function pickWithSpaced(theme, pool, pairs) {
 
 ### Selection Strategy
 
-| Pool Portion | Selection Method          |
-| ------------ | ------------------------- |
-| Top 40%      | Weighted (difficult cards) |
-| Remaining 60%| Random from pool          |
+| Pool Portion  | Selection Method           |
+| ------------- | -------------------------- |
+| Top 40%       | Weighted (difficult cards) |
+| Remaining 60% | Random from pool           |
 
 ## Data Storage
 
@@ -85,7 +85,7 @@ function pickWithSpaced(theme, pool, pairs) {
 
 ```typescript
 interface SpacedData {
-  [cardValue: string]: number;  // Card value → weight
+  [cardValue: string]: number; // Card value → weight
 }
 ```
 
@@ -106,12 +106,12 @@ Themes: `emoji`, `numbers`, `letters`, `shapes`, `colors`
 
 ### Weight Interpretation
 
-| Weight | Meaning                         |
-| ------ | ------------------------------- |
-| 0      | Never seen or fully decayed     |
-| 1-2    | Slightly difficult              |
-| 3-5    | Moderately difficult            |
-| 6+     | Very difficult                  |
+| Weight | Meaning                     |
+| ------ | --------------------------- |
+| 0      | Never seen or fully decayed |
+| 1-2    | Slightly difficult          |
+| 3-5    | Moderately difficult        |
+| 6+     | Very difficult              |
 
 ## Implementation
 
@@ -195,25 +195,25 @@ Weights reduce over time if cards improve
 
 ## Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| First game ever             | No weighted cards, random selection    |
-| Struggle with card A        | Card A weighted higher                 |
-| Win game with spaced on     | Weights updated and decayed            |
-| Toggle spaced off           | Random selection (no weights used)     |
-| Switch theme                | Separate weights per theme             |
-| Multiple games              | Weights decay and accumulate           |
-| Card improves (fewer exposures) | Weight stops growing              |
+| Scenario                        | Expected Behavior                   |
+| ------------------------------- | ----------------------------------- |
+| First game ever                 | No weighted cards, random selection |
+| Struggle with card A            | Card A weighted higher              |
+| Win game with spaced on         | Weights updated and decayed         |
+| Toggle spaced off               | Random selection (no weights used)  |
+| Switch theme                    | Separate weights per theme          |
+| Multiple games                  | Weights decay and accumulate        |
+| Card improves (fewer exposures) | Weight stops growing                |
 
 ## Future Roadmap
 
-| Priority | Feature                  | Description                              |
-| -------- | ------------------------ | ---------------------------------------- |
-| P1       | SM-2 Algorithm           | SuperMemo-inspired intervals             |
-| P2       | Mastery Scores           | Track individual card mastery level      |
-| P3       | Review Sessions          | Dedicated review mode for weak cards     |
-| P4       | Cross-device Sync        | Sync weights across devices              |
-| P5       | Leitner System           | Box-based card scheduling                |
+| Priority | Feature           | Description                          |
+| -------- | ----------------- | ------------------------------------ |
+| P1       | SM-2 Algorithm    | SuperMemo-inspired intervals         |
+| P2       | Mastery Scores    | Track individual card mastery level  |
+| P3       | Review Sessions   | Dedicated review mode for weak cards |
+| P4       | Cross-device Sync | Sync weights across devices          |
+| P5       | Leitner System    | Box-based card scheduling            |
 
 ### SM-2 Algorithm Preview
 
@@ -226,7 +226,8 @@ function sm2(card, quality) {
   } else {
     card.interval = 1; // Reset to 1 day
   }
-  card.easinessFactor = Math.max(1.3,
+  card.easinessFactor = Math.max(
+    1.3,
     card.easinessFactor + 0.1 - quality * (0.08 + quality * 0.02)
   );
   return card;

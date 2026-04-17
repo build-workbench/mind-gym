@@ -6,11 +6,11 @@ This directory contains BDD-style test case specifications for Mind Gym.
 
 ## Testing Strategy
 
-| Type         | Location        | Purpose                          |
-| ------------ | --------------- | -------------------------------- |
-| Unit Tests   | `/__tests__/`   | Test individual functions/modules|
-| E2E Tests    | Future          | Test complete user flows         |
-| BDD Specs    | `/specs/testing/`| Define expected behavior        |
+| Type       | Location          | Purpose                           |
+| ---------- | ----------------- | --------------------------------- |
+| Unit Tests | `/__tests__/`     | Test individual functions/modules |
+| E2E Tests  | Future            | Test complete user flows          |
+| BDD Specs  | `/specs/testing/` | Define expected behavior          |
 
 ---
 
@@ -18,20 +18,20 @@ This directory contains BDD-style test case specifications for Mind Gym.
 
 ### Module Tests
 
-| Module           | Test File                     | Coverage Focus           |
-| ---------------- | ----------------------------- | ------------------------ |
-| `storage.js`     | `__tests__/storage.test.js`   | CRUD operations          |
-| `stats.js`       | `__tests__/stats.test.js`     | Calculations             |
-| `modes.js`       | `__tests__/modes.test.js`     | Game logic               |
-| `import-export.js`| `__tests__/import-export.test.js`| Data normalization     |
+| Module             | Test File                         | Coverage Focus     |
+| ------------------ | --------------------------------- | ------------------ |
+| `storage.js`       | `__tests__/storage.test.js`       | CRUD operations    |
+| `stats.js`         | `__tests__/stats.test.js`         | Calculations       |
+| `modes.js`         | `__tests__/modes.test.js`         | Game logic         |
+| `import-export.js` | `__tests__/import-export.test.js` | Data normalization |
 
 ### Integration Tests
 
-| Feature          | Test Focus                    | Acceptance Criteria      |
-| ---------------- | ----------------------------- | ------------------------ |
-| Game Flow        | Start → Play → Win            | Complete game cycle      |
-| Data Persistence | Save → Reload → Verify        | Data survives reload     |
-| PWA Install      | Install → Launch → Offline    | Offline functionality    |
+| Feature          | Test Focus                 | Acceptance Criteria   |
+| ---------------- | -------------------------- | --------------------- |
+| Game Flow        | Start → Play → Win         | Complete game cycle   |
+| Data Persistence | Save → Reload → Verify     | Data survives reload  |
+| PWA Install      | Install → Launch → Offline | Offline functionality |
 
 ---
 
@@ -79,12 +79,12 @@ Feature: Classic Matching Mode
 
 ## Test Coverage Goals
 
-| Category      | Target Coverage |
-| ------------- | --------------- |
-| Statements    | 80%             |
-| Branches      | 75%             |
-| Functions     | 90%             |
-| Lines         | 80%             |
+| Category   | Target Coverage |
+| ---------- | --------------- |
+| Statements | 80%             |
+| Branches   | 75%             |
+| Functions  | 90%             |
+| Lines      | 80%             |
 
 ---
 

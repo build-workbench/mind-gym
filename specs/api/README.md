@@ -116,11 +116,11 @@ interface ExportPayload {
 
 If server-side features are added in the future:
 
-| Feature            | Method | Endpoint            | Description              |
-| ------------------ | ------ | ------------------- | ------------------------ |
-| Sync progress      | POST   | `/api/sync`         | Cross-device sync        |
-| Daily challenge    | GET    | `/api/daily/:date`  | Server-validated daily   |
-| Leaderboard        | GET    | `/api/leaderboard`  | Global rankings          |
+| Feature         | Method | Endpoint           | Description            |
+| --------------- | ------ | ------------------ | ---------------------- |
+| Sync progress   | POST   | `/api/sync`        | Cross-device sync      |
+| Daily challenge | GET    | `/api/daily/:date` | Server-validated daily |
+| Leaderboard     | GET    | `/api/leaderboard` | Global rankings        |
 
 These are **not implemented** and would require new RFC documents.
 

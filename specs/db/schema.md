@@ -36,24 +36,24 @@ All keys use `memory_match_` prefix to avoid conflicts with other applications.
 
 ```typescript
 interface Settings {
-  sound: boolean;           // Sound effects enabled
-  vibrate: boolean;         // Haptic feedback enabled
-  previewSeconds: number;   // Preview time at start (0-5)
-  accent: 'indigo' | 'emerald' | 'rose';  // Theme accent color
-  theme: 'auto' | 'light' | 'dark';       // Color scheme
-  motion: 'auto' | 'on' | 'off';          // Animation preference
-  volume: number;           // Volume level (0-1)
+  sound: boolean; // Sound effects enabled
+  vibrate: boolean; // Haptic feedback enabled
+  previewSeconds: number; // Preview time at start (0-5)
+  accent: 'indigo' | 'emerald' | 'rose'; // Theme accent color
+  theme: 'auto' | 'light' | 'dark'; // Color scheme
+  motion: 'auto' | 'on' | 'off'; // Animation preference
+  volume: number; // Volume level (0-1)
   soundPack: 'clear' | 'electro' | 'soft'; // Sound pack
   cardFace: 'emoji' | 'numbers' | 'letters' | 'shapes' | 'colors';
   gameMode: 'classic' | 'countdown';
   countdown: {
-    easy: number;    // Easy countdown seconds (10-999)
-    medium: number;  // Medium countdown seconds
-    hard: number;    // Hard countdown seconds
+    easy: number; // Easy countdown seconds (10-999)
+    medium: number; // Medium countdown seconds
+    hard: number; // Hard countdown seconds
   };
   language: 'auto' | 'zh' | 'en';
-  adaptive: boolean;  // Adaptive assist enabled
-  spaced: boolean;    // Spaced repetition enabled
+  adaptive: boolean; // Adaptive assist enabled
+  spaced: boolean; // Spaced repetition enabled
 }
 ```
 
@@ -74,7 +74,7 @@ const DEFAULT_SETTINGS = {
   countdown: { easy: 90, medium: 150, hard: 240 },
   language: 'auto',
   adaptive: false,
-  spaced: false
+  spaced: false,
 };
 ```
 
@@ -84,12 +84,13 @@ const DEFAULT_SETTINGS = {
 
 ```typescript
 interface BestScore {
-  time: number;   // Time in seconds
-  moves: number;  // Number of moves
+  time: number; // Time in seconds
+  moves: number; // Number of moves
 }
 ```
 
 **Example:**
+
 ```json
 {
   "time": 45,
@@ -105,17 +106,19 @@ interface BestScore {
 type Leaderboard = LeaderboardEntry[];
 
 interface LeaderboardEntry {
-  time: number;   // Time in seconds
-  moves: number;  // Number of moves
-  at: number;     // Timestamp (Date.now())
+  time: number; // Time in seconds
+  moves: number; // Number of moves
+  at: number; // Timestamp (Date.now())
 }
 ```
 
 **Constraints:**
+
 - Maximum 3 entries retained
 - Sorted by: time → moves → timestamp
 
 **Example:**
+
 ```json
 [
   { "time": 45, "moves": 12, "at": 1713264000000 },
@@ -132,7 +135,7 @@ interface LeaderboardEntry {
 interface Achievements {
   [achievementId: string]: {
     unlocked: true;
-    at: number;  // Unlock timestamp
+    at: number; // Unlock timestamp
   };
 }
 ```
@@ -149,6 +152,7 @@ interface Achievements {
 | `perfect_moves`    | Perfect game (moves = pairs) |
 
 **Example:**
+
 ```json
 {
   "first_win": { "unlocked": true, "at": 1713264000000 },
@@ -162,20 +166,20 @@ interface Achievements {
 
 ```typescript
 interface Stats {
-  games: number;         // Total games played
-  wins: number;          // Total wins
-  timeSum: number;       // Total time (seconds)
-  movesSum: number;      // Total moves
-  hintsSum: number;      // Total hints used
-  comboSum: number;      // Sum of max combos
-  bestCombo: number;     // Best combo ever
-  recallAttempts: number;   // Recall test attempts
-  precisionSum: number;     // Precision sum (for average)
-  recallSum: number;        // Recall sum (for average)
-  nbackAttempts: number;    // N-back attempts
-  nbackAccSum: number;      // N-back accuracy sum
-  nbackRtSum: number;       // N-back RT sum (ms)
-  nbackRtCount: number;     // N-back RT sample count
+  games: number; // Total games played
+  wins: number; // Total wins
+  timeSum: number; // Total time (seconds)
+  movesSum: number; // Total moves
+  hintsSum: number; // Total hints used
+  comboSum: number; // Sum of max combos
+  bestCombo: number; // Best combo ever
+  recallAttempts: number; // Recall test attempts
+  precisionSum: number; // Precision sum (for average)
+  recallSum: number; // Recall sum (for average)
+  nbackAttempts: number; // N-back attempts
+  nbackAccSum: number; // N-back accuracy sum
+  nbackRtSum: number; // N-back RT sum (ms)
+  nbackRtCount: number; // N-back RT sample count
 }
 ```
 
@@ -199,12 +203,13 @@ interface Stats {
 
 ```typescript
 interface AdaptiveData {
-  rating: number;  // Rating (600-1600)
-  lastDiff: 'easy' | 'medium' | 'hard';  // Last difficulty played
+  rating: number; // Rating (600-1600)
+  lastDiff: 'easy' | 'medium' | 'hard'; // Last difficulty played
 }
 ```
 
 **Defaults:**
+
 ```json
 { "rating": 1000, "lastDiff": "easy" }
 ```
@@ -215,11 +220,12 @@ interface AdaptiveData {
 
 ```typescript
 interface SpacedData {
-  [cardValue: string]: number;  // Card value → weight
+  [cardValue: string]: number; // Card value → weight
 }
 ```
 
 **Example:**
+
 ```json
 {
   "🍎": 2.4,
@@ -229,6 +235,7 @@ interface SpacedData {
 ```
 
 **Weight Rules:**
+
 - Accumulates based on exposure count (>1 exposure = difficult)
 - Old weights decay by 0.8 each game
 - Higher weight = higher selection probability
@@ -240,11 +247,12 @@ interface SpacedData {
 ```typescript
 interface DailyData {
   done: true;
-  at: number;  // Completion timestamp
+  at: number; // Completion timestamp
 }
 ```
 
 **Example:**
+
 ```json
 { "done": true, "at": 1713264000000 }
 ```

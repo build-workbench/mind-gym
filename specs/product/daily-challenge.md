@@ -34,11 +34,11 @@ function seedFromDate(dateStr, diff, theme) {
 
 ### Input Parameters
 
-| Parameter  | Format                    | Example          |
-| ---------- | ------------------------- | ---------------- |
-| `dateStr`  | ISO date string           | `"2026-04-17"`   |
-| `diff`     | Difficulty key            | `"easy"`         |
-| `theme`    | Card face theme           | `"emoji"`        |
+| Parameter | Format          | Example        |
+| --------- | --------------- | -------------- |
+| `dateStr` | ISO date string | `"2026-04-17"` |
+| `diff`    | Difficulty key  | `"easy"`       |
+| `theme`   | Card face theme | `"emoji"`      |
 
 ### Output
 
@@ -50,7 +50,7 @@ function seedFromDate(dateStr, diff, theme) {
 // Seeded PRNG (xorshift)
 function seededRandom(seed) {
   let x = seed;
-  return function() {
+  return function () {
     x ^= x << 13;
     x ^= x >>> 17;
     x ^= x << 5;
@@ -94,7 +94,7 @@ Click "Daily" Button
 ```typescript
 interface DailyData {
   done: true;
-  at: number;  // Completion timestamp
+  at: number; // Completion timestamp
 }
 ```
 
@@ -146,12 +146,12 @@ Example key: `memory_match_daily_2026-04-17_easy`
 
 ## Determinism Guarantees
 
-| Condition              | Guarantee                    |
-| ---------------------- | ---------------------------- |
-| Same date + diff + theme | Identical card order       |
-| Different timezone     | Uses local date (no UTC)     |
-| Cross-session          | Reproducible results         |
-| Cross-device           | Same seed = same board       |
+| Condition                | Guarantee                |
+| ------------------------ | ------------------------ |
+| Same date + diff + theme | Identical card order     |
+| Different timezone       | Uses local date (no UTC) |
+| Cross-session            | Reproducible results     |
+| Cross-device             | Same seed = same board   |
 
 ## Limitations
 

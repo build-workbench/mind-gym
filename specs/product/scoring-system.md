@@ -46,12 +46,12 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
 ### Rating Factors
 
-| Factor | Impact                                  |
-| ------ | --------------------------------------- |
-| Time   | Proportional penalty for exceeding par  |
-| Moves  | 3 point penalty per move above minimum  |
-| Hints  | 10 point penalty per hint used          |
-| Combos | +2 points per combo achieved (max 10)   |
+| Factor | Impact                                 |
+| ------ | -------------------------------------- |
+| Time   | Proportional penalty for exceeding par |
+| Moves  | 3 point penalty per move above minimum |
+| Hints  | 10 point penalty per hint used         |
+| Combos | +2 points per combo achieved (max 10)  |
 
 ### Par Values by Difficulty
 
@@ -63,13 +63,13 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
 ### Score to Stars
 
-| Score Range | Stars |
-| ----------- | ----- |
+| Score Range | Stars          |
+| ----------- | -------------- |
 | 81-100      | ⭐⭐⭐⭐⭐ (5) |
-| 61-80       | ⭐⭐⭐⭐ (4) |
-| 41-60       | ⭐⭐⭐ (3) |
-| 21-40       | ⭐⭐ (2) |
-| 0-20        | ⭐ (1) |
+| 61-80       | ⭐⭐⭐⭐ (4)   |
+| 41-60       | ⭐⭐⭐ (3)     |
+| 21-40       | ⭐⭐ (2)       |
+| 0-20        | ⭐ (1)         |
 
 ## Combo System
 
@@ -97,19 +97,19 @@ if (comboCount >= 2) {
 
 ### Combo Window
 
-| Parameter | Value    |
-| --------- | -------- |
-| Window    | 5 seconds|
-| Minimum display | 2x combo |
+| Parameter       | Value     |
+| --------------- | --------- |
+| Window          | 5 seconds |
+| Minimum display | 2x combo  |
 
 ### Effects
 
-| Effect              | Description                      |
-| ------------------- | -------------------------------- |
-| Combo counter       | Increments                       |
-| Toast notification  | Shows "2x Combo!" etc.           |
-| Max combo recorded  | For session stats                |
-| Star rating impact  | +2 points per combo (max +10)    |
+| Effect             | Description                   |
+| ------------------ | ----------------------------- |
+| Combo counter      | Increments                    |
+| Toast notification | Shows "2x Combo!" etc.        |
+| Max combo recorded | For session stats             |
+| Star rating impact | +2 points per combo (max +10) |
 
 ## Statistics Tracking
 
@@ -117,20 +117,20 @@ if (comboCount >= 2) {
 
 ```typescript
 interface Stats {
-  games: number;        // Total games played
-  wins: number;         // Total wins
-  timeSum: number;      // Total time (seconds)
-  movesSum: number;     // Total moves
-  hintsSum: number;     // Total hints used
-  comboSum: number;     // Sum of max combos
-  bestCombo: number;    // Best combo ever
-  recallAttempts: number;  // Recall test attempts
-  precisionSum: number;    // Precision sum
-  recallSum: number;       // Recall sum
-  nbackAttempts: number;   // N-back attempts
-  nbackAccSum: number;     // N-back accuracy sum
-  nbackRtSum: number;      // N-back RT sum (ms)
-  nbackRtCount: number;    // N-back RT sample count
+  games: number; // Total games played
+  wins: number; // Total wins
+  timeSum: number; // Total time (seconds)
+  movesSum: number; // Total moves
+  hintsSum: number; // Total hints used
+  comboSum: number; // Sum of max combos
+  bestCombo: number; // Best combo ever
+  recallAttempts: number; // Recall test attempts
+  precisionSum: number; // Precision sum
+  recallSum: number; // Recall sum
+  nbackAttempts: number; // N-back attempts
+  nbackAccSum: number; // N-back accuracy sum
+  nbackRtSum: number; // N-back RT sum (ms)
+  nbackRtCount: number; // N-back RT sample count
 }
 ```
 
@@ -175,14 +175,15 @@ function updateStats(win, time, moves, hints, combo) {
 
 ```typescript
 interface BestScore {
-  time: number;   // Time in seconds
-  moves: number;  // Number of moves
+  time: number; // Time in seconds
+  moves: number; // Number of moves
 }
 ```
 
 ### Update Condition
 
 New best score replaces old when:
+
 1. Time is faster, OR
 2. Time is equal AND moves are fewer
 
@@ -190,8 +191,7 @@ New best score replaces old when:
 function updateBest(diff, time, moves) {
   const current = loadBest(diff);
 
-  if (!current || time < current.time ||
-      (time === current.time && moves < current.moves)) {
+  if (!current || time < current.time || (time === current.time && moves < current.moves)) {
     saveBest(diff, { time, moves });
   }
 }
@@ -205,9 +205,9 @@ function updateBest(diff, time, moves) {
 type Leaderboard = LeaderboardEntry[];
 
 interface LeaderboardEntry {
-  time: number;   // Time in seconds
-  moves: number;  // Number of moves
-  at: number;     // Timestamp (Date.now())
+  time: number; // Time in seconds
+  moves: number; // Number of moves
+  at: number; // Timestamp (Date.now())
 }
 ```
 
@@ -266,15 +266,15 @@ function updateLeaderboard(diff, time, moves) {
 
 ## Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| Perfect game (moves=pairs)  | 5 stars possible (if time good)        |
-| Very slow game              | 1-2 stars                              |
-| Use all hints               | Star rating reduced                    |
-| Get 5x combo                | +10 points to score                    |
-| Break personal best         | New best score saved                   |
-| Make top 3                  | Added to leaderboard                   |
-| Multiple games              | Statistics aggregate correctly         |
+| Scenario                   | Expected Behavior               |
+| -------------------------- | ------------------------------- |
+| Perfect game (moves=pairs) | 5 stars possible (if time good) |
+| Very slow game             | 1-2 stars                       |
+| Use all hints              | Star rating reduced             |
+| Get 5x combo               | +10 points to score             |
+| Break personal best        | New best score saved            |
+| Make top 3                 | Added to leaderboard            |
+| Multiple games             | Statistics aggregate correctly  |
 
 ## Related Specifications
 

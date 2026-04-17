@@ -1,9 +1,9 @@
 # RFC-0001: Core Architecture
 
-| Status    | Accepted     |
-| --------- | ------------ |
-| Created   | 2025-12-19   |
-| Updated   | 2026-04-17   |
+| Status  | Accepted   |
+| ------- | ---------- |
+| Created | 2025-12-19 |
+| Updated | 2026-04-17 |
 
 ## Summary
 
@@ -12,6 +12,7 @@ This RFC defines the core architecture of Mind Gym: a zero-runtime-dependency br
 ## Motivation
 
 The goal is to create a lightweight, fast-loading PWA that:
+
 1. Works offline after first load
 2. Requires no build step for JavaScript
 3. Can be hosted on static file servers
@@ -70,6 +71,7 @@ src/keys.js → src/utils.js → src/stats.js → src/achievements.js → src/mo
 ```
 
 Each module exposes a global object (UMD pattern):
+
 - `window.RememberStorage`
 - `window.RememberI18n`
 - etc.

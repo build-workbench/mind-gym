@@ -4,10 +4,10 @@
 
 ## Module Overview
 
-| File            | Global Object          | Purpose                          |
-| --------------- | ---------------------- | -------------------------------- |
-| `src/keys.js`   | `window.RememberKeys`  | localStorage key constants        |
-| `src/storage.js`| `window.RememberStorage` | CRUD operations, normalization |
+| File             | Global Object            | Purpose                        |
+| ---------------- | ------------------------ | ------------------------------ |
+| `src/keys.js`    | `window.RememberKeys`    | localStorage key constants     |
+| `src/storage.js` | `window.RememberStorage` | CRUD operations, normalization |
 
 ---
 
@@ -17,12 +17,12 @@
 // src/keys.js
 const KEYS = {
   SETTINGS: 'memory_match_settings',
-  BEST: (diff) => `memory_match_best_${diff}`,
-  LB: (diff) => `memory_match_lb_${diff}`,
+  BEST: diff => `memory_match_best_${diff}`,
+  LB: diff => `memory_match_lb_${diff}`,
   ACHIEVEMENTS: 'memory_match_achievements',
   STATS: 'memory_match_stats',
   ADAPTIVE: 'memory_match_adaptive',
-  SPACED: (theme) => `memory_match_spaced_${theme}`,
+  SPACED: theme => `memory_match_spaced_${theme}`,
   DAILY: (date, diff) => `memory_match_daily_${date}_${diff}`,
   ONBOARDING: 'memory_match_onboarding_v1',
 };
@@ -122,8 +122,7 @@ function saveBest(diff, score) {
  */
 function updateBest(diff, time, moves) {
   const current = loadBest(diff);
-  if (!current || time < current.time ||
-      (time === current.time && moves < current.moves)) {
+  if (!current || time < current.time || (time === current.time && moves < current.moves)) {
     saveBest(diff, { time, moves });
     return true;
   }
@@ -481,18 +480,18 @@ function safeOperation(fn, fallback) {
 
 ## Test Cases
 
-| Operation                | Test Case                          | Expected Result            |
-| ------------------------ | ---------------------------------- | -------------------------- |
-| `loadSettings`           | No existing data                   | Returns defaults           |
-| `loadSettings`           | Corrupt JSON                       | Returns defaults           |
-| `updateBest`             | New best time                      | Returns true, saves        |
-| `updateBest`             | Same time, fewer moves             | Returns true, saves        |
-| `addToLeaderboard`       | Top 3 score                        | Returns position 1-3       |
-| `addToLeaderboard`       | Not top 3                          | Returns 0, not saved       |
-| `unlockAchievement`      | Already unlocked                   | Returns false              |
-| `unlockAchievement`      | New achievement                    | Returns true, saves        |
-| `importData`             | Partial data                       | Missing fields filled      |
-| `importData`             | Invalid values                     | Values normalized/clamped  |
+| Operation           | Test Case              | Expected Result           |
+| ------------------- | ---------------------- | ------------------------- |
+| `loadSettings`      | No existing data       | Returns defaults          |
+| `loadSettings`      | Corrupt JSON           | Returns defaults          |
+| `updateBest`        | New best time          | Returns true, saves       |
+| `updateBest`        | Same time, fewer moves | Returns true, saves       |
+| `addToLeaderboard`  | Top 3 score            | Returns position 1-3      |
+| `addToLeaderboard`  | Not top 3              | Returns 0, not saved      |
+| `unlockAchievement` | Already unlocked       | Returns false             |
+| `unlockAchievement` | New achievement        | Returns true, saves       |
+| `importData`        | Partial data           | Missing fields filled     |
+| `importData`        | Invalid values         | Values normalized/clamped |
 
 ---
 

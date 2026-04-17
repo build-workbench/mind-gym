@@ -8,12 +8,12 @@ Welcome to the Mind Gym documentation. This directory contains user guides, tuto
 
 ## Quick Links
 
-| Document                          | Description                          | Audience           |
-| --------------------------------- | ------------------------------------ | ------------------ |
-| [Architecture](./architecture.md) | System design and data flow          | Developers         |
-| [Training Modes](./modes.md)      | Game modes and mechanics             | Users, Developers  |
-| [Storage Model](./storage.md)     | Data structures and persistence      | Developers         |
-| [PWA & Offline](./pwa.md)         | Service Worker and offline support   | Developers         |
+| Document                          | Description                        | Audience          |
+| --------------------------------- | ---------------------------------- | ----------------- |
+| [Architecture](./architecture.md) | System design and data flow        | Developers        |
+| [Training Modes](./modes.md)      | Game modes and mechanics           | Users, Developers |
+| [Storage Model](./storage.md)     | Data structures and persistence    | Developers        |
+| [PWA & Offline](./pwa.md)         | Service Worker and offline support | Developers        |
 
 ---
 
@@ -45,13 +45,13 @@ For detailed product specifications and technical RFCs, see the [/specs](../spec
 
 ### Game Modes
 
-| Mode                 | Description                                       |
-| -------------------- | ------------------------------------------------- |
-| **Classic Matching** | Flip cards to find matching pairs                 |
-| **Countdown**        | Race against configurable time limits             |
-| **Daily Challenge**  | Same card layout for all players worldwide        |
-| **N-back Training**  | Working memory exercise                           |
-| **Delayed Recall**   | Post-game recognition test                        |
+| Mode                 | Description                                |
+| -------------------- | ------------------------------------------ |
+| **Classic Matching** | Flip cards to find matching pairs          |
+| **Countdown**        | Race against configurable time limits      |
+| **Daily Challenge**  | Same card layout for all players worldwide |
+| **N-back Training**  | Working memory exercise                    |
+| **Delayed Recall**   | Post-game recognition test                 |
 
 See [Training Modes](./modes.md) for detailed descriptions.
 

@@ -12,23 +12,23 @@ RFCs are design documents that describe a new feature, architecture decision, or
 
 ## RFC List
 
-| RFC                                        | Title                       | Status    |
-| ------------------------------------------ | --------------------------- | --------- |
-| [0001-core-architecture.md](./0001-core-architecture.md) | Core Architecture           | Accepted  |
-| [0002-i18n-strategy.md](./0002-i18n-strategy.md) | Internationalization Strategy | Accepted |
-| [0003-pwa-offline.md](./0003-pwa-offline.md) | PWA & Offline Strategy      | Accepted  |
+| RFC                                                      | Title                         | Status   |
+| -------------------------------------------------------- | ----------------------------- | -------- |
+| [0001-core-architecture.md](./0001-core-architecture.md) | Core Architecture             | Accepted |
+| [0002-i18n-strategy.md](./0002-i18n-strategy.md)         | Internationalization Strategy | Accepted |
+| [0003-pwa-offline.md](./0003-pwa-offline.md)             | PWA & Offline Strategy        | Accepted |
 
 ---
 
 ## RFC Status Values
 
-| Status    | Description                                    |
-| --------- | ---------------------------------------------- |
-| Draft     | Work in progress, not ready for review         |
-| Review    | Ready for review and feedback                  |
-| Accepted  | Approved and implemented                       |
-| Rejected  | Not approved, documented for future reference  |
-| Superseded| Replaced by a newer RFC                        |
+| Status     | Description                                   |
+| ---------- | --------------------------------------------- |
+| Draft      | Work in progress, not ready for review        |
+| Review     | Ready for review and feedback                 |
+| Accepted   | Approved and implemented                      |
+| Rejected   | Not approved, documented for future reference |
+| Superseded | Replaced by a newer RFC                       |
 
 ---
 
@@ -52,10 +52,10 @@ RFCs are design documents that describe a new feature, architecture decision, or
 ```markdown
 # RFC-NNNN: [Title]
 
-| Status    | Draft        |
-| --------- | ------------ |
-| Created   | YYYY-MM-DD   |
-| Updated   | YYYY-MM-DD   |
+| Status  | Draft      |
+| ------- | ---------- |
+| Created | YYYY-MM-DD |
+| Updated | YYYY-MM-DD |
 
 ## Summary
 

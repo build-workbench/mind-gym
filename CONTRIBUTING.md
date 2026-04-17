@@ -29,13 +29,13 @@
 
 ### Spec 目录结构
 
-| 目录                    | 用途                          |
-| ----------------------- | ----------------------------- |
-| `/specs/product/`       | 产品功能定义与验收标准        |
-| `/specs/rfc/`           | 技术设计文档 (Request for Comments) |
-| `/specs/api/`           | API 接口定义（如适用）        |
-| `/specs/db/`            | 数据模型定义与 Schema 规范    |
-| `/specs/testing/`       | BDD 测试用例规范              |
+| 目录              | 用途                                |
+| ----------------- | ----------------------------------- |
+| `/specs/product/` | 产品功能定义与验收标准              |
+| `/specs/rfc/`     | 技术设计文档 (Request for Comments) |
+| `/specs/api/`     | API 接口定义（如适用）              |
+| `/specs/db/`      | 数据模型定义与 Schema 规范          |
+| `/specs/testing/` | BDD 测试用例规范                    |
 
 ### 参与编写 Spec
 
@@ -57,16 +57,20 @@
 # Feature Name
 
 ## Overview
+
 Brief description of the feature.
 
 ## Acceptance Criteria
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 
 ## Technical Design
+
 Implementation details, data structures, algorithms.
 
 ## Test Cases
+
 - Test scenario 1: expected behavior
 - Test scenario 2: expected behavior
 ```

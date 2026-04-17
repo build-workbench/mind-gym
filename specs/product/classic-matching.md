@@ -68,12 +68,12 @@ function getRating(elapsedSec, movesCount, diffKey, usedHints, comboMax) {
 
 ### Rating Factors
 
-| Factor | Impact                                  |
-| ------ | --------------------------------------- |
-| Time   | Proportional penalty for exceeding par  |
-| Moves  | 3 point penalty per move above minimum  |
-| Hints  | 10 point penalty per hint used          |
-| Combos | +2 points per combo achieved (max 10)   |
+| Factor | Impact                                 |
+| ------ | -------------------------------------- |
+| Time   | Proportional penalty for exceeding par |
+| Moves  | 3 point penalty per move above minimum |
+| Hints  | 10 point penalty per hint used         |
+| Combos | +2 points per combo achieved (max 10)  |
 
 ## Game State Machine
 
@@ -87,17 +87,17 @@ IDLE → PREVIEW → PLAYING → PAUSED → WON/LOST
 
 ### State Transitions
 
-| Current State | Event              | Next State   |
-| ------------- | ------------------ | ------------ |
-| IDLE          | First flip         | PLAYING      |
-| IDLE          | Preview enabled    | PREVIEW      |
-| PREVIEW       | Preview ends       | IDLE         |
-| PLAYING       | Pause key pressed  | PAUSED       |
-| PAUSED        | Resume key pressed | PLAYING      |
-| PLAYING       | All pairs matched  | WON          |
-| PLAYING       | Time expires       | LOST         |
-| PLAYING       | Second card flip   | LOCKED       |
-| LOCKED        | Cards flip back    | PLAYING      |
+| Current State | Event              | Next State |
+| ------------- | ------------------ | ---------- |
+| IDLE          | First flip         | PLAYING    |
+| IDLE          | Preview enabled    | PREVIEW    |
+| PREVIEW       | Preview ends       | IDLE       |
+| PLAYING       | Pause key pressed  | PAUSED     |
+| PAUSED        | Resume key pressed | PLAYING    |
+| PLAYING       | All pairs matched  | WON        |
+| PLAYING       | Time expires       | LOST       |
+| PLAYING       | Second card flip   | LOCKED     |
+| LOCKED        | Cards flip back    | PLAYING    |
 
 ## Keyboard Shortcuts
 
@@ -140,8 +140,8 @@ IDLE → PREVIEW → PLAYING → PAUSED → WON/LOST
 
 ```typescript
 interface BestScore {
-  time: number;   // Time in seconds
-  moves: number;  // Number of moves
+  time: number; // Time in seconds
+  moves: number; // Number of moves
 }
 ```
 
@@ -151,9 +151,9 @@ Key: `memory_match_best_<difficulty>`
 
 ```typescript
 interface LeaderboardEntry {
-  time: number;   // Time in seconds
-  moves: number;  // Number of moves
-  at: number;     // Timestamp (Date.now())
+  time: number; // Time in seconds
+  moves: number; // Number of moves
+  at: number; // Timestamp (Date.now())
 }
 ```
 
@@ -162,17 +162,17 @@ Maximum: 3 entries, sorted by time → moves → timestamp
 
 ## Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| Flip first card             | Card flips, timer doesn't start        |
-| Flip second matching card   | Both cards locked, combo updated       |
-| Flip non-matching card      | Both cards flip back after delay       |
-| Complete game               | Win modal shows, stats updated         |
-| Use hint                    | Matching card highlighted              |
-| Pause during game           | Timer stops, board hidden              |
-| Keyboard navigation         | Selected card highlighted              |
-| Exceed target time          | Lower star rating                      |
-| Perfect game (moves=pairs)  | Achievement unlocked                   |
+| Scenario                   | Expected Behavior                |
+| -------------------------- | -------------------------------- |
+| Flip first card            | Card flips, timer doesn't start  |
+| Flip second matching card  | Both cards locked, combo updated |
+| Flip non-matching card     | Both cards flip back after delay |
+| Complete game              | Win modal shows, stats updated   |
+| Use hint                   | Matching card highlighted        |
+| Pause during game          | Timer stops, board hidden        |
+| Keyboard navigation        | Selected card highlighted        |
+| Exceed target time         | Lower star rating                |
+| Perfect game (moves=pairs) | Achievement unlocked             |
 
 ## Related Specifications
 

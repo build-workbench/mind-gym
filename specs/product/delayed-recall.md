@@ -17,12 +17,12 @@ Delayed Recall is a post-game assessment that tests the player's ability to reco
 
 ## Trigger Conditions
 
-| Condition      | Trigger Behavior               |
-| -------------- | ------------------------------ |
-| Game won       | Recall test offered            |
-| Game lost      | No recall test                 |
-| N-back mode    | No recall test                 |
-| Player skips   | No stats recorded              |
+| Condition    | Trigger Behavior    |
+| ------------ | ------------------- |
+| Game won     | Recall test offered |
+| Game lost    | No recall test      |
+| N-back mode  | No recall test      |
+| Player skips | No stats recorded   |
 
 ## Test Construction
 
@@ -31,8 +31,8 @@ Delayed Recall is a post-game assessment that tests the player's ability to reco
 ```javascript
 // src/modes.js
 function buildRecallItems(params) {
-  const truth = params.truthValues;    // Cards from current game
-  const pool = params.poolValues;      // All possible cards
+  const truth = params.truthValues; // Cards from current game
+  const pool = params.poolValues; // All possible cards
 
   const trueCount = Math.min(6, truth.length);
   const falseCandidates = pool.filter(v => !truth.includes(v));
@@ -50,17 +50,18 @@ function buildRecallItems(params) {
 
 ### Item Distribution
 
-| Parameter         | Value                     |
-| ----------------- | ------------------------- |
-| Total items       | 9                         |
-| True items (appeared) | 3-6 (max 6)           |
-| False items (distractors) | 3-6 (complement)   |
+| Parameter                 | Value            |
+| ------------------------- | ---------------- |
+| Total items               | 9                |
+| True items (appeared)     | 3-6 (max 6)      |
+| False items (distractors) | 3-6 (complement) |
 
 ### Example Test
 
 Game contained: 🍎, 🍌, 🍇, 🍊, 🍋, 🍓, 🍑, 🍒
 
 Test items:
+
 ```
 Displayed: 🍎, 🍇, 🍋, 🥝, 🍈, 🍌, 🥭, 🍑, 🥥
 Correct:   ✓,   ✓,   ✓,   ✗,   ✗,   ✓,   ✗,   ✓,   ✗
@@ -84,12 +85,12 @@ $$Recall = \frac{TP}{TP + FN}$$
 
 ### Terminology
 
-| Term             | Definition                          |
-| ---------------- | ----------------------------------- |
-| TP (True Positive) | Correct cards selected            |
+| Term                | Definition                        |
+| ------------------- | --------------------------------- |
+| TP (True Positive)  | Correct cards selected            |
 | FP (False Positive) | Incorrect cards selected          |
 | FN (False Negative) | Correct cards missed              |
-| TN (True Negative) | Incorrect cards correctly skipped  |
+| TN (True Negative)  | Incorrect cards correctly skipped |
 
 ### Example Calculation
 
@@ -155,18 +156,18 @@ Game Won
 ```typescript
 interface Stats {
   // ... other stats
-  recallAttempts: number;   // Total tests taken
-  precisionSum: number;     // Precision sum (for average)
-  recallSum: number;        // Recall sum (for average)
+  recallAttempts: number; // Total tests taken
+  precisionSum: number; // Precision sum (for average)
+  recallSum: number; // Recall sum (for average)
 }
 ```
 
 ### Derived Metrics
 
-| Metric         | Calculation                        |
-| -------------- | ---------------------------------- |
-| Avg Precision  | `precisionSum / recallAttempts`    |
-| Avg Recall     | `recallSum / recallAttempts`       |
+| Metric        | Calculation                     |
+| ------------- | ------------------------------- |
+| Avg Precision | `precisionSum / recallAttempts` |
+| Avg Recall    | `recallSum / recallAttempts`    |
 
 ## Implementation
 
@@ -174,8 +175,8 @@ interface Stats {
 
 ```javascript
 // app.js - during game
-let seenCountMap = new Map();  // Track exposure counts
-let lastGameValues = [];       // Cards in current game
+let seenCountMap = new Map(); // Track exposure counts
+let lastGameValues = []; // Cards in current game
 
 // On each card flip
 seenCountMap.set(cardValue, (seenCountMap.get(cardValue) || 0) + 1);
@@ -201,20 +202,21 @@ function prepareRecallTest() {
 
 ## Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| Win game                    | Recall test modal appears              |
-| Skip test                   | No stats recorded, return to main      |
-| Start test                  | 9 cards displayed                      |
-| Select all correct cards    | Precision = 1.0, Recall = 1.0          |
-| Select no cards             | Precision = 0, Recall = 0              |
-| Select mix of cards         | Calculated Precision & Recall          |
-| Submit selection            | Results shown, stats updated           |
-| Multiple tests              | Averages tracked in stats              |
+| Scenario                 | Expected Behavior                 |
+| ------------------------ | --------------------------------- |
+| Win game                 | Recall test modal appears         |
+| Skip test                | No stats recorded, return to main |
+| Start test               | 9 cards displayed                 |
+| Select all correct cards | Precision = 1.0, Recall = 1.0     |
+| Select no cards          | Precision = 0, Recall = 0         |
+| Select mix of cards      | Calculated Precision & Recall     |
+| Submit selection         | Results shown, stats updated      |
+| Multiple tests           | Averages tracked in stats         |
 
 ## Cognitive Science Background
 
 Delayed recall tests measure:
+
 - **Episodic memory**: Memory for specific events/experiences
 - **Recognition memory**: Distinguishing familiar from novel items
 - **Memory consolidation**: Transfer from short-term to long-term storage

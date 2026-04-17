@@ -35,9 +35,9 @@ function updateAdaptiveOnEnd(win, stars, diff) {
   if (!settings.adaptive) return;
 
   const a = loadAdaptive();
-  const exp = expectedStarsFor(diff);  // easy:4, medium:3.5, hard:3
-  const perf = win ? stars : 1.5;      // Loss = poor performance
-  const k = 12;                        // ELO-like K-factor
+  const exp = expectedStarsFor(diff); // easy:4, medium:3.5, hard:3
+  const perf = win ? stars : 1.5; // Loss = poor performance
+  const k = 12; // ELO-like K-factor
 
   a.rating = Math.max(600, Math.min(1600, Math.round(a.rating + k * (perf - exp))));
   a.lastDiff = diff;
@@ -56,12 +56,12 @@ function updateAdaptiveOnEnd(win, stars, diff) {
 
 ### Performance Interpretation
 
-| Performance     | Rating Change    |
-| --------------- | ---------------- |
-| Stars > Expected | Rating increases |
-| Stars = Expected | Rating stays     |
-| Stars < Expected | Rating decreases |
-| Loss            | Rating decreases significantly |
+| Performance      | Rating Change                  |
+| ---------------- | ------------------------------ |
+| Stars > Expected | Rating increases               |
+| Stars = Expected | Rating stays                   |
+| Stars < Expected | Rating decreases               |
+| Loss             | Rating decreases significantly |
 
 ## Adjustment Strategy
 
@@ -76,15 +76,16 @@ function updateAdaptiveOnEnd(win, stars, diff) {
 
 ### Hint Adjustment
 
-| Rating Range | Hint Adjustment                     |
-| ------------ | ----------------------------------- |
-| < 940        | +1 hint (more assistance)           |
-| 940 - 1140   | No change                           |
-| > 1140       | -1 hint (more challenge)            |
+| Rating Range | Hint Adjustment           |
+| ------------ | ------------------------- |
+| < 940        | +1 hint (more assistance) |
+| 940 - 1140   | No change                 |
+| > 1140       | -1 hint (more challenge)  |
 
 ### Minimum Hints
 
 Regardless of rating adjustment:
+
 - Easy: minimum 1 hint
 - Medium: minimum 1 hint
 - Hard: minimum 0 hints
@@ -95,8 +96,8 @@ Regardless of rating adjustment:
 
 ```typescript
 interface AdaptiveData {
-  rating: number;     // Current rating (600-1600)
-  lastDiff: 'easy' | 'medium' | 'hard';  // Last difficulty played
+  rating: number; // Current rating (600-1600)
+  lastDiff: 'easy' | 'medium' | 'hard'; // Last difficulty played
 }
 ```
 
@@ -186,16 +187,16 @@ New Player (Rating: 1000)
 
 ## Test Cases
 
-| Scenario                    | Expected Behavior                      |
-| --------------------------- | -------------------------------------- |
-| New player starts           | Rating = 1000                          |
-| Win with 5 stars on easy    | Rating increases                       |
-| Win with 1 star             | Rating decreases                       |
-| Lose game                   | Rating decreases significantly         |
-| Rating < 940                | More preview time, more hints          |
-| Rating > 1140               | No preview, fewer hints                |
-| Toggle adaptive off         | Uses manual settings                   |
-| Toggle adaptive on          | Uses rating-based settings             |
+| Scenario                 | Expected Behavior              |
+| ------------------------ | ------------------------------ |
+| New player starts        | Rating = 1000                  |
+| Win with 5 stars on easy | Rating increases               |
+| Win with 1 star          | Rating decreases               |
+| Lose game                | Rating decreases significantly |
+| Rating < 940             | More preview time, more hints  |
+| Rating > 1140            | No preview, fewer hints        |
+| Toggle adaptive off      | Uses manual settings           |
+| Toggle adaptive on       | Uses rating-based settings     |
 
 ## Design Rationale
 
