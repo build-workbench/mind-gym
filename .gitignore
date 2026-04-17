@@ -15,6 +15,8 @@ pnpm-debug.log*
 .idea/
 *.swp
 *.swo
+.vscode/settings.json
+.vscode/launch.json
 
 # Coverage
 coverage/
@@ -33,3 +35,12 @@ Thumbs.db
 # Local data exports/imports
 *.bak
 *.backup.json
+
+# SSL certificates (for dev HTTPS)
+*.pem
+!node_modules/**/*.pem
+
+# Lighthouse reports
+lighthouse-report*.html
+audit.json
+lhci-reports/
