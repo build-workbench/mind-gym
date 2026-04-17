@@ -1,16 +1,18 @@
 /**
- * Mind Gym Service Worker v3 - Aggressive Performance Optimization
+ * Mind Gym Service Worker v4 - Optimized Performance
  * Advanced caching with Workbox patterns
  *
  * @version 1.6.1
  * @license MIT
  */
 
-const CACHE_NAME = 'mind-gym-v3-aggressive';
+const CACHE_VERSION = 'v4';
+const CACHE_NAME = `mind-gym-${CACHE_VERSION}`;
 const STATIC_CACHE = `${CACHE_NAME}-static`;
 const IMAGE_CACHE = `${CACHE_NAME}-images`;
 const FONT_CACHE = `${CACHE_NAME}-fonts`;
 const RUNTIME_CACHE = `${CACHE_NAME}-runtime`;
+const OFFLINE_PAGE = './offline.html';
 
 // Precache list - critical assets
 const PRECACHE_ASSETS = [
@@ -34,10 +36,12 @@ const PRECACHE_ASSETS = [
   './manifest.webmanifest',
   './assets/icon.svg',
   './assets/app.css',
+  OFFLINE_PAGE,
 ];
 
 // Install event - precache critical assets
 self.addEventListener('install', event => {
+  console.log('[SW] Installing...');
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
@@ -57,22 +61,14 @@ self.addEventListener('install', event => {
 
 // Activate event - cleanup old caches
 self.addEventListener('activate', event => {
+  console.log('[SW] Activating...');
   event.waitUntil(
     caches
       .keys()
       .then(cacheNames => {
         return Promise.all(
           cacheNames
-            .filter(name => {
-              // Keep current cache version
-              return (
-                name.startsWith('mind-gym-') &&
-                name !== STATIC_CACHE &&
-                name !== IMAGE_CACHE &&
-                name !== FONT_CACHE &&
-                name !== RUNTIME_CACHE
-              );
-            })
+            .filter(name => name.startsWith('mind-gym-') && name !== CACHE_NAME)
             .map(name => {
               console.log('[SW] Deleting old cache:', name);
               return caches.delete(name);
@@ -89,43 +85,36 @@ self.addEventListener('activate', event => {
 // Fetch event - advanced caching strategies
 self.addEventListener('fetch', event => {
   const { request } = event;
-  const url = new URL(request.url);
-
-  // Only handle same-origin requests
-  if (url.origin !== self.location.origin) {
-    // Handle external requests (fonts, APIs)
-    if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-      event.respondWith(handleGoogleFonts(request));
-    }
-    return;
-  }
 
   // Skip non-GET requests
-  if (request.method !== 'GET') {
-    return;
-  }
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
 
   // Skip sw.js itself
-  if (url.pathname.endsWith('/sw.js')) {
+  if (url.pathname.endsWith('/sw.js')) return;
+
+  // Handle external requests (fonts)
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    event.respondWith(handleGoogleFonts(request));
     return;
   }
 
+  // Only handle same-origin requests
+  if (url.origin !== self.location.origin) return;
+
   // Route to appropriate strategy based on file type
-  if (url.pathname.endsWith('.css')) {
-    event.respondWith(cacheFirstWithTimeout(request, STATIC_CACHE, 2000));
-  } else if (url.pathname.endsWith('.js')) {
+  if (/\.(css|js)$/i.test(url.pathname)) {
     event.respondWith(cacheFirstWithTimeout(request, STATIC_CACHE, 2000));
   } else if (/\.(png|jpg|jpeg|svg|gif|webp|ico)$/i.test(url.pathname)) {
     event.respondWith(cacheFirstWithExpiration(request, IMAGE_CACHE, 100, 30 * 24 * 60 * 60));
-  } else if (
-    url.pathname.endsWith('.woff2') ||
-    url.pathname.endsWith('.woff') ||
-    url.pathname.endsWith('.ttf')
-  ) {
+  } else if (/\.(woff2|woff|ttf)$/i.test(url.pathname)) {
     event.respondWith(cacheFirstWithExpiration(request, FONT_CACHE, 20, 365 * 24 * 60 * 60));
-  } else if (url.pathname === '/' || url.pathname === '/index.html') {
-    event.respondWith(networkFirstWithFallback(request, STATIC_CACHE));
-  } else if (request.mode === 'navigate') {
+  } else if (
+    request.mode === 'navigate' ||
+    url.pathname === '/' ||
+    url.pathname === '/index.html'
+  ) {
     event.respondWith(networkFirstWithFallback(request, STATIC_CACHE));
   } else {
     event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE));
@@ -223,8 +212,16 @@ async function networkFirstWithFallback(request, cacheName) {
     return cached;
   }
 
-  // Ultimate fallback
-  return cache.match('./index.html');
+  // Ultimate fallback - offline page
+  try {
+    const offline = await cache.match(OFFLINE_PAGE);
+    if (offline) return offline;
+  } catch (e) {}
+
+  return new Response('Offline - Please check your connection', {
+    status: 503,
+    headers: { 'Content-Type': 'text/plain' },
+  });
 }
 
 // Stale While Revalidate
