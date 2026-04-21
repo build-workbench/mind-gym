@@ -115,7 +115,7 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
-## [v1.2.1] - 2026-07-15
+## [v1.2.1] - 2026-04-15
 
 ### Added / 新增
 
