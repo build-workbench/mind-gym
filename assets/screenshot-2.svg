@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc"/>
+      <stop offset="100%" style="stop-color:#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="header2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4f46e5"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1280" height="720" fill="url(#bg2)"/>
+  
+  <!-- Header -->
+  <rect width="1280" height="60" fill="url(#header2)"/>
+  <text x="640" y="40" font-family="Arial, sans-serif" font-size="20" 
+        fill="white" text-anchor="middle" font-weight="bold">🧠 Mind Gym</text>
+  
+  <!-- Mock content area -->
+  <rect x="40" y="80" width="1200" 
+        height="400" rx="8" fill="white" opacity="0.9"/>
+  
+  <!-- Mock cards/grid -->
+  <g fill="#4f46e5" opacity="0.6">
+    <rect x="456" y="120" width="80" height="80" rx="8"/>
+<rect x="552" y="120" width="80" height="80" rx="8"/>
+<rect x="648" y="120" width="80" height="80" rx="8"/>
+<rect x="744" y="120" width="80" height="80" rx="8"/>
+<rect x="456" y="216" width="80" height="80" rx="8"/>
+<rect x="552" y="216" width="80" height="80" rx="8"/>
+<rect x="648" y="216" width="80" height="80" rx="8"/>
+<rect x="744" y="216" width="80" height="80" rx="8"/>
+<rect x="456" y="312" width="80" height="80" rx="8"/>
+<rect x="552" y="312" width="80" height="80" rx="8"/>
+<rect x="648" y="312" width="80" height="80" rx="8"/>
+<rect x="744" y="312" width="80" height="80" rx="8"/>
+  </g>
+  
+  <!-- Screenshot label -->
+  <rect x="10" y="680" width="200" height="30" rx="4" fill="#1e293b" opacity="0.8"/>
+  <text x="110" y="700" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Mind Gym - N-back Training</text>
+</svg>

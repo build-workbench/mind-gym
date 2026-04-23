@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+  <defs>
+    <linearGradient id="bgmobile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc"/>
+      <stop offset="100%" style="stop-color:#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="headermobile" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4f46e5"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="390" height="844" fill="url(#bgmobile)"/>
+  
+  <!-- Header -->
+  <rect width="390" height="80" fill="url(#headermobile)"/>
+  <text x="195" y="50" font-family="Arial, sans-serif" font-size="28" 
+        fill="white" text-anchor="middle" font-weight="bold">🧠 Mind Gym</text>
+  
+  <!-- Mock content area -->
+  <rect x="20" y="100" width="350" 
+        height="200" rx="12" fill="white" opacity="0.9"/>
+  
+  <!-- Mock cards/grid -->
+  <g fill="#4f46e5" opacity="0.6">
+    <rect x="78" y="140" width="70" height="70" rx="8"/>
+<rect x="160" y="140" width="70" height="70" rx="8"/>
+<rect x="242" y="140" width="70" height="70" rx="8"/>
+<rect x="78" y="222" width="70" height="70" rx="8"/>
+<rect x="160" y="222" width="70" height="70" rx="8"/>
+<rect x="242" y="222" width="70" height="70" rx="8"/>
+<rect x="78" y="304" width="70" height="70" rx="8"/>
+<rect x="160" y="304" width="70" height="70" rx="8"/>
+<rect x="242" y="304" width="70" height="70" rx="8"/>
+<rect x="78" y="386" width="70" height="70" rx="8"/>
+<rect x="160" y="386" width="70" height="70" rx="8"/>
+<rect x="242" y="386" width="70" height="70" rx="8"/>
+  </g>
+  
+  <!-- Screenshot label -->
+  <rect x="10" y="804" width="200" height="30" rx="4" fill="#1e293b" opacity="0.8"/>
+  <text x="110" y="824" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Mind Gym Mobile</text>
+</svg>
