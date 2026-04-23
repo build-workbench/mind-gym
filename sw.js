@@ -1,12 +1,12 @@
 /**
- * Mind Gym Service Worker v4 - Optimized Performance
- * Advanced caching with Workbox patterns
+ * Mind Gym Service Worker v5 - GitHub Pages Optimized
+ * Advanced caching with update awareness
  *
- * @version 1.6.1
+ * @version 1.7.0
  * @license MIT
  */
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `mind-gym-${CACHE_VERSION}`;
 const STATIC_CACHE = `${CACHE_NAME}-static`;
 const IMAGE_CACHE = `${CACHE_NAME}-images`;
@@ -19,6 +19,8 @@ const PRECACHE_ASSETS = [
   './',
   './index.html',
   './app.js',
+  './404.html',
+  './offline.html',
   './src/keys.js',
   './src/utils.js',
   './src/storage.js',
@@ -35,8 +37,9 @@ const PRECACHE_ASSETS = [
   './src/ui.js',
   './manifest.webmanifest',
   './assets/icon.svg',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
   './assets/app.css',
-  OFFLINE_PAGE,
 ];
 
 // Install event - precache critical assets
@@ -47,7 +50,14 @@ self.addEventListener('install', event => {
       .open(STATIC_CACHE)
       .then(cache => {
         console.log('[SW] Precaching static assets...');
-        return cache.addAll(PRECACHE_ASSETS);
+        // Use addAll but catch errors for optional assets
+        return Promise.all(
+          PRECACHE_ASSETS.map(url =>
+            cache.add(url).catch(err => {
+              console.warn('[SW] Failed to cache:', url, err.message);
+            })
+          )
+        );
       })
       .then(() => {
         console.log('[SW] Precache complete');
@@ -68,7 +78,7 @@ self.addEventListener('activate', event => {
       .then(cacheNames => {
         return Promise.all(
           cacheNames
-            .filter(name => name.startsWith('mind-gym-') && name !== CACHE_NAME)
+            .filter(name => name.startsWith('mind-gym-') && !name.includes(CACHE_VERSION))
             .map(name => {
               console.log('[SW] Deleting old cache:', name);
               return caches.delete(name);
@@ -94,69 +104,58 @@ self.addEventListener('fetch', event => {
   // Skip sw.js itself
   if (url.pathname.endsWith('/sw.js')) return;
 
-  // Handle external requests (fonts)
+  // Handle external requests (Google Fonts)
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     event.respondWith(handleGoogleFonts(request));
     return;
   }
 
-  // Only handle same-origin requests
-  if (url.origin !== self.location.origin) return;
+  // Only handle same-origin requests for main content
+  // For GitHub Pages, also handle requests from the repo path
+  const isGitHubPages = url.hostname === 'lessup.github.io';
+  const isSameOrigin = url.origin === self.location.origin;
+
+  if (!isSameOrigin && !isGitHubPages) return;
 
   // Route to appropriate strategy based on file type
   if (/\.(css|js)$/i.test(url.pathname)) {
-    event.respondWith(cacheFirstWithTimeout(request, STATIC_CACHE, 2000));
+    event.respondWith(staleWhileRevalidate(request, STATIC_CACHE));
   } else if (/\.(png|jpg|jpeg|svg|gif|webp|ico)$/i.test(url.pathname)) {
     event.respondWith(cacheFirstWithExpiration(request, IMAGE_CACHE, 100, 30 * 24 * 60 * 60));
   } else if (/\.(woff2|woff|ttf)$/i.test(url.pathname)) {
     event.respondWith(cacheFirstWithExpiration(request, FONT_CACHE, 20, 365 * 24 * 60 * 60));
-  } else if (
-    request.mode === 'navigate' ||
-    url.pathname === '/' ||
-    url.pathname === '/index.html'
-  ) {
+  } else if (request.mode === 'navigate' || url.pathname.endsWith('index.html')) {
+    // For navigation requests, use network-first for up-to-date content
     event.respondWith(networkFirstWithFallback(request, STATIC_CACHE));
   } else {
     event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE));
   }
 });
 
-// Cache First with timeout strategy
-async function cacheFirstWithTimeout(request, cacheName, timeout = 2000) {
+// Stale While Revalidate - good for JS/CSS that updates frequently
+async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
 
-  if (cached) {
-    // Return cached immediately, update in background
-    fetchWithTimeout(request, timeout)
-      .then(networkResponse => {
-        if (networkResponse && networkResponse.ok) {
-          cache.put(request, networkResponse.clone());
-        }
-      })
-      .catch(() => {});
-    return cached;
-  }
+  const fetchPromise = fetch(request)
+    .then(networkResponse => {
+      if (networkResponse && networkResponse.ok) {
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    })
+    .catch(() => cached);
 
-  // No cache - fetch and store
-  try {
-    const networkResponse = await fetchWithTimeout(request, timeout);
-    if (networkResponse && networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-  } catch (error) {
-    return new Response('Network error', { status: 408 });
-  }
+  return cached || fetchPromise;
 }
 
-// Cache First with expiration and limit
+// Cache First with expiration and limit - good for images
 async function cacheFirstWithExpiration(request, cacheName, maxEntries, maxAgeSeconds) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
 
   if (cached) {
-    // Check expiration
+    // Check expiration via custom header
     const headers = cached.headers;
     const cachedTime = headers.get('sw-cached-time');
     if (cachedTime) {
@@ -183,8 +182,6 @@ async function cacheFirstWithExpiration(request, cacheName, maxEntries, maxAgeSe
       });
 
       await cache.put(request, responseToCache);
-
-      // Cleanup old entries if over limit
       await cleanupCache(cacheName, maxEntries);
     }
     return networkResponse;
@@ -193,12 +190,12 @@ async function cacheFirstWithExpiration(request, cacheName, maxEntries, maxAgeSe
   }
 }
 
-// Network First with fallback
+// Network First with fallback - good for navigation
 async function networkFirstWithFallback(request, cacheName) {
   const cache = await caches.open(cacheName);
 
   try {
-    const networkResponse = await fetch(request);
+    const networkResponse = await fetchWithTimeout(request, 3000);
     if (networkResponse && networkResponse.ok) {
       cache.put(request, networkResponse.clone());
       return networkResponse;
@@ -224,21 +221,26 @@ async function networkFirstWithFallback(request, cacheName) {
   });
 }
 
-// Stale While Revalidate
-async function staleWhileRevalidate(request, cacheName) {
+// Network First with cache update - good for HTML pages
+async function networkFirstWithCacheUpdate(request, cacheName) {
   const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
 
-  const fetchPromise = fetch(request)
-    .then(networkResponse => {
-      if (networkResponse && networkResponse.ok) {
-        cache.put(request, networkResponse.clone());
-      }
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
       return networkResponse;
-    })
-    .catch(() => cached);
+    }
+  } catch (error) {
+    console.log('[SW] Network failed, serving from cache');
+  }
 
-  return cached || fetchPromise;
+  const cached = await cache.match(request);
+  if (cached) {
+    return cached;
+  }
+
+  return new Response('Offline', { status: 503 });
 }
 
 // Google Fonts special handling
@@ -278,25 +280,10 @@ async function cleanupCache(cacheName, maxEntries) {
   }
 }
 
-// Background sync
-defineBGSync(self);
-
-function defineBGSync(self) {
-  self.addEventListener('sync', event => {
-    if (event.tag === 'sync-stats') {
-      event.waitUntil(syncStats());
-    }
-  });
-}
-
-async function syncStats() {
-  // Background stats sync implementation
-  console.log('[SW] Background sync executed');
-}
-
 // Message handling for app communication
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[SW] Skip waiting received');
     self.skipWaiting();
   }
 
@@ -308,13 +295,24 @@ self.addEventListener('message', event => {
           return Promise.all(names.map(name => caches.delete(name)));
         })
         .then(() => {
-          event.ports[0].postMessage({ type: 'CACHES_CLEARED' });
+          if (event.ports && event.ports[0]) {
+            event.ports[0].postMessage({ type: 'CACHES_CLEARED' });
+          }
         })
     );
   }
+
+  if (event.data && event.data.type === 'CHECK_UPDATE') {
+    // Trigger update check
+    self.registration.update().then(() => {
+      if (event.ports && event.ports[0]) {
+        event.ports[0].postMessage({ type: 'UPDATE_CHECKED' });
+      }
+    });
+  }
 });
 
-// Periodic sync (if supported)
+// Periodic background sync (if supported)
 if ('periodicSync' in self.registration) {
   self.addEventListener('periodicsync', event => {
     if (event.tag === 'content-sync') {
@@ -325,4 +323,5 @@ if ('periodicSync' in self.registration) {
 
 async function syncContent() {
   console.log('[SW] Periodic sync executed');
+  // Could fetch stats or achievements here
 }

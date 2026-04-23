@@ -12,7 +12,7 @@
   "lang": "en",
   "dir": "ltr",
   "categories": ["games", "education", "health"],
-  
+
   "icons": [
     {
       "src": "./assets/icon.svg",
@@ -69,7 +69,7 @@
       "purpose": "any maskable"
     }
   ],
-  
+
   "screenshots": [
     {
       "src": "./assets/screenshot-1.png",
@@ -93,7 +93,7 @@
       "label": "Mobile gameplay"
     }
   ],
-  
+
   "shortcuts": [
     {
       "name": "New Classic Game",
@@ -117,7 +117,7 @@
       "icons": [{ "src": "./assets/icon-96.png", "sizes": "96x96" }]
     }
   ],
-  
+
   "share_target": {
     "action": "./",
     "method": "GET",
@@ -127,15 +127,15 @@
       "url": "url"
     }
   },
-  
+
   "related_applications": [],
   "prefer_related_applications": false,
-  
+
   "handle_links": "preferred",
   "launch_handler": {
     "client_mode": ["navigate-existing", "auto"]
   },
-  
+
   "edge_side_panel": {
     "preferred_width": 400
   }

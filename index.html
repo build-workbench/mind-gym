@@ -7,6 +7,9 @@
     <!-- Critical: Viewport for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
+    <!-- Base URL for proper resource resolution -->
+    <base href="./" />
+
     <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -40,32 +43,30 @@
       property="og:description"
       content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!"
     />
-    <meta property="og:image" content="https://lessup.github.io/mind-gym/assets/og-image.svg" />
+    <meta property="og:image" content="https://lessup.github.io/mind-gym/assets/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:site_name" content="Mind Gym" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://lessup.github.io/mind-gym/" />
-    <meta property="twitter:title" content="Mind Gym - Memory Training Game" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://lessup.github.io/mind-gym/" />
+    <meta name="twitter:title" content="Mind Gym - Memory Training Game" />
     <meta
-      property="twitter:description"
+      name="twitter:description"
       content="Train your memory with multiple game modes, adaptive difficulty, and progress tracking. Play free in your browser!"
     />
-    <meta
-      property="twitter:image"
-      content="https://lessup.github.io/mind-gym/assets/og-image.svg"
-    />
+    <meta name="twitter:image" content="https://lessup.github.io/mind-gym/assets/og-image.png" />
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.webmanifest" />
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="./assets/icon.svg" />
-    <link rel="apple-touch-icon" href="./assets/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/icon-72.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
     <link rel="mask-icon" href="./assets/icon.svg" color="#4f46e5" />
 
     <!-- Theme Colors -->
@@ -81,6 +82,12 @@
     <meta name="application-name" content="Mind Gym" />
     <meta name="msapplication-TileColor" content="#4f46e5" />
     <meta name="msapplication-config" content="./browserconfig.xml" />
+
+    <!-- Security Headers (since GitHub Pages doesn't support custom HTTP headers) -->
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
 
     <!-- Performance: Preload critical CSS -->
     <link rel="preload" href="./assets/app.css" as="style" />
@@ -201,6 +208,37 @@
           color: #f8fafc;
         }
       }
+
+      /* Update notification */
+      .update-notification {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #4f46e5;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 9999;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .update-notification.show {
+        display: flex;
+      }
+
+      .update-notification button {
+        background: white;
+        color: #4f46e5;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+      }
     </style>
 
     <!-- Preconnect to required origins -->
@@ -220,6 +258,12 @@
     <!-- Initial Loading State -->
     <div id="initial-loader" class="initial-loader" aria-hidden="true"></div>
 
+    <!-- Update Notification -->
+    <div id="update-notification" class="update-notification">
+      <span>🚀 New version available!</span>
+      <button id="update-btn">Update Now</button>
+    </div>
+
     <!-- Main Application Container -->
     <div id="app" role="application" aria-label="Mind Gym Memory Training Game">
       <!-- Content will be dynamically loaded by app.js -->
@@ -236,19 +280,32 @@
 
     <!-- Service Worker Registration -->
     <script>
+      // SPA redirect handling (from 404.html)
+      (function () {
+        var redirect = sessionStorage.getItem('spa-redirect');
+        if (redirect) {
+          sessionStorage.removeItem('spa-redirect');
+          // Store the path for app.js to handle routing
+          window.__INITIAL_PATH__ = redirect;
+          console.log('[SPA] Restored path from redirect:', redirect);
+        }
+      })();
+
       // Remove loader when app starts
       window.addEventListener('DOMContentLoaded', function () {
         const loader = document.getElementById('initial-loader');
         if (loader) {
           loader.style.opacity = '0';
           setTimeout(function () {
-            loader.remove();
+            if (loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+            }
             document.body.classList.remove('loading');
           }, 300);
         }
       });
 
-      // Register Service Worker with aggressive caching
+      // Service Worker Registration with update handling
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
           navigator.serviceWorker
@@ -263,9 +320,9 @@
 
                 newWorker.addEventListener('statechange', function () {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // New content available
+                    // New content available - show update notification
                     console.log('[SW] Update ready');
-                    // Optionally show update notification to user
+                    showUpdateNotification(newWorker);
                   }
                 });
               });
@@ -277,8 +334,28 @@
           // Listen for messages from SW
           navigator.serviceWorker.addEventListener('message', function (event) {
             console.log('[SW] Message:', event.data);
+            if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+              showUpdateNotification();
+            }
           });
         });
+
+        // Show update notification
+        function showUpdateNotification(worker) {
+          const notification = document.getElementById('update-notification');
+          const updateBtn = document.getElementById('update-btn');
+
+          if (notification && updateBtn) {
+            notification.classList.add('show');
+
+            updateBtn.addEventListener('click', function () {
+              if (worker) {
+                worker.postMessage({ type: 'SKIP_WAITING' });
+              }
+              window.location.reload();
+            });
+          }
+        }
       }
     </script>
 
@@ -312,7 +389,6 @@
 
     <!-- Deferred non-critical scripts -->
     <script defer>
-      // Analytics placeholder (if needed in future)
       // Performance monitoring
       if ('performance' in window) {
         window.addEventListener('load', function () {
@@ -321,12 +397,12 @@
             if (perfData) {
               console.log(
                 '[Perf] DOM loaded:',
-                perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                Math.round(perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart),
                 'ms'
               );
               console.log(
                 '[Perf] Full load:',
-                perfData.loadEventEnd - perfData.loadEventStart,
+                Math.round(perfData.loadEventEnd - perfData.loadEventStart),
                 'ms'
               );
             }

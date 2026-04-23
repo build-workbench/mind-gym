@@ -6,6 +6,7 @@ on:
     paths:
       # Core application files
       - 'index.html'
+      - '404.html'
       - 'app.js'
       - 'sw.js'
       - 'manifest.webmanifest'
@@ -18,7 +19,7 @@ on:
       # Build configuration
       - 'package.json'
       - 'package-lock.json'
-      - 'scripts/prepare-deploy.sh'
+      - 'scripts/**'
       # Workflow files
       - '.github/workflows/pages.yml'
       - '.github/workflows/ci.yml'
@@ -84,6 +85,11 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci --prefer-offline
 
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+
       - name: Run lint check
         run: npm run lint
 
@@ -93,8 +99,18 @@ jobs:
       - name: Build CSS
         run: npm run build:css
 
+      - name: Generate PWA icons
+        run: |
+          echo "📦 Generating PWA icons..."
+          bash scripts/generate-icons.sh
+          echo ""
+          echo "Generated icon files:"
+          ls -la assets/icon-*.png assets/apple-touch-icon.png 2>/dev/null || echo "Warning: Some icons may be missing"
+
       - name: Prepare deployment bundle
-        run: npm run prepare:deploy
+        run: |
+          echo "📦 Building deployment bundle..."
+          npm run prepare:deploy
 
       - name: Verify dist contents
         run: |
@@ -102,7 +118,18 @@ jobs:
           ls -la dist/
           echo ""
           echo "📋 Checking required files..."
-          for file in index.html app.js sw.js manifest.webmanifest; do
+
+          # Core files
+          required_files=(
+            "index.html"
+            "404.html"
+            "app.js"
+            "sw.js"
+            "manifest.webmanifest"
+            "offline.html"
+          )
+
+          for file in "${required_files[@]}"; do
             if [ -f "dist/$file" ]; then
               echo "✅ $file exists"
             else
@@ -110,22 +137,49 @@ jobs:
               exit 1
             fi
           done
+
+          # Directories
           echo ""
-          echo "📁 Checking src directory..."
-          if [ -d "dist/src" ]; then
-            echo "✅ src/ directory exists ($(ls dist/src/*.js | wc -l) files)"
-          else
-            echo "❌ src/ directory missing"
-            exit 1
-          fi
+          echo "📁 Checking directories..."
+          for dir in src assets; do
+            if [ -d "dist/$dir" ]; then
+              file_count=$(find "dist/$dir" -type f | wc -l)
+              echo "✅ $dir/ directory exists ($file_count files)"
+            else
+              echo "❌ $dir/ directory missing"
+              exit 1
+            fi
+          done
+
+          # PWA Icons
           echo ""
-          echo "📁 Checking assets directory..."
-          if [ -d "dist/assets" ]; then
-            echo "✅ assets/ directory exists"
+          echo "🎨 Checking PWA icons..."
+          icon_sizes=(72 96 128 144 152 192 384 512)
+          for size in "${icon_sizes[@]}"; do
+            if [ -f "dist/assets/icon-${size}.png" ]; then
+              echo "✅ icon-${size}.png"
+            else
+              echo "⚠️  icon-${size}.png missing (will use fallback)"
+            fi
+          done
+
+          # Apple touch icon
+          if [ -f "dist/assets/apple-touch-icon.png" ]; then
+            echo "✅ apple-touch-icon.png"
           else
-            echo "❌ assets/ directory missing"
-            exit 1
+            echo "⚠️  apple-touch-icon.png missing"
           fi
+
+          # OG Image
+          if [ -f "dist/assets/og-image.png" ]; then
+            echo "✅ og-image.png"
+          else
+            echo "⚠️  og-image.png missing"
+          fi
+
+          echo ""
+          echo "📊 Total dist size:"
+          du -sh dist/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -150,3 +204,9 @@ jobs:
       - name: Output deployment URL
         run: |
           echo "🚀 Deployed to: ${{ steps.deployment.outputs.page_url }}"
+          echo ""
+          echo "📱 PWA is now available!"
+          echo "   Users can install the app on:"
+          echo "   - Chrome/Edge: Click install icon or Menu → Install"
+          echo "   - iOS Safari: Share → Add to Home Screen"
+          echo "   - Android Chrome: Menu → Add to Home screen"

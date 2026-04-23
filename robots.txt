@@ -1,17 +1,4 @@
-# robots.txt for Mind Gym
-# Allow all search engines
-
 User-agent: *
 Allow: /
 
-# Sitemap location
 Sitemap: https://lessup.github.io/mind-gym/sitemap.xml
-
-# Crawl rate optimization
-Crawl-delay: 1
-
-# Disallow old or development paths
-Disallow: /node_modules/
-Disallow: /.github/
-Disallow: /__tests__/
-Disallow: /dist/

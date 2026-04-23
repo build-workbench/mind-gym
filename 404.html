@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="./" />
+    <title>Page Not Found - Mind Gym</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/icon.svg" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: white;
+      }
+
+      .container {
+        max-width: 500px;
+        text-align: center;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      p {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        opacity: 0.9;
+      }
+
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 2rem 0;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .btn {
+        display: inline-block;
+        background: white;
+        color: #4f46e5;
+        text-decoration: none;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 0.5rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 1rem;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .path-info {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-top: 2rem;
+        font-family: monospace;
+        font-size: 0.875rem;
+        opacity: 0.8;
+        word-break: break-all;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">🧭</div>
+      <h1>Redirecting...</h1>
+      <p>Taking you back to Mind Gym</p>
+
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading...</span>
+      </div>
+
+      <a href="./" class="btn" id="home-btn" style="display: none">🏠 Go Home</a>
+
+      <div class="path-info" id="path-info"></div>
+    </div>
+
+    <script>
+      // SPA redirect logic for GitHub Pages
+      (function () {
+        // Get the current path
+        var currentPath = window.location.pathname;
+        var repoName = '/mind-gym';
+        var redirectUrl = './';
+
+        // Display path info for debugging
+        document.getElementById('path-info').textContent = 'Path: ' + currentPath;
+
+        // Check if we're in a GitHub Pages subpath
+        if (currentPath.indexOf(repoName) === 0) {
+          // Extract the path after the repo name
+          var pathAfterRepo = currentPath.substring(repoName.length);
+
+          // Store the original path in sessionStorage for the main app to handle
+          sessionStorage.setItem('spa-redirect', pathAfterRepo);
+          sessionStorage.setItem('spa-redirect-time', Date.now());
+        }
+
+        // Try to redirect to the main app
+        setTimeout(function () {
+          window.location.replace(redirectUrl);
+        }, 1500);
+
+        // Show manual button after delay in case auto-redirect fails
+        setTimeout(function () {
+          document.getElementById('home-btn').style.display = 'inline-block';
+          document.querySelector('.loading').style.display = 'none';
+        }, 3000);
+      })();
+    </script>
+  </body>
+</html>
