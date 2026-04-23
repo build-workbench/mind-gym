@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+coverage/
+lhci-reports/
+.nyc_output/
+
+# Generated CSS (built by Tailwind)
+assets/app.css
