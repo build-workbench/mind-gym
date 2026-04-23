@@ -1,0 +1,48 @@
+name: mind-gym
+version: 1
+
+context: |
+  Tech stack: Vanilla JavaScript, Tailwind CSS (no bundler)
+  Browser PWA with offline-first design
+  localStorage for all data persistence
+  Module loading: UMD pattern via script tags
+  Language: English + Chinese (i18n)
+
+  Key constraints:
+  - No runtime dependencies
+  - Static file hosting only
+  - No build system for JS
+
+rules:
+  specs:
+    - Use RFC 2119 keywords (SHALL, MUST, SHOULD, MAY)
+    - Include TypeScript interfaces for data structures
+    - Reference existing code patterns before proposing new ones
+    - Each requirement must have at least one scenario
+
+  proposals:
+    - Clearly state WHY the change is needed
+    - List all affected files and capabilities
+    - Include rollback strategy for breaking changes
+
+  design:
+    - Document browser compatibility considerations
+    - Consider offline-first constraints
+    - Evaluate localStorage impact
+
+  tasks:
+    - Include test coverage requirements
+    - Reference specific file paths
+    - Mark cross-platform testing needs
+
+change:
+  required:
+    - proposal
+    - specs
+    - tasks
+  optional:
+    - design
+
+archive:
+  merge_specs: true
+  date_prefix: true
