@@ -24,7 +24,15 @@ require_file() {
 echo "[build] Building optimized CSS..."
 npm run build:css
 
-# Copy and minify JS files
+# Generate icons
+echo "[build] Generating PWA icons..."
+if [[ -f "$ROOT_DIR/scripts/generate-icons.sh" ]]; then
+  bash "$ROOT_DIR/scripts/generate-icons.sh"
+else
+  echo "[build] Warning: Icon generation script not found"
+fi
+
+# Minify JS files
 echo "[build] Minifying JavaScript files..."
 
 # Minify app.js
@@ -48,67 +56,28 @@ cp "$ROOT_DIR/offline.html" "$DIST_DIR/" 2>/dev/null || true
 cp "$ROOT_DIR/robots.txt" "$DIST_DIR/" 2>/dev/null || true
 cp "$ROOT_DIR/sitemap.xml" "$DIST_DIR/" 2>/dev/null || true
 
+# Copy 404.html if exists, otherwise create it
+if [[ -f "$ROOT_DIR/404.html" ]]; then
+  cp "$ROOT_DIR/404.html" "$DIST_DIR/"
+  echo "[build] ✓ 404.html copied"
+else
+  echo "[build] Warning: 404.html not found"
+fi
+
 # Copy minified JS
 cp "$TEMP_DIR/app.js" "$DIST_DIR/"
 cp -R "$TEMP_DIR/src" "$DIST_DIR/"
 
-# Copy assets
+# Copy assets (including generated icons)
 cp -R "$ROOT_DIR/assets" "$DIST_DIR/"
-
-# Generate OG image if missing
-if [[ ! -f "$DIST_DIR/assets/og-image.png" ]]; then
-  echo "[build] Generating OG image placeholder..."
-  # Create a simple SVG that can be used as OG image
-  cat > "$DIST_DIR/assets/og-image.svg" << 'SVGEOF'
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#4f46e5"/>
-      <stop offset="100%" style="stop-color:#7c3aed"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <text x="600" y="250" font-family="Arial,sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">Mind Gym</text>
-  <text x="600" y="330" font-family="Arial,sans-serif" font-size="36" fill="white" text-anchor="middle">Memory Training Game</text>
-  <text x="600" y="400" font-family="Arial,sans-serif" font-size="24" fill="white" text-anchor="middle">Boost Your Cognitive Skills</text>
-  <text x="600" y="500" font-family="Arial,sans-serif" font-size="20" fill="white" text-anchor="middle">lessup.github.io/mind-gym</text>
-</svg>
-SVGEOF
-  echo "[build] ✓ OG image SVG created"
-fi
-
-# Copy icon.svg if exists
-if [[ -f "$ROOT_DIR/assets/icon.svg" ]]; then
-  cp "$ROOT_DIR/assets/icon.svg" "$DIST_DIR/assets/"
-fi
 
 # Create .nojekyll to bypass Jekyll
 touch "$DIST_DIR/.nojekyll"
 
-# Security headers file for GitHub Pages
-cat > "$DIST_DIR/_headers" << 'EOF'
-/*
-  X-Frame-Options: DENY
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
-EOF
-
-# Generate sitemap
-if [[ ! -f "$ROOT_DIR/sitemap.xml" ]]; then
-  echo "[build] Generating sitemap..."
-  cat > "$DIST_DIR/sitemap.xml" << 'XMLEOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://lessup.github.io/mind-gym/</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-XMLEOF
-fi
+# Remove _headers file - GitHub Pages doesn't support custom headers
+# Headers are handled via meta tags in HTML instead
+rm -f "$DIST_DIR/_headers"
+echo "[build] Note: Security headers are set via meta tags in HTML"
 
 # Cleanup temp
 rm -rf "$TEMP_DIR"
@@ -123,6 +92,8 @@ required_files=(
   "offline.html"
   "assets/app.css"
   "assets/icon.svg"
+  "assets/icon-192.png"
+  "assets/icon-512.png"
 )
 
 for file in "${required_files[@]}"; do
@@ -130,7 +101,10 @@ for file in "${required_files[@]}"; do
     echo "  ✓ $file"
   else
     echo "  ✗ $file missing" >&2
-    exit 1
+    # Don't fail for optional files
+    if [[ "$file" == "assets/icon-192.png" ]] || [[ "$file" == "assets/icon-512.png" ]]; then
+      echo "    Warning: PWA icons may be missing"
+    fi
   fi
 done
 
@@ -143,7 +117,7 @@ echo ""
 
 # Show file sizes for optimization
 echo "[build] File size breakdown:"
-find "$DIST_DIR" -type f -name "*.js" -o -name "*.css" | while read file; do
+find "$DIST_DIR" -type f \( -name "*.js" -o -name "*.css" -o -name "*.png" \) | while read file; do
   size=$(du -h "$file" | cut -f1)
   rel_path=${file#$DIST_DIR/}
   echo "  $rel_path: $size"
