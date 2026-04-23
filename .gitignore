@@ -26,6 +26,10 @@ coverage/
 .cache/
 .claude/
 
+# OpenSpec
+openspec/changes/
+openspec/explorations/
+
 # OS
 .DS_Store
 Thumbs.db
