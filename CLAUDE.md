@@ -4,68 +4,82 @@ This file provides guidance to Claude Code (claude.ai/code) for working with thi
 
 ---
 
-## Project Philosophy: Spec-Driven Development (SDD)
+## Project Philosophy: Spec-Driven Development with OpenSpec
 
-This project strictly follows the **Spec-Driven Development** paradigm. All code implementations must use the `/specs` directory as the Single Source of Truth.
+This project uses **OpenSpec** for structured change management. All specifications are maintained in the `openspec/` directory as the Single Source of Truth.
 
 ### Directory Context
 
-| Directory         | Purpose                                           |
-| ----------------- | ------------------------------------------------- |
-| `/specs/product/` | Product feature definitions & Acceptance Criteria |
-| `/specs/rfc/`     | Technical design documents (Request for Comments) |
-| `/specs/api/`     | API interface definitions (if applicable)         |
-| `/specs/db/`      | Data model definitions & Schema specifications    |
-| `/specs/testing/` | BDD test case specifications                      |
-| `/docs/`          | User guides, tutorials, and architecture overview |
-| `/changelog/`     | Version history and release notes                 |
+| Directory                   | Purpose                                           |
+| --------------------------- | ------------------------------------------------- |
+| `openspec/specs/`           | Capability specifications (source of truth)       |
+| `openspec/rfc/`             | Architectural decision records                    |
+| `openspec/changes/`         | Active change proposals                           |
+| `openspec/changes/archive/` | Completed changes                                 |
+| `openspec/explorations/`    | Research artifacts                                |
+| `specs/`                    | Legacy archive (read-only reference)              |
+| `docs/`                     | User guides, tutorials, and architecture overview |
+| `changelog/`                | Version history and release notes                 |
 
-### AI Agent Workflow Instructions
+### OpenSpec Workflow
 
-When asked to develop a new feature, modify existing functionality, or fix a bug, **follow this workflow strictly. Do not skip any steps.**
+#### For New Features
 
-#### Step 1: Review Specs (审查与分析)
+```
+/opsx:propose "add leaderboard sharing"
+  → Creates openspec/changes/add-leaderboard-sharing/
+  → Generates proposal.md, specs/, design.md, tasks.md
 
-Before writing any code, first read the relevant product documents, RFCs, and API definitions in `/specs`.
+/opsx:apply
+  → Implements tasks from tasks.md
+  → Marks completed items with [x]
 
-- If the user's instruction conflicts with an existing Spec, **STOP immediately** and point out the conflict. Ask the user if the Spec needs to be updated first.
-- 如果用户指令与现有 Spec 冲突，**立即停止编码**，指出冲突点，询问用户是否需要先更新 Spec。
+/opsx:archive
+  → Merges delta specs into openspec/specs/
+  → Moves change to archive/ with date prefix
+```
 
-#### Step 2: Spec-First Update (规范优先)
+#### For Bug Fixes
 
-If this is a new feature or requires changes to existing interfaces/database structures:
+```
+/opsx:explore
+  → Investigate the issue
+  → Create exploration notes in openspec/explorations/
 
-1. **First propose modifications or create the corresponding Spec document** (e.g., in `/specs/product/` or `/specs/rfc/`).
-2. Wait for user confirmation of the Spec changes before proceeding to the code writing phase.
-3. 如果是新功能或需要修改现有接口/数据库结构，**必须首先提议修改或创建相应的 Spec 文档**。
-4. 等待用户确认 Spec 的修改后，才能进入代码编写阶段。
+/opsx:propose "fix timer pause bug"
+  → Create structured fix proposal
 
-#### Step 3: Implementation (代码实现)
+/opsx:apply → /opsx:archive
+```
 
-When writing code:
+### AI Agent Rules
 
-- **100% compliance with the Spec definitions** (including variable naming, API paths, data types, status codes, etc.).
-- Do not add features not defined in the Spec (No Gold-Plating).
-- 编写代码时，必须 100% 遵守 Spec 中的定义。
-- 不要在代码中擅自添加 Spec 中未定义的功能。
+1. **Always check openspec/specs/ first** - This is the source of truth
+2. **Use /opsx:propose for changes** - Never edit specs directly
+3. **Follow delta spec format** - ADDED/MODIFIED/REMOVED sections
+4. **Archive completed changes** - Keep changes/ clean
 
-#### Step 4: Test against Spec (测试验证)
+### OpenSpec CLI Commands
 
-- Write unit tests and integration tests based on Acceptance Criteria in `/specs`.
-- Ensure test cases cover all boundary cases described in the Spec.
-- 根据 `/specs` 中的验收标准编写单元测试和集成测试。
-- 确保测试用例覆盖了 Spec 中描述的所有边界情况。
+```bash
+openspec list              # List active changes
+openspec list --specs      # List capabilities
+openspec validate --all    # Validate all specs
+openspec status            # Show completion progress
+openspec show <item>       # View specific change/spec
+openspec archive <change>  # Archive completed change
+```
 
 ---
 
 ## Code Generation Rules
 
-| Rule                        | Description                                           |
-| --------------------------- | ----------------------------------------------------- |
-| New Features                | Must have corresponding `/specs/product/` document    |
-| Database Changes            | Schema changes must sync with `/specs/db/`            |
-| API Changes                 | Any external API changes must sync with `/specs/api/` |
-| Uncertain Technical Details | Check `/specs/rfc/` for architecture conventions      |
+| Rule            | Description                                         |
+| --------------- | --------------------------------------------------- |
+| New Features    | Use `/opsx:propose` to create change proposal first |
+| Spec Changes    | All changes to specs go through OpenSpec workflow   |
+| Implementation  | 100% compliance with the spec in `openspec/specs/`  |
+| No Gold-Plating | Do not add features not defined in specs            |
 
 ---
 
