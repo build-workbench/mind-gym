@@ -4,6 +4,21 @@ This file provides guidance for AI coding assistants (Claude Code, Cursor, GitHu
 
 ---
 
+## Project Status: Final Release
+
+> **Version**: 1.8.0 | **Status**: Maintenance-Only
+
+This project is in **maintenance-only** mode. No new features are planned.
+
+### Handoff Notes for GLM / Successor Models
+
+1. **All critical bugs in v1.8.0 are fixed** — see changelog for details
+2. **Documentation consolidated** — `openspec/specs/` is the single source of truth
+3. **CI/CD is optimized** — do not add complexity to workflows
+4. **For any changes**, follow the OpenSpec workflow below
+
+---
+
 ## Project Philosophy: Spec-Driven Development with OpenSpec
 
 This project uses **OpenSpec** for structured change management. All specifications are maintained in the `openspec/` directory as the Single Source of Truth.
@@ -215,3 +230,17 @@ This project uses **English** as the primary language for:
 
 - User-facing documentation (README.zh-CN.md)
 - UI elements (via i18n system)
+
+---
+
+## Quick Reference for Maintenance Tasks
+
+| Task             | Command / Action                              |
+| ---------------- | --------------------------------------------- |
+| Run tests        | `npm test`                                    |
+| Format code      | `npm run format`                              |
+| Build CSS        | `npm run build:css`                           |
+| Prepare deploy   | `npm run prepare:deploy`                      |
+| Check specs      | Read `openspec/specs/*/spec.md`               |
+| Update changelog | Edit `changelog/CHANGELOG.md`                 |
+| Version bump     | Update `package.json` + `sw.js` CACHE_VERSION |

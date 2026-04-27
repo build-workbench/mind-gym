@@ -182,4 +182,25 @@ All changes are recorded in the `changelog/` directory.
 
 ## currentDate
 
-Today's date: 2026/04/17.
+Today's date: 2026/04/27.
+
+---
+
+## Project Status: Final Release (v1.8.0)
+
+**Last major refactoring**: 2026-04-27
+
+### Changes in v1.8.0
+
+- Fixed critical `isReducedMotion()` bug (logic was inverted)
+- Fixed critical `createDeck()` bug (now falls back to emoji)
+- Consolidated documentation (removed redundant docs/)
+- Optimized Service Worker (removed debug logs)
+- Simplified CI/CD workflows
+
+### For Successor Models (GLM)
+
+- All specs are in `openspec/specs/`
+- User docs are in `docs/README.md`
+- Follow OpenSpec workflow for any changes
+- This project is in maintenance-only mode

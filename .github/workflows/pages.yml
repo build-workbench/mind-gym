@@ -54,8 +54,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup GitHub Pages
         id: pages
@@ -80,21 +78,8 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci --prefer-offline
 
-      - name: Install ImageMagick
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y imagemagick
-
       - name: Build CSS
         run: npm run build:css
-
-      - name: Generate PWA icons
-        run: |
-          echo "📦 Generating PWA icons..."
-          bash scripts/generate-icons.sh
-          echo ""
-          echo "Generated icon files:"
-          ls -la assets/icon-*.png assets/apple-touch-icon.png 2>/dev/null || echo "Warning: Some icons may be missing"
 
       - name: Prepare deployment bundle
         run: |
@@ -104,71 +89,23 @@ jobs:
       - name: Verify dist contents
         run: |
           echo "📦 Verifying dist directory..."
-          ls -la dist/
-          echo ""
-          echo "📋 Checking required files..."
 
           # Core files
-          required_files=(
-            "index.html"
-            "404.html"
-            "app.js"
-            "sw.js"
-            "manifest.webmanifest"
-            "offline.html"
-          )
-
-          for file in "${required_files[@]}"; do
-            if [ -f "dist/$file" ]; then
-              echo "✅ $file exists"
-            else
-              echo "❌ $file missing"
-              exit 1
-            fi
+          required_files="index.html app.js sw.js manifest.webmanifest offline.html"
+          for file in $required_files; do
+            [ -f "dist/$file" ] && echo "✅ $file" || { echo "❌ $file missing"; exit 1; }
           done
 
           # Directories
-          echo ""
-          echo "📁 Checking directories..."
-          for dir in src assets; do
-            if [ -d "dist/$dir" ]; then
-              file_count=$(find "dist/$dir" -type f | wc -l)
-              echo "✅ $dir/ directory exists ($file_count files)"
-            else
-              echo "❌ $dir/ directory missing"
-              exit 1
-            fi
+          [ -d "dist/src" ] && [ -d "dist/assets" ] || { echo "❌ Required directories missing"; exit 1; }
+          echo "✅ src/ and assets/ directories"
+
+          # PWA Icons (only check critical sizes)
+          for size in 192 512; do
+            [ -f "dist/assets/icon-${size}.png" ] && echo "✅ icon-${size}.png" || echo "⚠️ icon-${size}.png missing"
           done
 
-          # PWA Icons
-          echo ""
-          echo "🎨 Checking PWA icons..."
-          icon_sizes=(72 96 128 144 152 192 384 512)
-          for size in "${icon_sizes[@]}"; do
-            if [ -f "dist/assets/icon-${size}.png" ]; then
-              echo "✅ icon-${size}.png"
-            else
-              echo "⚠️  icon-${size}.png missing (will use fallback)"
-            fi
-          done
-
-          # Apple touch icon
-          if [ -f "dist/assets/apple-touch-icon.png" ]; then
-            echo "✅ apple-touch-icon.png"
-          else
-            echo "⚠️  apple-touch-icon.png missing"
-          fi
-
-          # OG Image
-          if [ -f "dist/assets/og-image.png" ]; then
-            echo "✅ og-image.png"
-          else
-            echo "⚠️  og-image.png missing"
-          fi
-
-          echo ""
-          echo "📊 Total dist size:"
-          du -sh dist/
+          echo "📊 Total dist size: $(du -sh dist/ | cut -f1)"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -64,8 +64,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const title = context.payload.pull_request.title;
-            const type = title.split(':')[0].split('(')[0];
+            const title = context.payload.pull_request.title || '';
+            const type = title.split(':')[0].split('(')[0].trim();
+
+            if (!type) {
+              console.log('No valid type found in PR title');
+              return;
+            }
 
             const labelMap = {
               'feat': 'enhancement',

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "module": "ES2022",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["jest"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["app.js", "src/**/*.js", "__tests__/**/*.js"],
+  "exclude": ["node_modules", "dist", "coverage"]
+}
