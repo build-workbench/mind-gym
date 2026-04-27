@@ -1,3 +1,10 @@
+---
+title: Data Layer
+version: 1.0.0
+status: active
+last_updated: 2026-04-27
+---
+
 # Data Layer
 
 > localStorage schema and CRUD operations

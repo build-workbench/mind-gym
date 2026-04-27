@@ -33,11 +33,10 @@ Welcome to the Mind Gym documentation. This directory contains user guides, tuto
 
 ### Specifications
 
-For detailed product specifications and technical RFCs, see the [/specs](../specs/) directory:
+For detailed product specifications and technical RFCs, see the [/openspec](../openspec/) directory:
 
-- [Product Specifications](../specs/product/) — Feature definitions and acceptance criteria
-- [Technical RFCs](../specs/rfc/) — Architecture decisions and design documents
-- [Database Schema](../specs/db/) — Data model definitions
+- [Capability Specifications](../openspec/specs/) — Feature definitions and acceptance criteria
+- [Technical RFCs](../openspec/rfc/) — Architecture decisions and design documents
 
 ---
 

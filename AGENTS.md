@@ -4,70 +4,104 @@ This file provides guidance for AI coding assistants (Claude Code, Cursor, GitHu
 
 ---
 
-## Project Philosophy: Spec-Driven Development (SDD)
+## Project Philosophy: Spec-Driven Development with OpenSpec
 
-This project strictly follows the **Spec-Driven Development** paradigm. All code implementations must use the `/specs` directory as the Single Source of Truth.
+This project uses **OpenSpec** for structured change management. All specifications are maintained in the `openspec/` directory as the Single Source of Truth.
+
+---
 
 ## Directory Context
 
-| Directory         | Purpose                                           |
-| ----------------- | ------------------------------------------------- |
-| `/specs/product/` | Product feature definitions & Acceptance Criteria |
-| `/specs/rfc/`     | Technical design documents (Request for Comments) |
-| `/specs/api/`     | API interface definitions (if applicable)         |
-| `/specs/db/`      | Data model definitions & Schema specifications    |
-| `/specs/testing/` | BDD test case specifications                      |
-| `/docs/`          | User guides, tutorials, and architecture overview |
-| `/changelog/`     | Version history and release notes                 |
+| Directory                   | Purpose                                           |
+| --------------------------- | ------------------------------------------------- |
+| `openspec/specs/`           | Capability specifications (source of truth)       |
+| `openspec/rfc/`             | Architectural decision records                    |
+| `openspec/changes/`         | Active change proposals                           |
+| `openspec/changes/archive/` | Completed changes                                 |
+| `openspec/explorations/`    | Research artifacts                                |
+| `docs/`                     | User guides, tutorials, and architecture overview |
+| `changelog/`                | Version history and release notes                 |
+
+---
+
+## OpenSpec Workflow
+
+### For New Features
+
+```
+/opsx:propose "add leaderboard sharing"
+  → Creates openspec/changes/add-leaderboard-sharing/
+  → Generates proposal.md, specs/, design.md, tasks.md
+
+/opsx:apply
+  → Implements tasks from tasks.md
+  → Marks completed items with [x]
+
+/opsx:archive
+  → Merges delta specs into openspec/specs/
+  → Moves change to archive/ with date prefix
+```
+
+### For Bug Fixes
+
+```
+/opsx:explore
+  → Investigate the issue
+  → Create exploration notes in openspec/explorations/
+
+/opsx:propose "fix timer pause bug"
+  → Create structured fix proposal
+
+/opsx:apply → /opsx:archive
+```
 
 ---
 
 ## AI Agent Workflow Instructions
 
-When asked to develop a new feature, modify existing functionality, or fix a bug, **you MUST follow this workflow strictly. Do not skip any steps.**
+When asked to develop a new feature, modify existing functionality, or fix a bug, **follow this workflow strictly**:
 
 ### Step 1: Review Specs (审查与分析)
 
-Before writing any code, first read the relevant product documents, RFCs, and API definitions in `/specs`.
+Before writing any code, first read the relevant specifications in `openspec/specs/`.
 
 - If the user's instruction conflicts with an existing Spec, **STOP immediately** and point out the conflict. Ask the user if the Spec needs to be updated first.
 - 如果用户指令与现有 Spec 冲突，**立即停止编码**，指出冲突点，询问用户是否需要先更新 Spec。
 
 ### Step 2: Spec-First Update (规范优先)
 
-If this is a new feature or requires changes to existing interfaces/database structures:
+If this is a new feature or requires changes to existing interfaces:
 
-1. **First propose modifications or create the corresponding Spec document** (e.g., `openapi.yaml` or RFC document).
-2. Wait for user confirmation of the Spec changes before proceeding to the code writing phase.
-3. 如果是新功能或需要修改现有接口/数据库结构，**必须首先提议修改或创建相应的 Spec 文档**。
-4. 等待用户确认 Spec 的修改后，才能进入代码编写阶段。
+1. **Use OpenSpec workflow to propose changes** (`/opsx:propose`)
+2. Wait for user confirmation before proceeding to code implementation
+3. 如果是新功能或需要修改现有接口，**必须首先通过 OpenSpec 流程提议变更**
+4. 等待用户确认后，才能进入代码编写阶段
 
 ### Step 3: Implementation (代码实现)
 
 When writing code:
 
-- **100% compliance with the Spec definitions** (including variable naming, API paths, data types, status codes, etc.).
-- Do not add features not defined in the Spec (No Gold-Plating).
-- 编写代码时，必须 100% 遵守 Spec 中的定义（包括变量命名、API 路径、数据类型、状态码等）。
-- 不要在代码中擅自添加 Spec 中未定义的功能。
+- **100% compliance with the Spec definitions** (including variable naming, API paths, data types, status codes, etc.)
+- Do not add features not defined in the Spec (No Gold-Plating)
+- 编写代码时，必须 100% 遵守 Spec 中的定义
+- 不要在代码中擅自添加 Spec 中未定义的功能
 
 ### Step 4: Test against Spec (测试验证)
 
-- Write unit tests and integration tests based on Acceptance Criteria in `/specs`.
-- Ensure test cases cover all boundary cases described in the Spec.
-- 根据 `/specs` 中的验收标准编写单元测试和集成测试。
-- 确保测试用例覆盖了 Spec 中描述的所有边界情况。
+- Write unit tests based on Acceptance Criteria in `openspec/specs/`
+- Ensure test cases cover all boundary cases described in the Spec
+- 根据 `openspec/specs/` 中的验收标准编写单元测试
+- 确保测试用例覆盖了 Spec 中描述的所有边界情况
 
 ---
 
 ## Code Generation Rules
 
-| Rule                        | Description                                           |
-| --------------------------- | ----------------------------------------------------- |
-| API Changes                 | Any external API changes must sync with `/specs/api/` |
-| Database Changes            | Schema changes must sync with `/specs/db/`            |
-| New Features                | Must have corresponding `/specs/product/` document    |
-| Uncertain Technical Details | Check `/specs/rfc/` for architecture conventions      |
+| Rule                        | Description                                                |
+| --------------------------- | ---------------------------------------------------------- |
+| API Changes                 | Any external API changes must go through OpenSpec workflow |
+| New Features                | Must have corresponding `openspec/specs/` document         |
+| Uncertain Technical Details | Check `openspec/rfc/` for architecture conventions         |
 
 ---
 
@@ -107,7 +141,7 @@ Each `src/` module exposes a global object (e.g., `window.RememberStorage`, `win
 
 | File                   | Responsibility                                                          |
 | ---------------------- | ----------------------------------------------------------------------- |
-| `app.js`               | Game main loop, state machine, all mode logic (~2500 lines)             |
+| `app.js`               | Game main loop, state machine, all mode logic (~2150 lines)             |
 | `src/storage.js`       | localStorage CRUD — settings, scores, stats, achievements               |
 | `src/stats.js`         | Statistics normalization and aggregation logic                          |
 | `src/achievements.js`  | Achievement definitions and check logic                                 |
@@ -156,9 +190,9 @@ GitHub Actions (`pages.yml`) runs lint → test → `prepare:deploy` → upload 
 
 ## Code Style
 
-- **Prettier**: Single quotes, trailing commas, 120 character line width, 2-space indent, LF
-- **Commit Format**: Conventional Commits (`feat:`, `fix:`, `docs:`, `style:`, `test:`, `chore:`, `ci:`)
-- **Allowed PR Scopes**: `ci`, `deps`, `docs`, `ui`, `gameplay`, `tooling`
+- **Prettier**: Single quotes, trailing commas, 100 character line width, 2-space indent, LF
+- **Commit Format**: Conventional Commits (`feat:`, `fix:`, `docs:`, `style:`, `test:`, `chore:`, `ci:`, `spec:`)
+- **Allowed PR Scopes**: `ci`, `deps`, `docs`, `ui`, `gameplay`, `tooling`, `storage`, `i18n`, `pwa`
 
 ---
 
@@ -181,9 +215,3 @@ This project uses **English** as the primary language for:
 
 - User-facing documentation (README.zh-CN.md)
 - UI elements (via i18n system)
-
----
-
-## currentDate
-
-Today's date: 2026/04/17.

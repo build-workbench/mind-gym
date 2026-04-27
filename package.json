@@ -45,6 +45,7 @@
     "build": "npm run build:css && npm run prepare:deploy",
     "lint": "prettier --check '**/*.{js,json,md,html,css,yml}'",
     "lint:fix": "prettier --write '**/*.{js,json,md,html,css,yml}'",
+    "lint:es": "eslint app.js src/*.js --max-warnings=0",
     "format": "prettier --write '**/*.{js,json,md,html,css,yml}'",
     "prepare:deploy": "bash scripts/prepare-deploy.sh",
     "dev": "npx serve . -p 3000",

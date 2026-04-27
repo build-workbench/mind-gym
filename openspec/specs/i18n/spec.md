@@ -1,3 +1,10 @@
+---
+title: Internationalization (i18n)
+version: 1.0.0
+status: active
+last_updated: 2026-04-27
+---
+
 # Internationalization (i18n)
 
 > Multi-language support with runtime switching

@@ -1,3 +1,10 @@
+---
+title: PWA & Offline
+version: 1.0.0
+status: active
+last_updated: 2026-04-27
+---
+
 # PWA & Offline
 
 > Progressive Web App with offline support

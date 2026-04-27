@@ -1,3 +1,10 @@
+---
+title: Adaptive Systems
+version: 1.0.0
+status: active
+last_updated: 2026-04-27
+---
+
 # Adaptive Systems
 
 > Dynamic difficulty adjustment and spaced reinforcement

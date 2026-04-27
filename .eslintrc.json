@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc.json",
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "script"
+  },
+  "globals": {
+    "RememberStorage": "readonly",
+    "RememberStats": "readonly",
+    "RememberAchievements": "readonly",
+    "RememberModes": "readonly",
+    "RememberImportExport": "readonly",
+    "RememberI18n": "readonly",
+    "RememberEffects": "readonly",
+    "RememberPools": "readonly",
+    "RememberTimer": "readonly",
+    "RememberConfetti": "readonly",
+    "RememberUIEvents": "readonly",
+    "RememberUI": "readonly",
+    "RememberKeys": "readonly",
+    "RememberUtils": "readonly"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-undef": "off",
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "prefer-const": "warn",
+    "no-var": "off"
+  },
+  "ignorePatterns": ["dist/**", "coverage/**", "node_modules/**", "*.min.js"]
+}

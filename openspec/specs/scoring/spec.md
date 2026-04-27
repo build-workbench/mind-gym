@@ -1,3 +1,10 @@
+---
+title: Scoring
+version: 1.0.0
+status: active
+last_updated: 2026-04-27
+---
+
 # Scoring
 
 > Star ratings, combos, and performance metrics
