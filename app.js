@@ -733,8 +733,8 @@ function applyTheme() {
 function isReducedMotion() {
   const prefReduce =
     window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (settings.motion === 'on') return true;
-  if (settings.motion === 'off') return false;
+  if (settings.motion === 'on') return false; // 用户选择开启动画
+  if (settings.motion === 'off') return true; // 用户选择关闭动画
   return !!prefReduce;
 }
 
@@ -2031,16 +2031,17 @@ function buildDeckItems(picks) {
 
 function createDeck(pairs) {
   const theme = settings.cardFace || 'emoji';
-  const pool = getPoolForTheme(theme);
-  // 边界检查：确保 pool 足够且 pairs 有效
+  let pool = getPoolForTheme(theme);
+  // 边界检查：pool 无效时回退到 emoji
   if (!Array.isArray(pool) || pool.length === 0) {
-    console.error('createDeck: pool is empty or invalid for theme:', theme);
-    return [];
+    console.warn('createDeck: pool invalid for theme:', theme, ', falling back to emoji');
+    pool = getPoolForTheme('emoji');
   }
-  if (typeof pairs !== 'number' || pairs < 1 || pairs > pool.length) {
-    console.error('createDeck: invalid pairs value:', pairs, 'pool size:', pool.length);
-    pairs = Math.min(pairs || 8, pool.length);
+  // 确保 pairs 有效
+  if (typeof pairs !== 'number' || pairs < 1) {
+    pairs = 8;
   }
+  pairs = Math.min(pairs, pool.length);
   if (dailyActive) {
     const rng = mulberry32(dailySeed);
     const poolCopy = pool.slice();

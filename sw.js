@@ -1,18 +1,23 @@
 /**
- * Mind Gym Service Worker v5 - GitHub Pages Optimized
+ * Mind Gym Service Worker v6 - GitHub Pages Optimized
  * Advanced caching with update awareness
  *
- * @version 1.7.0
+ * @version 1.8.0
  * @license MIT
  */
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `mind-gym-${CACHE_VERSION}`;
 const STATIC_CACHE = `${CACHE_NAME}-static`;
 const IMAGE_CACHE = `${CACHE_NAME}-images`;
 const FONT_CACHE = `${CACHE_NAME}-fonts`;
 const RUNTIME_CACHE = `${CACHE_NAME}-runtime`;
 const OFFLINE_PAGE = './offline.html';
+const DEBUG = false; // 生产环境关闭调试
+
+const log = DEBUG ? console.log.bind(console, '[SW]') : () => {};
+const warn = console.warn.bind(console, '[SW]');
+const error = console.error.bind(console, '[SW]');
 
 // Precache list - critical assets
 const PRECACHE_ASSETS = [
@@ -44,34 +49,34 @@ const PRECACHE_ASSETS = [
 
 // Install event - precache critical assets
 self.addEventListener('install', event => {
-  console.log('[SW] Installing...');
+  log('Installing...');
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
       .then(cache => {
-        console.log('[SW] Precaching static assets...');
+        log('Precaching static assets...');
         // Use addAll but catch errors for optional assets
         return Promise.all(
           PRECACHE_ASSETS.map(url =>
             cache.add(url).catch(err => {
-              console.warn('[SW] Failed to cache:', url, err.message);
+              warn('Failed to cache:', url, err.message);
             })
           )
         );
       })
       .then(() => {
-        console.log('[SW] Precache complete');
+        log('Precache complete');
         return self.skipWaiting();
       })
       .catch(err => {
-        console.error('[SW] Precache failed:', err);
+        error('Precache failed:', err);
       })
   );
 });
 
 // Activate event - cleanup old caches
 self.addEventListener('activate', event => {
-  console.log('[SW] Activating...');
+  log('Activating...');
   event.waitUntil(
     caches
       .keys()
@@ -80,13 +85,13 @@ self.addEventListener('activate', event => {
           cacheNames
             .filter(name => name.startsWith('mind-gym-') && !name.includes(CACHE_VERSION))
             .map(name => {
-              console.log('[SW] Deleting old cache:', name);
+              log('Deleting old cache:', name);
               return caches.delete(name);
             })
         );
       })
       .then(() => {
-        console.log('[SW] Activation complete');
+        log('Activation complete');
         return self.clients.claim();
       })
   );
@@ -201,7 +206,7 @@ async function networkFirstWithFallback(request, cacheName) {
       return networkResponse;
     }
   } catch (error) {
-    console.log('[SW] Network failed, serving from cache');
+    log('Network failed, serving from cache');
   }
 
   const cached = await cache.match(request);
@@ -232,7 +237,7 @@ async function networkFirstWithCacheUpdate(request, cacheName) {
       return networkResponse;
     }
   } catch (error) {
-    console.log('[SW] Network failed, serving from cache');
+    log('Network failed, serving from cache');
   }
 
   const cached = await cache.match(request);
@@ -283,7 +288,7 @@ async function cleanupCache(cacheName, maxEntries) {
 // Message handling for app communication
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    console.log('[SW] Skip waiting received');
+    log('Skip waiting received');
     self.skipWaiting();
   }
 
@@ -322,6 +327,6 @@ if ('periodicSync' in self.registration) {
 }
 
 async function syncContent() {
-  console.log('[SW] Periodic sync executed');
+  log('Periodic sync executed');
   // Could fetch stats or achievements here
 }

@@ -18,6 +18,31 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
+## [v1.8.0] - 2026-04-27
+
+### Added / 新增
+
+- `jsconfig.json` for LSP type checking support
+- `openspec/changes/archive/.gitkeep` for directory structure
+
+### Changed / 变更
+
+- Consolidated documentation: removed redundant docs/, use openspec/specs/ as source of truth
+- Optimized Service Worker: removed debug logs, added DEBUG flag
+- Updated docs/README.md as user guide entry point
+
+### Fixed / 修复
+
+- **Critical**: `isReducedMotion()` logic was inverted - motion preference now works correctly
+- **Critical**: `createDeck()` now falls back to emoji theme when pool is invalid
+
+### Removed / 移除
+
+- Redundant documentation files (9 files deleted)
+- Root `CHANGELOG.md` (use `changelog/CHANGELOG.md` instead)
+
+---
+
 ## [v1.6.1] - 2026-04-16
 
 ### Added / 新增
@@ -214,7 +239,8 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
-[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.8.0...HEAD
+[v1.8.0]: https://github.com/LessUp/mind-gym/compare/v1.6.1...v1.8.0
 [v1.6.1]: https://github.com/LessUp/mind-gym/compare/v1.6.0...v1.6.1
 [v1.6.0]: https://github.com/LessUp/mind-gym/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/LessUp/mind-gym/compare/v1.4.0...v1.5.0

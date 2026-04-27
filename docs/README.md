@@ -1,46 +1,16 @@
-# Documentation
+# Mind Gym Documentation
 
-Welcome to the Mind Gym documentation. This directory contains user guides, tutorials, and technical references.
+> 🧠 Browser-based memory training PWA with N-back, adaptive difficulty, and daily challenges.
 
-[English](./README.md) | [简体中文](./README.zh-CN.md)
-
----
-
-## Quick Links
-
-| Document                          | Description                        | Audience          |
-| --------------------------------- | ---------------------------------- | ----------------- |
-| [Architecture](./architecture.md) | System design and data flow        | Developers        |
-| [Training Modes](./modes.md)      | Game modes and mechanics           | Users, Developers |
-| [Storage Model](./storage.md)     | Data structures and persistence    | Developers        |
-| [PWA & Offline](./pwa.md)         | Service Worker and offline support | Developers        |
+[English](#english) | [简体中文](#简体中文)
 
 ---
 
-## For Developers
+## English
 
-### Getting Started
+### What is Mind Gym?
 
-- New to the codebase? → [Architecture Overview](./architecture.md#system-architecture)
-- Want to understand data flow? → [Data Flow](./architecture.md#data-flow)
-- Need storage details? → [Storage Model](./storage.md)
-
-### Contributing
-
-- Adding a new game mode? → [Extending Game Modes](./modes.md#extending-game-modes)
-- Modifying storage? → [Data Migration](./storage.md#data-migration)
-- PWA changes? → [PWA Strategy](./pwa.md)
-
-### Specifications
-
-For detailed product specifications and technical RFCs, see the [/openspec](../openspec/) directory:
-
-- [Capability Specifications](../openspec/specs/) — Feature definitions and acceptance criteria
-- [Technical RFCs](../openspec/rfc/) — Architecture decisions and design documents
-
----
-
-## For Users
+Mind Gym is a Progressive Web App (PWA) designed to train your memory through multiple game modes. It works completely offline and requires no installation.
 
 ### Game Modes
 
@@ -52,39 +22,87 @@ For detailed product specifications and technical RFCs, see the [/openspec](../o
 | **N-back Training**  | Working memory exercise                    |
 | **Delayed Recall**   | Post-game recognition test                 |
 
-See [Training Modes](./modes.md) for detailed descriptions.
+### Quick Start
 
-### Installation
+1. Visit [Mind Gym](https://lessup.github.io/mind-gym/)
+2. Choose a difficulty level
+3. Start training!
 
-See the main [README](../README.md) for installation instructions.
+### Features
 
----
-
-## Directory Structure
-
-```
-docs/
-├── README.md           # This file
-├── README.zh-CN.md     # Chinese version
-├── architecture.md     # Architecture documentation
-├── architecture.zh-CN.md
-├── modes.md            # Training modes documentation
-├── modes.zh-CN.md
-├── storage.md          # Storage documentation
-├── storage.zh-CN.md
-├── pwa.md              # PWA documentation
-└── pwa.zh-CN.md
-```
+- 🎮 5 training modes
+- 📊 Progress tracking & statistics
+- 🏆 Achievement system
+- 🌐 Bilingual support (EN/ZH)
+- 📱 Works offline (PWA)
+- 🎨 Adaptive difficulty
 
 ---
 
-## External Resources
+## 简体中文
 
-- [Contributing Guidelines](../CONTRIBUTING.md)
+### 什么是 Mind Gym？
+
+Mind Gym 是一个渐进式 Web 应用 (PWA)，通过多种游戏模式训练您的记忆力。完全离线可用，无需安装。
+
+### 游戏模式
+
+| 模式            | 描述                   |
+| --------------- | ---------------------- |
+| **经典配对**    | 翻开卡片找到匹配的对子 |
+| **倒计时**      | 在限定时间内完成挑战   |
+| **每日挑战**    | 全球玩家使用相同牌组   |
+| **N-back 训练** | 工作记忆练习           |
+| **延迟回忆**    | 游戏后识别测试         |
+
+### 快速开始
+
+1. 访问 [Mind Gym](https://lessup.github.io/mind-gym/)
+2. 选择难度等级
+3. 开始训练！
+
+### 特性
+
+- 🎮 5 种训练模式
+- 📊 进度追踪和统计
+- 🏆 成就系统
+- 🌐 中英双语支持
+- 📱 离线可用 (PWA)
+- 🎨 自适应难度
+
+---
+
+## For Developers
+
+### Technical Specifications
+
+All technical specifications are maintained in the [`openspec/specs/`](../openspec/specs/) directory:
+
+| Spec                                                           | Description                        |
+| -------------------------------------------------------------- | ---------------------------------- |
+| [Game Modes](../openspec/specs/game-modes/spec.md)             | Game mode definitions and logic    |
+| [Data Layer](../openspec/specs/data-layer/spec.md)             | Storage and data persistence       |
+| [Scoring](../openspec/specs/scoring/spec.md)                   | Score calculation and leaderboards |
+| [PWA](../openspec/specs/pwa/spec.md)                           | Service Worker and offline support |
+| [i18n](../openspec/specs/i18n/spec.md)                         | Internationalization               |
+| [Adaptive Systems](../openspec/specs/adaptive-systems/spec.md) | Adaptive difficulty algorithm      |
+
+### Architecture Decisions
+
+See [`openspec/rfc/`](../openspec/rfc/) for Architecture Decision Records (ADRs).
+
+### Contributing
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for development guidelines.
+
+---
+
+## Resources
+
 - [Changelog](../changelog/CHANGELOG.md)
 - [GitHub Repository](https://github.com/LessUp/mind-gym)
 - [Live Demo](https://lessup.github.io/mind-gym/)
 
 ---
 
-_Last updated: 2026-04-17_
+_Last updated: 2026-04-27_
