@@ -120,17 +120,19 @@
   ) {
     const hardPenalty = rating === Rating.Hard ? w[9] : 1;
     const easyBonus = rating === Rating.Easy ? w[10] : 1;
+    // Protect against edge case where retrievability is 1
+    const r = Math.max(0.01, Math.min(0.99, retrievability));
 
     const s =
       currentStability *
       (1 +
         w[11] *
           Math.exp(w[12] * (currentDifficulty - w[13])) *
-          (Math.pow(1 - retrievability, -w[14]) - 1) *
+          (Math.pow(1 - r, -w[14]) - 1) *
           hardPenalty *
           easyBonus);
 
-    return Math.max(0.1, s);
+    return Math.max(0.1, isFinite(s) ? s : currentStability);
   }
 
   /**
@@ -143,13 +145,15 @@
    */
   function calculateNextStabilityFailure(currentDifficulty, currentStability, retrievability, w) {
     // FSRS-4.5 uses w[15] and w[16], not w[17]
+    // Protect against edge cases where retrievability is 1 or 0
+    const r = Math.max(0.01, Math.min(0.99, retrievability));
     const s =
       w[15] *
-      Math.pow(currentDifficulty, -w[16]) *
+      Math.pow(Math.max(0.1, currentDifficulty), -w[16]) *
       (Math.pow(currentStability + 1, w[16]) - 1) *
-      Math.exp(w[16] * (1 - retrievability));
+      Math.exp(w[16] * (1 - r));
 
-    return Math.max(0.1, s);
+    return Math.max(0.1, isFinite(s) ? s : 0.5);
   }
 
   /**
