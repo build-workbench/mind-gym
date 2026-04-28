@@ -6,7 +6,7 @@
  * @license MIT
  */
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const CACHE_NAME = `mind-gym-${CACHE_VERSION}`;
 const STATIC_CACHE = `${CACHE_NAME}-static`;
 const IMAGE_CACHE = `${CACHE_NAME}-images`;
@@ -35,6 +35,7 @@ const PRECACHE_ASSETS = [
   './src/import-export.js',
   './src/i18n.js',
   './src/effects.js',
+  './src/fsrs.js',
   './src/pools.js',
   './src/timer.js',
   './src/confetti.js',

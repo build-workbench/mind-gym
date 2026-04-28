@@ -128,6 +128,40 @@
     return result;
   }
 
+  function normalizeMasteryCard(raw) {
+    if (!isPlainObject(raw)) return null;
+    const now = Date.now();
+    return {
+      difficulty: clampNumber(raw.difficulty, 1, 10, 5),
+      stability: clampNumber(raw.stability, 0.1, 365, 1),
+      retrievability: clampNumber(raw.retrievability, 0, 1, 1),
+      lastReview: clampInt(raw.lastReview, 0, now, 0),
+      nextReview: clampInt(raw.nextReview, 0, now + 365 * 24 * 60 * 60 * 1000, now),
+      reps: clampInt(raw.reps, 0, 9999, 0),
+      lapses: clampInt(raw.lapses, 0, 999, 0),
+    };
+  }
+
+  function normalizeMasteryBucket(raw) {
+    if (!isPlainObject(raw)) return {};
+    const result = {};
+    for (const [key, value] of Object.entries(raw)) {
+      if (!key) continue;
+      const card = normalizeMasteryCard(value);
+      if (card) result[String(key)] = card;
+    }
+    return result;
+  }
+
+  function normalizeMastery(raw) {
+    const source = isPlainObject(raw) ? raw : {};
+    const result = {};
+    for (const theme of VALID_THEMES) {
+      if (source[theme]) result[theme] = normalizeMasteryBucket(source[theme]);
+    }
+    return result;
+  }
+
   function normalizeBests(raw) {
     const source = isPlainObject(raw) ? raw : {};
     const result = {};
@@ -185,6 +219,7 @@
     normalizeLeaderboard,
     normalizeAdaptive,
     normalizeSpaced,
+    normalizeMastery,
     normalizeImportData,
     collectExportData,
   };

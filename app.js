@@ -54,6 +54,10 @@ const __RememberUIEvents__ =
     : __GLOBAL__.RememberUIEvents;
 const __RememberUI__ =
   typeof module !== 'undefined' && module.exports ? require('./src/ui.js') : __GLOBAL__.RememberUI;
+const __RememberFSRS__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/fsrs.js')
+    : __GLOBAL__.RememberFSRS;
 const MODAL_FOCUS_PREV = new WeakMap();
 const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
 const DIFFS = ['easy', 'medium', 'hard'];
@@ -486,28 +490,110 @@ function saveSpaced(theme, data) {
   __RememberStorage__.saveSpaced(theme, data);
 }
 
-function applySpacedAfterWin(theme) {
-  if (!settings.spaced) return;
-  const weights = loadSpaced(theme);
-  // 衰减旧权重，累加本局曝光（>1 次才计为“困难”）
-  for (const k of Object.keys(weights)) weights[k] = Math.max(0, weights[k] * 0.8);
-  seenCountMap.forEach((cnt, v) => {
-    const extra = Math.max(0, cnt - 1);
-    if (extra > 0) weights[v] = (weights[v] || 0) + extra;
-  });
-  saveSpaced(theme, weights);
+function loadMastery(theme) {
+  return __RememberStorage__.loadMastery(theme);
+}
+function saveMastery(theme, data) {
+  __RememberStorage__.saveMastery(theme, data);
 }
 
-function pickWithSpaced(theme, pool, pairs) {
-  const weights = loadSpaced(theme);
-  const copy = pool.slice();
-  copy.sort((a, b) => (weights[b.v] || 0) - (weights[a.v] || 0));
-  const topN = Math.min(Math.floor(pairs * 0.4), copy.length);
-  const picksTop = copy.slice(0, topN);
-  const rest = pool.filter(x => !picksTop.some(y => y.v === x.v));
-  shuffle(rest);
-  const picks = [...picksTop, ...rest.slice(0, pairs - picksTop.length)];
+// FSRS-based mastery update (replaces applySpacedAfterWin)
+function updateMasteryAfterGame(theme, matchedCards, performance) {
+  if (!settings.spaced) return;
+
+  const mastery = loadMastery(theme);
+  const rating = __RememberFSRS__.inferRatingFromGamePerformance(
+    performance.elapsed,
+    performance.moves,
+    performance.difficulty,
+    performance.hintsUsed,
+    performance.maxCombo,
+    performance.win
+  );
+
+  // Update mastery for each matched card
+  for (const cardValue of matchedCards) {
+    const card = mastery[cardValue] || __RememberFSRS__.createDefaultCard();
+    const updated = __RememberFSRS__.review(card, rating);
+    mastery[cardValue] = updated;
+  }
+
+  saveMastery(theme, mastery);
+}
+
+// FSRS-based card selection (replaces pickWithSpaced)
+function pickWithFSRS(theme, pool, pairs) {
+  const mastery = loadMastery(theme);
+  const now = Date.now();
+
+  // Categorize cards: due for review vs not due
+  const due = [];
+  const notDue = [];
+
+  for (const card of pool) {
+    const m = mastery[card.v];
+    if (!m || m.nextReview <= now) {
+      due.push(card);
+    } else {
+      notDue.push(card);
+    }
+  }
+
+  // Sort due cards by mastery (lowest = most needing review)
+  due.sort((a, b) => {
+    const ma = __RememberFSRS__.calculateCardMastery(mastery[a.v] || {});
+    const mb = __RememberFSRS__.calculateCardMastery(mastery[b.v] || {});
+    return ma - mb;
+  });
+
+  // Selection: 60% due cards, 40% random from remaining
+  const dueCount = Math.min(Math.floor(pairs * 0.6), due.length);
+  const picks = due.slice(0, dueCount);
+
+  const remaining = [...due.slice(dueCount), ...notDue];
+  shuffle(remaining);
+  picks.push(...remaining.slice(0, pairs - picks.length));
+
   return picks;
+}
+
+// Count cards due for review
+function countDueForReview(theme) {
+  const mastery = loadMastery(theme);
+  return __RememberFSRS__.countDueCards(mastery);
+}
+
+// Get theme mastery summary
+function getThemeMasterySummary(theme) {
+  const mastery = loadMastery(theme);
+  return __RememberFSRS__.calculateThemeMastery(mastery);
+}
+
+// Migration: convert old spaced weights to mastery format
+function migrateSpacedToMastery(theme) {
+  const oldWeights = loadSpaced(theme);
+  if (Object.keys(oldWeights).length === 0) return false;
+
+  const mastery = loadMastery(theme);
+  const now = Date.now();
+
+  for (const [value, weight] of Object.entries(oldWeights)) {
+    if (weight > 0 && !mastery[value]) {
+      // High weight = high difficulty = low stability
+      mastery[value] = {
+        difficulty: Math.min(10, 5 + weight * 0.5),
+        stability: Math.max(0.5, 7 - weight),
+        retrievability: Math.max(0.3, 1 - weight * 0.1),
+        lastReview: now,
+        nextReview: now, // Immediately due for review
+        reps: 1,
+        lapses: Math.floor(weight / 2),
+      };
+    }
+  }
+
+  saveMastery(theme, mastery);
+  return true;
 }
 const difficulties = {
   easy: { rows: 4, cols: 4, pairs: 8 },
@@ -1220,7 +1306,16 @@ function onWin() {
     getRating(elapsed, moves, currentDifficulty, hintsUsed, maxComboThisGame),
     currentDifficulty
   );
-  applySpacedAfterWin(settings.cardFace || 'emoji');
+  // FSRS mastery update - use all exposed cards from seenCountMap
+  const matchedCards = Array.from(seenCountMap.keys());
+  updateMasteryAfterGame(settings.cardFace || 'emoji', matchedCards, {
+    elapsed,
+    moves,
+    difficulty: currentDifficulty,
+    hintsUsed,
+    maxCombo: maxComboThisGame,
+    win: true,
+  });
   const arr = loadLeaderboard(currentDifficulty);
   const updated = [...arr, { time: elapsed, moves, at: Date.now() }]
     .sort((a, b) => a.time - b.time || a.moves - b.moves)
@@ -1606,6 +1701,14 @@ if (typeof module !== 'undefined' && module.exports) {
     markGuideSeen,
     adaptiveKey,
     DEFAULT_SETTINGS,
+    // FSRS-related exports
+    loadMastery,
+    saveMastery,
+    updateMasteryAfterGame,
+    pickWithFSRS,
+    countDueForReview,
+    getThemeMasterySummary,
+    migrateSpacedToMastery,
     __setSettings(partial) {
       if (!partial || typeof partial !== 'object') return;
       Object.assign(settings, partial);
@@ -2050,7 +2153,7 @@ function createDeck(pairs) {
   }
   let picks;
   if (settings.spaced) {
-    picks = pickWithSpaced(theme, pool, pairs);
+    picks = pickWithFSRS(theme, pool, pairs);
   } else {
     shuffle(pool);
     picks = pool.slice(0, pairs);

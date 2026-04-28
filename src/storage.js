@@ -84,6 +84,36 @@
       return result;
     }
 
+    function normalizeMasteryCard(raw) {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+      const now = Date.now();
+      return {
+        difficulty: RememberImportExport.normalizeSettings
+          ? Math.max(1, Math.min(10, Number(raw.difficulty) || 5))
+          : 5,
+        stability: Math.max(0.1, Math.min(365, Number(raw.stability) || 1)),
+        retrievability: Math.max(0, Math.min(1, Number(raw.retrievability) || 1)),
+        lastReview: Math.max(0, Math.min(now, Math.round(Number(raw.lastReview) || 0))),
+        nextReview: Math.max(
+          0,
+          Math.min(now + 365 * 24 * 60 * 60 * 1000, Math.round(Number(raw.nextReview) || now))
+        ),
+        reps: Math.max(0, Math.min(9999, Math.round(Number(raw.reps) || 0))),
+        lapses: Math.max(0, Math.min(999, Math.round(Number(raw.lapses) || 0))),
+      };
+    }
+
+    function normalizeMasteryBucket(raw) {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+      const result = {};
+      for (const [key, value] of Object.entries(raw)) {
+        if (!key) continue;
+        const card = normalizeMasteryCard(value);
+        if (card) result[String(key)] = card;
+      }
+      return result;
+    }
+
     function normalizeDiff(diff) {
       return ['easy', 'medium', 'hard'].includes(diff) ? diff : 'easy';
     }
@@ -106,6 +136,16 @@
 
     function saveSpaced(theme, data) {
       safeWriteJSON(RememberKeys.spacedKey(normalizeTheme(theme)), normalizeSpaced(data));
+    }
+
+    function loadMastery(theme) {
+      return normalizeMasteryBucket(
+        safeParseJSON(RememberKeys.masteryKey(normalizeTheme(theme)), {})
+      );
+    }
+
+    function saveMastery(theme, data) {
+      safeWriteJSON(RememberKeys.masteryKey(normalizeTheme(theme)), normalizeMasteryBucket(data));
     }
 
     function loadStats() {
@@ -215,6 +255,8 @@
       saveAdaptive,
       loadSpaced,
       saveSpaced,
+      loadMastery,
+      saveMastery,
       loadStats,
       saveStats,
       loadSettings,

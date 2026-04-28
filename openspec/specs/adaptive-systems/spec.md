@@ -1,20 +1,20 @@
 ---
 title: Adaptive Systems
-version: 1.0.0
+version: 1.1.0
 status: active
-last_updated: 2026-04-27
+last_updated: 2026-04-28
 ---
 
 # Adaptive Systems
 
-> Dynamic difficulty adjustment and spaced reinforcement
+> Dynamic difficulty adjustment and FSRS-based spaced reinforcement
 
 ## Purpose
 
 Mind Gym provides two adaptive systems to personalize the training experience:
 
 1. **Adaptive Difficulty** - Dynamically adjusts preview time and hints based on performance rating
-2. **Spaced Reinforcement** - Prioritizes challenging cards using decay-weighted selection
+2. **FSRS Mastery System** - Tracks card mastery using FSRS-4.5 algorithm for optimal review scheduling
 
 ---
 
@@ -29,11 +29,29 @@ interface AdaptiveData {
 }
 ```
 
-### SpacedData
+### SpacedData (Legacy)
 
 ```typescript
 interface SpacedData {
   [cardValue: string]: number; // Card value → weight
+}
+```
+
+### MasteryData (FSRS-4.5)
+
+```typescript
+interface MasteryCard {
+  difficulty: number; // 1-10, higher = harder
+  stability: number; // Days until 90% retention
+  retrievability: number; // 0-1, probability of recall
+  lastReview: number; // Timestamp
+  nextReview: number; // Timestamp
+  reps: number; // Review count
+  lapses: number; // Forget count
+}
+
+interface MasteryData {
+  [cardValue: string]: MasteryCard;
 }
 ```
 
@@ -167,15 +185,51 @@ The system SHALL calculate weights based on excess exposures.
 
 ---
 
+## FSRS-4.5 Mastery System
+
+### Overview
+
+FSRS (Free Spaced Repetition Scheduler) is a modern algorithm that models memory retention mathematically:
+
+- **Stability**: How long the memory will last
+- **Difficulty**: How hard the item is to remember
+- **Retrievability**: Current probability of recall
+
+### Rating Mapping
+
+Game performance is mapped to FSRS ratings (1-4):
+
+| Rating    | Game Performance          |
+| --------- | ------------------------- |
+| Again (1) | Lost game                 |
+| Hard (2)  | Won with many moves/hints |
+| Good (3)  | Normal win                |
+| Easy (4)  | Perfect performance       |
+
+### Card Selection
+
+When spaced repetition is enabled:
+
+1. Cards due for review are prioritized (60%)
+2. Remaining cards selected randomly (40%)
+3. Due cards sorted by mastery (lowest first)
+
+### Data Storage
+
+- Key: `memory_match_mastery_<theme>`
+- Migration: `migrateSpacedToMastery()` converts old weights
+
+---
+
 ## Future Roadmap
 
-| Priority | Feature           | Description                          |
-| -------- | ----------------- | ------------------------------------ |
-| P1       | SM-2 Algorithm    | SuperMemo-inspired intervals         |
-| P2       | Mastery Scores    | Track individual card mastery level  |
-| P3       | Review Sessions   | Dedicated review mode for weak cards |
-| P4       | Cross-device Sync | Sync weights across devices          |
-| P5       | Leitner System    | Box-based card scheduling            |
+| Priority | Feature           | Description                          | Status  |
+| -------- | ----------------- | ------------------------------------ | ------- |
+| P1       | FSRS-4.5          | Modern spaced repetition algorithm   | ✅ Done |
+| P2       | Mastery Scores    | Track individual card mastery level  | ✅ Done |
+| P3       | Review Sessions   | Dedicated review mode for weak cards | ⬜      |
+| P4       | Cross-device Sync | Sync weights across devices          | ⬜      |
+| P5       | Leitner System    | Box-based card scheduling            | ⬜      |
 
 ---
 

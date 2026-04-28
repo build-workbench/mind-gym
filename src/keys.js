@@ -26,6 +26,9 @@
   function spacedKey(theme) {
     return `memory_match_spaced_${theme}`;
   }
+  function masteryKey(theme) {
+    return `memory_match_mastery_${theme}`;
+  }
   function dailyKey(dateStr, diff) {
     return `memory_match_daily_${dateStr}_${diff}`;
   }
@@ -42,6 +45,7 @@
     statsKey,
     adaptiveKey,
     spacedKey,
+    masteryKey,
     dailyKey,
     todayStr,
   };

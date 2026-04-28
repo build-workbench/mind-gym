@@ -33,6 +33,7 @@ Mind Gym is a Progressive Web App (PWA) designed to train your memory through mu
 - 🎮 5 training modes
 - 📊 Progress tracking & statistics
 - 🏆 Achievement system
+- 🧠 FSRS-based mastery tracking
 - 🌐 Bilingual support (EN/ZH)
 - 📱 Works offline (PWA)
 - 🎨 Adaptive difficulty
@@ -66,6 +67,7 @@ Mind Gym 是一个渐进式 Web 应用 (PWA)，通过多种游戏模式训练您
 - 🎮 5 种训练模式
 - 📊 进度追踪和统计
 - 🏆 成就系统
+- 🧠 基于 FSRS 的掌握度追踪
 - 🌐 中英双语支持
 - 📱 离线可用 (PWA)
 - 🎨 自适应难度

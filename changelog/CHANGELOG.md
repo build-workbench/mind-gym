@@ -18,6 +18,31 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
+## [v1.9.0] - 2026-04-28
+
+### Added / 新增
+
+- **FSRS-4.5 Mastery System**: Modern spaced repetition algorithm
+  - `src/fsrs.js` module with core FSRS-4.5 implementation
+  - Card mastery tracking with stability and difficulty metrics
+  - Intelligent review scheduling based on retrievability
+  - Game performance → FSRS rating mapping (Again/Hard/Good/Easy)
+  - Migration from legacy spaced weights to mastery format
+
+### Changed / 变更
+
+- Updated `openspec/specs/adaptive-systems/spec.md` with FSRS documentation
+- Updated Service Worker cache version to v7
+- Enhanced card selection with FSRS-based prioritization
+
+### Technical / 技术细节
+
+- New localStorage key: `memory_match_mastery_<theme>`
+- 22 new test cases for FSRS functions
+- Total: 187 tests passing
+
+---
+
 ## [v1.8.0] - 2026-04-27
 
 ### Added / 新增
@@ -239,7 +264,8 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
-[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.8.0...HEAD
+[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.9.0...HEAD
+[v1.9.0]: https://github.com/LessUp/mind-gym/compare/v1.8.0...v1.9.0
 [v1.8.0]: https://github.com/LessUp/mind-gym/compare/v1.6.1...v1.8.0
 [v1.6.1]: https://github.com/LessUp/mind-gym/compare/v1.6.0...v1.6.1
 [v1.6.0]: https://github.com/LessUp/mind-gym/compare/v1.5.0...v1.6.0
