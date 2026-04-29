@@ -257,6 +257,13 @@ function buildExportPayload() {
       shapes: loadSpaced('shapes'),
       colors: loadSpaced('colors'),
     },
+    mastery: {
+      emoji: loadMastery('emoji'),
+      numbers: loadMastery('numbers'),
+      letters: loadMastery('letters'),
+      shapes: loadMastery('shapes'),
+      colors: loadMastery('colors'),
+    },
   });
 }
 
@@ -360,6 +367,7 @@ function applyImportedSnapshot(normalized) {
   saveAdaptive(normalizeAdaptive(normalized.adaptive));
   for (const theme of THEMES) {
     saveSpaced(theme, normalized.spaced[theme] || {});
+    saveMastery(theme, normalized.mastery[theme] || {});
   }
 }
 
@@ -1704,6 +1712,8 @@ if (typeof module !== 'undefined' && module.exports) {
     // FSRS-related exports
     loadMastery,
     saveMastery,
+    buildExportPayload,
+    applyImportedSnapshot,
     updateMasteryAfterGame,
     pickWithFSRS,
     countDueForReview,

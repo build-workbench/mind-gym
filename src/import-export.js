@@ -193,6 +193,7 @@
       stats: RememberStats.normalizeStats(raw.stats),
       adaptive: normalizeAdaptive(raw.adaptive),
       spaced: normalizeSpaced(raw.spaced),
+      mastery: normalizeMastery(raw.mastery),
     };
   }
 
@@ -207,6 +208,7 @@
       stats: data.stats,
       adaptive: data.adaptive,
       spaced: data.spaced,
+      mastery: data.mastery,
     };
   }
 

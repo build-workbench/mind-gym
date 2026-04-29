@@ -186,6 +186,13 @@ interface ExportPayload {
     shapes?: SpacedData;
     colors?: SpacedData;
   };
+  mastery: {
+    emoji?: MasteryData;
+    numbers?: MasteryData;
+    letters?: MasteryData;
+    shapes?: MasteryData;
+    colors?: MasteryData;
+  };
 }
 ```
 
