@@ -108,7 +108,7 @@ npx jest __tests__/helpers.test.js
 ### Module Loading Order (index.html script tags)
 
 ```
-src/keys.js → src/utils.js → src/stats.js → src/achievements.js → src/modes.js
+src/keys.js → src/utils.js → src/shared.js → src/stats.js → src/achievements.js → src/modes.js
 → src/import-export.js → src/storage.js → src/fsrs.js → src/i18n.js → src/effects.js
 → src/pools.js → src/timer.js → src/confetti.js → src/ui-events.js → src/ui.js → app.js
 ```
@@ -120,6 +120,7 @@ Each `src/` module exposes a global object (e.g., `window.RememberStorage`, `win
 | File                   | Responsibility                                                          |
 | ---------------------- | ----------------------------------------------------------------------- |
 | `app.js`               | Game main loop, state machine, all mode logic (~2500 lines)             |
+| `src/shared.js`        | Shared utilities: isPlainObject, clampInt, clampNumber                  |
 | `src/storage.js`       | localStorage CRUD — settings, scores, stats, achievements               |
 | `src/stats.js`         | Statistics normalization and aggregation logic                          |
 | `src/achievements.js`  | Achievement definitions and check logic                                 |

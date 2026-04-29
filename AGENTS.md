@@ -39,19 +39,20 @@ npm run build:css # 编译 CSS
 ### 模块加载顺序
 
 ```
-src/keys.js → src/utils.js → src/stats.js → src/achievements.js → src/modes.js
+src/keys.js → src/utils.js → src/shared.js → src/stats.js → src/achievements.js → src/modes.js
 → src/import-export.js → src/storage.js → src/fsrs.js → src/i18n.js → src/effects.js
 → src/pools.js → src/timer.js → src/confetti.js → src/ui-events.js → src/ui.js → app.js
 ```
 
 ### 核心文件
 
-| 文件             | 职责                         |
-| ---------------- | ---------------------------- |
-| `app.js`         | 游戏主循环、状态机、模式逻辑 |
-| `src/storage.js` | localStorage CRUD            |
-| `src/fsrs.js`    | FSRS-4.5 间隔重复算法        |
-| `sw.js`          | Service Worker               |
+| 文件             | 职责                                     |
+| ---------------- | ---------------------------------------- |
+| `app.js`         | 游戏主循环、状态机、模式逻辑             |
+| `src/shared.js`  | 共享工具函数: isPlainObject, clampInt 等 |
+| `src/storage.js` | localStorage CRUD                        |
+| `src/fsrs.js`    | FSRS-4.5 间隔重复算法                    |
+| `sw.js`          | Service Worker                           |
 
 ### 游戏模式
 

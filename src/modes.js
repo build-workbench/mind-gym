@@ -1,19 +1,11 @@
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory();
+    module.exports = factory(require('./shared.js'));
   } else {
-    root.RememberModes = factory();
+    root.RememberModes = factory(root.RememberShared);
   }
-})(typeof self !== 'undefined' ? self : this, function () {
-  function isPlainObject(value) {
-    return !!value && typeof value === 'object' && !Array.isArray(value);
-  }
-
-  function clampInt(value, min, max, fallback) {
-    const n = parseInt(value, 10);
-    if (!Number.isFinite(n)) return fallback;
-    return Math.max(min, Math.min(max, n));
-  }
+})(typeof self !== 'undefined' ? self : this, function (RememberShared) {
+  const { isPlainObject, clampInt } = RememberShared;
 
   function buildRecallItems(params) {
     const data = isPlainObject(params) ? params : {};

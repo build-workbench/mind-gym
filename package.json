@@ -1,6 +1,6 @@
 {
   "name": "mind-gym",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "private": true,
   "type": "module",
   "description": "Browser-based memory training game with multiple modes, adaptive difficulty, and PWA support. Features N-back training, daily challenges, and comprehensive progress tracking.",

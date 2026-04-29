@@ -1,10 +1,11 @@
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory();
+    module.exports = factory(require('./shared.js'));
   } else {
-    root.RememberStats = factory();
+    root.RememberStats = factory(root.RememberShared);
   }
-})(typeof self !== 'undefined' ? self : this, function () {
+})(typeof self !== 'undefined' ? self : this, function (RememberShared) {
+  const { isPlainObject } = RememberShared;
   const DEFAULT_STATS = Object.freeze({
     games: 0,
     wins: 0,
@@ -22,10 +23,6 @@
     nbackRtCount: 0,
   });
   const PAIRS_BY_DIFFICULTY = { easy: 8, medium: 10, hard: 18 };
-
-  function isPlainObject(value) {
-    return !!value && typeof value === 'object' && !Array.isArray(value);
-  }
 
   function toNonNegativeNumber(value, fallback = 0) {
     const n = Number(value);

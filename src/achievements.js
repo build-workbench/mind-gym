@@ -1,10 +1,11 @@
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory();
+    module.exports = factory(require('./shared.js'));
   } else {
-    root.RememberAchievements = factory();
+    root.RememberAchievements = factory(root.RememberShared);
   }
-})(typeof self !== 'undefined' ? self : this, function () {
+})(typeof self !== 'undefined' ? self : this, function (RememberShared) {
+  const { isPlainObject } = RememberShared;
   const achievementsDef = [
     { id: 'first_win', titleKey: 'achFirstWin', descKey: 'achFirstWinDesc' },
     { id: 'easy_under_60', titleKey: 'achEasyUnder60', descKey: 'achEasyUnder60Desc' },
@@ -13,10 +14,6 @@
     { id: 'no_hint_win', titleKey: 'achNoHint', descKey: 'achNoHintDesc' },
     { id: 'perfect_moves', titleKey: 'achPerfect', descKey: 'achPerfectDesc' },
   ];
-
-  function isPlainObject(value) {
-    return !!value && typeof value === 'object' && !Array.isArray(value);
-  }
 
   function toValidTimestamp(value) {
     const n = Number(value);

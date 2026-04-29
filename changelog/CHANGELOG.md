@@ -18,6 +18,32 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
+## [v1.10.0] - 2026-04-29
+
+### Added / 新增
+
+- `src/shared.js` - 共享工具函数模块
+  - `isPlainObject()` - 判断纯对象
+  - `clampInt()` - 整数约束
+  - `clampNumber()` - 数值约束
+- `__tests__/shared.test.js` - 17 个测试用例
+
+### Changed / 变更
+
+- 消除代码重复：从 4 个模块提取公共函数到 shared.js
+  - `src/stats.js` - 引用 shared.js
+  - `src/modes.js` - 引用 shared.js
+  - `src/import-export.js` - 引用 shared.js
+  - `src/achievements.js` - 引用 shared.js
+- 更新模块加载顺序文档
+
+### Technical / 技术细节
+
+- 总测试数: 210 (新增 17)
+- 代码重复减少约 40 行
+
+---
+
 ## [v1.9.0] - 2026-04-28
 
 ### Added / 新增
