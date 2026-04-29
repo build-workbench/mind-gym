@@ -145,7 +145,6 @@ const DEFAULT_SETTINGS = {
   adaptive: false,
   spaced: false,
 };
-const DEFAULT_STATS = __RememberStats__.DEFAULT_STATS;
 const achievementsDef = __RememberAchievements__.achievementsDef;
 const NORMALIZE_SETTINGS = __RememberImportExport__.normalizeSettings;
 const NORMALIZE_IMPORT = __RememberImportExport__.normalizeImportData;
@@ -414,16 +413,6 @@ function handleModalBackdrop(e, modal, onClose) {
   if (e.target !== modal) return;
   if (typeof onClose === 'function') onClose();
 }
-
-function currentTimestamp() {
-  return getNow();
-}
-
-function getTimerPollMs() {
-  return TIMER_POLL_MS;
-}
-
-function noop() {}
 
 function getSelectedRecallValues(container) {
   return parseSelectedRecallValues(container);
@@ -1687,12 +1676,6 @@ if (typeof document !== 'undefined') {
       mqlReduce.addEventListener('change', () => {
         if ((settings.motion || 'auto') === 'auto') applyMotionPreference();
       });
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('./sw.js')
-        .then(reg => logLifecycle('service_worker_registered', { scope: reg.scope }))
-        .catch(err => logError('service_worker_registration_failed', { message: err?.message }));
-    }
 
     initGame(currentDifficulty);
   });

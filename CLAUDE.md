@@ -109,7 +109,7 @@ npx jest __tests__/helpers.test.js
 
 ```
 src/keys.js → src/utils.js → src/stats.js → src/achievements.js → src/modes.js
-→ src/import-export.js → src/storage.js → src/i18n.js → src/effects.js
+→ src/import-export.js → src/storage.js → src/fsrs.js → src/i18n.js → src/effects.js
 → src/pools.js → src/timer.js → src/confetti.js → src/ui-events.js → src/ui.js → app.js
 ```
 
@@ -125,6 +125,7 @@ Each `src/` module exposes a global object (e.g., `window.RememberStorage`, `win
 | `src/achievements.js`  | Achievement definitions and check logic                                 |
 | `src/modes.js`         | Pure logic for N-back and recall tests                                  |
 | `src/import-export.js` | Backup/restore data normalization                                       |
+| `src/fsrs.js`          | FSRS-4.5 spaced repetition algorithm                                    |
 | `src/i18n.js`          | zh/en dictionary; auto-detect browser language                          |
 | `src/ui.js`            | DOM element bindings (single source of truth for elements)              |
 | `src/ui-events.js`     | Event listener registration                                             |
@@ -186,17 +187,16 @@ Today's date: 2026/04/27.
 
 ---
 
-## Project Status: Final Release (v1.8.0)
+## Project Status: Final Release (v1.9.0)
 
-**Last major refactoring**: 2026-04-27
+**Last major refactoring**: 2026-04-29
 
-### Changes in v1.8.0
+### Changes in v1.9.0
 
-- Fixed critical `isReducedMotion()` bug (logic was inverted)
-- Fixed critical `createDeck()` bug (now falls back to emoji)
-- Consolidated documentation (removed redundant docs/)
-- Optimized Service Worker (removed debug logs)
-- Simplified CI/CD workflows
+- Added FSRS-4.5 mastery system for intelligent spaced repetition
+- Added per-card mastery tracking with stability and difficulty metrics
+- Enhanced card selection with FSRS-based prioritization
+- Consolidated mastery normalization functions
 
 ### For Successor Models (GLM)
 

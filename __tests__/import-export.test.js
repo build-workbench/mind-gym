@@ -108,7 +108,10 @@ describe('import/export normalization', () => {
   });
 
   test('normalizeImportData keeps legacy backups without mastery compatible', () => {
-    const normalized = ImportExport.normalizeImportData({ version: 1, spaced: { emoji: { '🍎': 2 } } }, DEFAULT_SETTINGS);
+    const normalized = ImportExport.normalizeImportData(
+      { version: 1, spaced: { emoji: { '🍎': 2 } } },
+      DEFAULT_SETTINGS
+    );
 
     expect(normalized.mastery).toEqual({});
     expect(normalized.spaced).toEqual({ emoji: { '🍎': 2 } });

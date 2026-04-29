@@ -227,28 +227,6 @@ async function networkFirstWithFallback(request, cacheName) {
   });
 }
 
-// Network First with cache update - good for HTML pages
-async function networkFirstWithCacheUpdate(request, cacheName) {
-  const cache = await caches.open(cacheName);
-
-  try {
-    const networkResponse = await fetch(request);
-    if (networkResponse && networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
-      return networkResponse;
-    }
-  } catch (error) {
-    log('Network failed, serving from cache');
-  }
-
-  const cached = await cache.match(request);
-  if (cached) {
-    return cached;
-  }
-
-  return new Response('Offline', { status: 503 });
-}
-
 // Google Fonts special handling
 async function handleGoogleFonts(request) {
   const cacheName = request.url.includes('fonts.googleapis.com')
