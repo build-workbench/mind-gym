@@ -145,18 +145,24 @@ The system SHALL calculate weights based on excess exposures.
 
 ## Acceptance Criteria
 
-| ID        | Criterion                          | Status | Verified   |
-| --------- | ---------------------------------- | ------ | ---------- |
-| AC-AD-001 | Rating initialized to 1000         | DONE   | 2026-04-17 |
-| AC-AD-002 | Rating updates after each game     | DONE   | 2026-04-17 |
-| AC-AD-003 | Preview adjusted by rating         | DONE   | 2026-04-17 |
-| AC-AD-004 | Hints adjusted by rating           | DONE   | 2026-04-17 |
-| AC-AD-005 | Toggle on/off in settings          | DONE   | 2026-04-17 |
-| AC-SR-001 | Exposure count tracked per card    | DONE   | 2026-04-17 |
-| AC-SR-002 | Weights decay each game            | DONE   | 2026-04-17 |
-| AC-SR-003 | Weighted cards selected more often | DONE   | 2026-04-17 |
-| AC-SR-004 | Per-theme weight tracking          | DONE   | 2026-04-17 |
-| AC-SR-005 | Toggle on/off in settings          | DONE   | 2026-04-17 |
+| ID        | Criterion                            | Status | Verified   |
+| --------- | ------------------------------------ | ------ | ---------- |
+| AC-AD-001 | Rating initialized to 1000           | DONE   | 2026-04-17 |
+| AC-AD-002 | Rating updates after each game       | DONE   | 2026-04-17 |
+| AC-AD-003 | Preview adjusted by rating           | DONE   | 2026-04-17 |
+| AC-AD-004 | Hints adjusted by rating             | DONE   | 2026-04-17 |
+| AC-AD-005 | Toggle on/off in settings            | DONE   | 2026-04-17 |
+| AC-SR-001 | Exposure count tracked per card      | DONE   | 2026-04-17 |
+| AC-SR-002 | Weights decay each game              | DONE   | 2026-04-17 |
+| AC-SR-003 | Weighted cards selected more often   | DONE   | 2026-04-17 |
+| AC-SR-004 | Per-theme weight tracking            | DONE   | 2026-04-17 |
+| AC-SR-005 | Toggle on/off in settings            | DONE   | 2026-04-17 |
+| AC-FS-001 | FSRS-4.5 algorithm implemented       | DONE   | 2026-04-28 |
+| AC-FS-002 | Card mastery calculated correctly    | DONE   | 2026-04-28 |
+| AC-FS-003 | Game performance maps to FSRS rating | DONE   | 2026-04-28 |
+| AC-FS-004 | Mastery data persists per theme      | DONE   | 2026-04-28 |
+| AC-FS-005 | Due cards prioritized when enabled   | DONE   | 2026-04-28 |
+| AC-FS-006 | Migration from old weights works     | DONE   | 2026-04-28 |
 
 ---
 

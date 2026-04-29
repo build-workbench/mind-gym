@@ -125,11 +125,29 @@ interface AdaptiveData {
 }
 ```
 
-### SpacedData
+### SpacedData (Legacy)
 
 ```typescript
 interface SpacedData {
   [cardValue: string]: number;
+}
+```
+
+### MasteryData (FSRS-4.5)
+
+```typescript
+interface MasteryCard {
+  difficulty: number; // 1-10, higher = harder
+  stability: number; // Days until 90% retention
+  retrievability: number; // 0-1, probability of recall
+  lastReview: number; // Timestamp
+  nextReview: number; // Timestamp
+  reps: number; // Review count
+  lapses: number; // Forget count
+}
+
+interface MasteryData {
+  [cardValue: string]: MasteryCard;
 }
 ```
 
@@ -183,7 +201,8 @@ interface ExportPayload {
 | `memory_match_achievements`              | Achievements | Unlock status             |
 | `memory_match_stats`                     | Stats        | Aggregate statistics      |
 | `memory_match_adaptive`                  | AdaptiveData | Rating data               |
-| `memory_match_spaced_<theme>`            | SpacedData   | Per-theme weights         |
+| `memory_match_spaced_<theme>`            | SpacedData   | Legacy per-theme weights  |
+| `memory_match_mastery_<theme>`           | MasteryData  | FSRS-4.5 mastery tracking |
 | `memory_match_daily_<date>_<difficulty>` | DailyData    | Daily completion          |
 | `memory_match_onboarding_v1`             | string       | Onboarding flag           |
 
