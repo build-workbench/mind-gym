@@ -221,6 +221,8 @@
     normalizeLeaderboard,
     normalizeAdaptive,
     normalizeSpaced,
+    normalizeMasteryCard,
+    normalizeMasteryBucket,
     normalizeMastery,
     normalizeImportData,
     collectExportData,

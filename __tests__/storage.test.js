@@ -1,3 +1,4 @@
+const ImportExport = require('../src/import-export.js');
 const Keys = require('../src/keys.js');
 const Storage = require('../src/storage.js');
 
@@ -133,5 +134,42 @@ describe('storage normalization', () => {
   test('markDailyDone and isDailyDone use sanitized difficulty', () => {
     Storage.markDailyDone('2026-04-06', 'unexpected');
     expect(Storage.isDailyDone('2026-04-06', 'easy')).toBe(true);
+  });
+
+  test('loadMastery matches import-export mastery normalization', () => {
+    const rawMastery = {
+      '🍎': {
+        difficulty: 0,
+        stability: 'bad',
+        retrievability: 0,
+        lastReview: 10,
+        nextReview: 20,
+        reps: '3',
+        lapses: -1,
+      },
+    };
+    localStorage.setItem(Keys.masteryKey('emoji'), JSON.stringify(rawMastery));
+
+    expect(Storage.loadMastery('emoji')).toEqual(ImportExport.normalizeMasteryBucket(rawMastery));
+  });
+
+  test('saveMastery persists the shared mastery normalization result', () => {
+    const rawMastery = {
+      '🍎': {
+        difficulty: 0,
+        stability: 'bad',
+        retrievability: 0,
+        lastReview: 10,
+        nextReview: 20,
+        reps: '3',
+        lapses: -1,
+      },
+    };
+
+    Storage.saveMastery('emoji', rawMastery);
+
+    expect(JSON.parse(localStorage.getItem(Keys.masteryKey('emoji')))).toEqual(
+      ImportExport.normalizeMasteryBucket(rawMastery)
+    );
   });
 });

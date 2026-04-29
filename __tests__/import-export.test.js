@@ -114,6 +114,32 @@ describe('import/export normalization', () => {
     expect(normalized.spaced).toEqual({ emoji: { '🍎': 2 } });
   });
 
+  test('normalizeMasteryBucket preserves zero retrievability and clamps difficulty', () => {
+    expect(
+      ImportExport.normalizeMasteryBucket({
+        '🍎': {
+          difficulty: 0,
+          stability: 'bad',
+          retrievability: 0,
+          lastReview: 10,
+          nextReview: 20,
+          reps: '3',
+          lapses: -1,
+        },
+      })
+    ).toEqual({
+      '🍎': {
+        difficulty: 1,
+        stability: 1,
+        retrievability: 0,
+        lastReview: 10,
+        nextReview: 20,
+        reps: 3,
+        lapses: 0,
+      },
+    });
+  });
+
   test('collectExportData preserves provided sections', () => {
     const payload = ImportExport.collectExportData({
       settings: { cardFace: 'emoji' },
