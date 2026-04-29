@@ -88,10 +88,11 @@ npm run build:css  # Compile Tailwind
 ├── app.js        # Game orchestrator
 ├── sw.js         # Service Worker
 ├── src/          # Core modules
-│   ├── storage.js, stats.js, modes.js, i18n.js
+│   ├── storage.js, stats.js, modes.js, i18n.js, fsrs.js
 ├── __tests__/    # Jest tests
-├── docs/         # User & developer guides
-└── specs/        # Spec-driven dev docs
+├── docs/         # User guides
+└── openspec/     # Spec-driven development
+    └── specs/    # Capability specifications
 ```
 
 </details>
@@ -100,10 +101,7 @@ npm run build:css  # Compile Tailwind
 
 ## 📖 Documentation
 
-- [Training Modes](docs/modes.md) — Game mode specifications
-- [PWA/Offline](docs/pwa.md) — Service worker details
-- [Architecture](docs/architecture.md) — System design & data flow
-- [Storage Model](docs/storage.md) — Data structures
+- [Documentation](docs/README.md) — User guides and tutorials
 
 ---
 

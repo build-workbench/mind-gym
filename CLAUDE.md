@@ -184,20 +184,20 @@ All changes are recorded in the `changelog/` directory.
 
 ## currentDate
 
-Today's date: 2026/04/27.
+Today's date: 2026/04/30.
 
 ---
 
-## Project Status: Final Release (v1.9.0)
+## Project Status: Final Release (v1.10.0)
 
 **Last major refactoring**: 2026-04-29
 
-### Changes in v1.9.0
+### Changes in v1.10.0
 
-- Added FSRS-4.5 mastery system for intelligent spaced repetition
-- Added per-card mastery tracking with stability and difficulty metrics
-- Enhanced card selection with FSRS-based prioritization
-- Consolidated mastery normalization functions
+- Enhanced project documentation and CI/CD configuration
+- Fixed broken documentation links and references
+- Optimized GitHub Actions workflow
+- Removed redundant npm scripts and dependencies
 
 ### For Successor Models (GLM)
 

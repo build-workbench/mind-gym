@@ -14,10 +14,6 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  # Supported Node.js versions
-  NODE_VERSIONS: '[20, 22]'
-
 jobs:
   # Lint and basic checks
   lint:
@@ -60,18 +56,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node-version }}-
-            ${{ runner.os }}-node-
-
       - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci --prefer-offline
 
       - name: Run tests

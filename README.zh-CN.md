@@ -144,27 +144,28 @@ npx serve .
 
 ```
 mind-gym/
-├── specs/                # 规范驱动开发文档
-│   ├── product/          # 产品功能规范
-│   ├── rfc/              # 技术设计文档
-│   ├── db/               # 数据模型定义
-│   └── testing/          # 测试规范
-├── docs/                 # 用户指南和教程
-├── changelog/            # 版本历史
-├── index.html            # 主入口（单页应用）
-├── app.js                # 游戏编排器（状态机、模式）
-├── sw.js                 # Service Worker（离线缓存）
-├── manifest.webmanifest  # PWA 清单
-├── src/                  # 模块化源码（UMD）
-│   ├── storage.js        # localStorage CRUD
-│   ├── stats.js          # 统计聚合
-│   ├── achievements.js   # 成就逻辑
-│   ├── modes.js          # N-back 和回忆逻辑
-│   ├── i18n.js           # 国际化
-│   ├── timer.js          # 计时器管理
-│   └── ...               # 其他模块
-├── __tests__/            # Jest 测试
-└── assets/               # 图标、CSS、静态文件
+├── openspec/              # OpenSpec 规范文档
+│   ├── specs/             # 能力规范 (单一真相来源)
+│   ├── rfc/               # 架构决策记录
+│   ├── changes/           # 变更提案
+│   └── explorations/      # 探索记录
+├── docs/                  # 用户指南和教程
+├── changelog/             # 版本历史
+├── index.html             # 主入口（单页应用）
+├── app.js                 # 游戏编排器（状态机、模式）
+├── sw.js                  # Service Worker（离线缓存）
+├── manifest.webmanifest   # PWA 清单
+├── src/                   # 模块化源码（UMD）
+│   ├── storage.js         # localStorage CRUD
+│   ├── stats.js           # 统计聚合
+│   ├── achievements.js    # 成就逻辑
+│   ├── modes.js           # N-back 和回忆逻辑
+│   ├── fsrs.js            # FSRS-4.5 间隔重复
+│   ├── i18n.js            # 国际化
+│   ├── timer.js           # 计时器管理
+│   └── ...                # 其他模块
+├── __tests__/             # Jest 测试
+└── assets/                # 图标、CSS、静态文件
 ```
 
 ---
@@ -220,28 +221,12 @@ mind-gym/
 | `_achievements`      | 已解锁成就            |
 | `_adaptive`          | 自适应评分 (600-1600) |
 
-完整数据结构请参见 [docs/storage.md](docs/storage.zh-CN.md)。
-
 ---
 
 ## 📖 文档
 
-### 用户文档
-
-| 文档                            | 说明                  |
-| ------------------------------- | --------------------- |
-| [训练模式](docs/modes.zh-CN.md) | 模式规格与算法        |
-| [PWA/离线](docs/pwa.zh-CN.md)   | Service Worker 与缓存 |
-
-### 开发者文档
-
-| 文档                                   | 说明               |
-| -------------------------------------- | ------------------ |
-| [架构概览](docs/architecture.zh-CN.md) | 系统设计与数据流   |
-| [存储模型](docs/storage.zh-CN.md)      | 数据结构与持久化   |
-| [产品规范](specs/product/)             | 功能定义与验收标准 |
-| [技术 RFC](specs/rfc/)                 | 架构决策文档       |
-| [数据库 Schema](specs/db/)             | 数据模型规范       |
+- [用户指南](docs/README.md) — 使用教程与功能说明
+- [规范文档](openspec/specs/) — 能力规范与技术定义
 
 ---
 
@@ -253,7 +238,7 @@ mind-gym/
 
 1. Fork 仓库
 2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
-3. **审查或创建相关的 Spec 文档**（在 `/specs/` 目录中）
+3. 使用 `/opsx:propose` 创建或更新规范文档
 4. 按代码规范进行修改
 5. 运行测试 (`npm test`)
 6. 提交清晰的提交信息

@@ -25,29 +25,28 @@
 
 ## Spec-Driven Development
 
-本项目采用 **规范驱动开发 (SDD)** 模式。所有代码实现必须以 `/specs` 目录下的规范文档为唯一事实来源 (Single Source of Truth)。
+本项目采用 **规范驱动开发 (SDD)** 模式。所有代码实现必须以 `openspec/specs/` 目录下的规范文档为唯一事实来源 (Single Source of Truth)。
 
 ### Spec 目录结构
 
-| 目录              | 用途                                |
-| ----------------- | ----------------------------------- |
-| `/specs/product/` | 产品功能定义与验收标准              |
-| `/specs/rfc/`     | 技术设计文档 (Request for Comments) |
-| `/specs/api/`     | API 接口定义（如适用）              |
-| `/specs/db/`      | 数据模型定义与 Schema 规范          |
-| `/specs/testing/` | BDD 测试用例规范                    |
+| 目录                     | 用途                                |
+| ------------------------ | ----------------------------------- |
+| `openspec/specs/`        | 能力规范 (单一真相来源)             |
+| `openspec/rfc/`          | 架构决策记录 (Request for Comments) |
+| `openspec/changes/`      | 变更提案                            |
+| `openspec/explorations/` | 探索记录                            |
 
 ### 参与编写 Spec
 
 #### 新功能提案
 
-1. **先创建 Spec** — 在 `/specs/product/` 下创建功能规范文档
+1. **先创建 Spec** — 使用 `/opsx:propose` 命令创建功能提案
 2. **讨论与评审** — 通过 Issue 或 PR 讨论技术方案
-3. **确认后实现** — Spec 审核通过后才开始编码
+3. **确认后实现** — Spec 审核通过后使用 `/opsx:apply` 开始编码
 
 #### 修改现有功能
 
-1. **先更新 Spec** — 修改 `/specs/` 下的相关文档
+1. **先更新 Spec** — 修改 `openspec/specs/` 下的相关文档
 2. **同步代码** — 确保代码实现与 Spec 保持一致
 3. **更新测试** — 根据新的验收标准更新测试用例
 
@@ -91,7 +90,7 @@ Implementation details, data structures, algorithms.
 
 ### 提出新功能
 
-1. 在 `/specs/product/` 下创建功能规范文档
+1. 使用 `/opsx:propose` 命令创建功能提案
 2. 通过 Issue 链接到该 Spec 文档
 3. 讨论实现方案和可行性
 4. 获得维护者确认后再开始实现
@@ -136,37 +135,37 @@ npx serve .
 
 ```
 mind-gym/
-├── specs/                # 规范文档 (SDD)
-│   ├── product/          # 产品功能定义
-│   ├── rfc/              # 技术设计文档
-│   ├── api/              # API 定义
-│   ├── db/               # 数据模型
-│   └── testing/          # 测试规范
-├── docs/                 # 用户文档与指南
-│   ├── setup/            # 环境搭建
-│   ├── tutorials/        # 使用教程
-│   └── assets/           # 图片与静态资源
-├── changelog/            # 版本历史
-├── index.html            # 主页面
-├── app.js                # 游戏主逻辑
-├── sw.js                 # Service Worker
-├── src/                  # 模块化源文件
-│   ├── keys.js           # 存储键名
-│   ├── utils.js          # 工具函数
-│   ├── storage.js        # 数据持久化
-│   ├── stats.js          # 统计逻辑
-│   ├── achievements.js   # 成就系统
-│   ├── modes.js          # 训练模式
-│   ├── import-export.js  # 导入导出
-│   ├── i18n.js           # 国际化
-│   ├── effects.js        # 音效震动
-│   ├── pools.js          # 卡面资源
-│   ├── timer.js          # 计时器
-│   ├── confetti.js       # 动画效果
-│   ├── ui.js             # DOM 绑定
-│   └── ui-events.js      # 事件绑定
-├── __tests__/            # 单元测试
-└── assets/               # 图标、CSS、静态文件
+├── openspec/              # OpenSpec 规范文档
+│   ├── specs/             # 能力规范 (单一真相来源)
+│   ├── rfc/               # 架构决策记录
+│   ├── changes/           # 变更提案
+│   ├── explorations/      # 探索记录
+│   └── archive/           # 已归档变更
+├── docs/                  # 用户文档与指南
+├── changelog/             # 版本历史
+├── index.html             # 主页面
+├── app.js                 # 游戏主逻辑
+├── sw.js                  # Service Worker
+├── src/                   # 模块化源文件
+│   ├── keys.js            # 存储键名
+│   ├── utils.js           # 工具函数
+│   ├── shared.js          # 共享工具函数
+│   ├── storage.js         # 数据持久化
+│   ├── stats.js           # 统计逻辑
+│   ├── achievements.js    # 成就系统
+│   ├── modes.js           # 训练模式
+│   ├── import-export.js   # 导入导出
+│   ├── fsrs.js            # FSRS-4.5 间隔重复
+│   ├── i18n.js            # 国际化
+│   ├── effects.js         # 音效震动
+│   ├── pools.js           # 卡面资源
+│   ├── timer.js           # 计时器
+│   ├── confetti.js        # 动画效果
+│   ├── ui.js              # DOM 绑定
+│   └── ui-events.js       # 事件绑定
+├── __tests__/             # 单元测试
+├── scripts/               # 构建脚本
+└── assets/                # 图标、CSS、静态文件
 ```
 
 ---
@@ -189,11 +188,11 @@ mind-gym/
 - **单一职责**：每个函数只做一件事
 - **添加注释**：复杂逻辑需要说明
 - **错误处理**：使用 try-catch 包裹可能失败的操作
-- **遵循 Spec**：代码实现必须与 `/specs/` 中的定义一致
+- **遵循 Spec**：代码实现必须与 `openspec/specs/` 中的定义一致
 
 ### 新增功能
 
-1. **先创建 Spec** — 在 `/specs/product/` 下定义功能规范
+1. **先创建 Spec** — 使用 `/opsx:propose` 创建功能提案
 2. 添加对应的单元测试
 3. 更新相关文档
 4. 在 `src/` 目录下创建新模块而非修改 `app.js`
@@ -249,7 +248,7 @@ test(storage): add edge case tests for leaderboard
 ## Pull Request 流程
 
 1. **创建分支**：从 `master` 创建特性分支
-2. **更新 Spec**：如有必要，先更新 `/specs/` 下的规范文档
+2. **更新 Spec**：如有必要，先更新 `openspec/specs/` 下的规范文档
 3. **进行修改**：遵循代码规范，确保与 Spec 一致
 4. **运行测试**：确保 `npm test` 通过
 5. **更新文档**：如有必要，更新 README 或 docs/
@@ -297,7 +296,7 @@ npm test
 
 ### 更新文档
 
-- **Specs (`/specs/`)** — 功能规范与技术设计
+- **Specs (`openspec/specs/`)** — 功能规范与技术设计
 - **README** — 功能变更、新命令
 - **docs/** — 用户指南、架构说明
 - **changelog/** — 每次发布创建新文件
@@ -313,7 +312,7 @@ npm test
 
 ## 需要帮助？
 
-- 查看 [Specs](specs/) 了解功能规范
+- 查看 [Specs](openspec/specs/) 了解功能规范
 - 查看 [文档](docs/)
 - 在 [Discussions](https://github.com/LessUp/mind-gym/discussions) 提问
 - 创建 [Issue](https://github.com/LessUp/mind-gym/issues)

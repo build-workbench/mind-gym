@@ -44,7 +44,6 @@
     "build:js": "bash scripts/minify-js.sh",
     "build": "npm run build:css && npm run prepare:deploy",
     "lint": "prettier --check '**/*.{js,json,md,html,css,yml}'",
-    "lint:fix": "prettier --write '**/*.{js,json,md,html,css,yml}'",
     "lint:es": "eslint app.js src/*.js --max-warnings=0",
     "format": "prettier --write '**/*.{js,json,md,html,css,yml}'",
     "prepare:deploy": "bash scripts/prepare-deploy.sh",
@@ -56,14 +55,12 @@
     "lighthouse:ci": "npx lhci autorun --config=lighthouserc.cjs",
     "audit:perf": "npm run build && npm run preview & npx lighthouse http://localhost:4173 --preset=desktop --chrome-flags='--headless' --output=json --output-path=./audit.json",
     "clean": "rm -rf dist coverage lhci-reports .nyc_output",
-    "typecheck": "echo 'No TypeScript files to check'",
     "validate": "npm run lint && npm run test && npm run build"
   },
   "devDependencies": {
     "@lhci/cli": "^0.13.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "lighthouse": "^11.0.0",
     "prettier": "3.8.1",
     "tailwindcss": "3.4.19",
     "terser": "^5.46.1"
