@@ -58,9 +58,21 @@ const __RememberFSRS__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/fsrs.js')
     : __GLOBAL__.RememberFSRS;
+const __RememberGameManager__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/game-manager.js')
+    : __GLOBAL__.RememberGameManager;
+const __RememberModalManager__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/modal-manager.js')
+    : __GLOBAL__.RememberModalManager;
 const MODAL_FOCUS_PREV = new WeakMap();
 const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
 const DIFFS = ['easy', 'medium', 'hard'];
+
+// 全局 ModalManager 实例
+let modalManager = null;
+
 const CARD_LABELS = {
   emoji: 'emoji',
   numbers: 'number',
@@ -77,57 +89,6 @@ const CARD_LABELS_ZH = {
 };
 const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-// Focus trap state
-let activeFocusTrap = null;
-
-function getAllFocusable(el) {
-  if (!el) return [];
-  return Array.from(el.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
-    node => !node.disabled && node.offsetParent !== null && node.getAttribute('tabindex') !== '-1'
-  );
-}
-
-function createFocusTrap(el) {
-  const handler = e => {
-    if (e.key !== 'Tab') return;
-    const focusable = getAllFocusable(el);
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.shiftKey) {
-      if (document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      }
-    } else {
-      if (document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    }
-  };
-  el.addEventListener('keydown', handler);
-  return handler;
-}
-
-function activateFocusTrap(el) {
-  if (activeFocusTrap) {
-    deactivateFocusTrap(activeFocusTrap.el, activeFocusTrap.handler);
-  }
-  const handler = createFocusTrap(el);
-  activeFocusTrap = { el, handler };
-  return handler;
-}
-
-function deactivateFocusTrap(el, handler) {
-  if (el && handler) {
-    el.removeEventListener('keydown', handler);
-  }
-  if (activeFocusTrap && activeFocusTrap.el === el) {
-    activeFocusTrap = null;
-  }
-}
 
 const DEFAULT_SETTINGS = {
   sound: true,
@@ -201,36 +162,6 @@ function cardLabelForTheme(theme) {
   return currentLang() === 'zh'
     ? CARD_LABELS_ZH[theme] || CARD_LABELS_ZH.emoji
     : CARD_LABELS[theme] || CARD_LABELS.emoji;
-}
-
-function rememberModalFocus(el) {
-  if (el) MODAL_FOCUS_PREV.set(el, getActiveElement());
-}
-
-function restoreModalFocus(el) {
-  const prev = el ? MODAL_FOCUS_PREV.get(el) : null;
-  focusElement(prev);
-}
-
-function focusModal(el) {
-  queueFocus(() => focusElement(getFocusable(el) || el));
-}
-
-function openModalWithFocus(el) {
-  if (!el) return;
-  rememberModalFocus(el);
-  showModal(el);
-  activateFocusTrap(el);
-  focusModal(el);
-}
-
-function closeModalWithFocusRestore(el) {
-  if (!el) return;
-  if (activeFocusTrap && activeFocusTrap.el === el) {
-    deactivateFocusTrap(el, activeFocusTrap.handler);
-  }
-  hideModal(el);
-  restoreModalFocus(el);
 }
 
 function getNow() {
@@ -651,9 +582,9 @@ let guideBtn,
   guideShortcutsList,
   guideNoShowLabel,
   guideOpenHintEl;
-let firstCard = null;
-let secondCard = null;
-let lockBoard = false;
+// GameManager 实例，管理翻牌匹配核心逻辑
+let gameManager = null;
+// 以下变量保留用于 UI 引用（从 GameManager.getState() 获取值）
 let moves = 0;
 let matchedPairs = 0;
 let elapsed = 0;
@@ -665,6 +596,7 @@ let currentDifficulty = 'easy';
 const HINT_LIMITS = { easy: 3, medium: 2, hard: 1 };
 const GUIDE_KEY = 'memory_match_onboarding_v1';
 let paused = false;
+let lockBoard = false;
 let hintsLeft = 0;
 let isPreviewing = false;
 let hintsUsed = 0;
@@ -749,17 +681,37 @@ function logError(event, detail = {}) {
 }
 
 function showModal(el) {
-  if (!el) return;
-  el.classList.remove('hidden');
-  el.classList.add('flex');
-  el.setAttribute('aria-hidden', 'false');
+  if (!modalManager || !el) {
+    // 降级处理：直接操作 DOM
+    if (el) {
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+      el.setAttribute('aria-hidden', 'false');
+    }
+    return;
+  }
+  modalManager.open(el);
 }
 
 function hideModal(el) {
-  if (!el) return;
-  el.classList.add('hidden');
-  el.classList.remove('flex');
-  el.setAttribute('aria-hidden', 'true');
+  if (!modalManager || !el) {
+    // 降级处理：直接操作 DOM
+    if (el) {
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    return;
+  }
+  modalManager.close(el);
+}
+
+function openModalWithFocus(el) {
+  showModal(el);
+}
+
+function closeModalWithFocusRestore(el) {
+  hideModal(el);
 }
 function getAccent() {
   const a = settings.accent || 'indigo';
@@ -1119,14 +1071,21 @@ function makeCard(item) {
 }
 
 function resetBoardState() {
-  firstCard = null;
-  secondCard = null;
-  lockBoard = false;
+  // 委托给 GameManager
+  if (gameManager) {
+    gameManager.afterMismatchFlipBack();
+  }
 }
+
+// 当前翻开的卡片 DOM 元素（用于不匹配时翻回）
+let currentFirstCardEl = null;
+let currentSecondCardEl = null;
 
 function onFlip(cardEl) {
   if (paused || isPreviewing) return;
-  if (lockBoard) return;
+  if (!gameManager) return;
+  const state = gameManager.getState();
+  if (state.isLocked) return;
   if (cardEl.classList.contains('flipped')) return;
   if (!started) {
     started = true;
@@ -1139,68 +1098,109 @@ function onFlip(cardEl) {
     `${getCardA11yLabel(resolveBoardTheme(), cardEl.dataset.value)} · ${currentLang() === 'zh' ? '已翻开' : 'revealed'}`
   );
   sfx('flip');
-  if (!firstCard) {
-    firstCard = cardEl;
+
+  const cardIndex = parseInt(cardEl.dataset.index, 10);
+  const cardValue = cardEl.dataset.value;
+  const result = gameManager.flip(cardIndex, cardValue);
+
+  if (!result.canFlip) {
+    // 如果不允许翻转，移除翻转状态
+    if (!result.isFirstCard) {
+      cardEl.classList.remove('flipped');
+      cardEl.setAttribute('aria-pressed', 'false');
+    }
     return;
   }
-  if (cardEl === firstCard) return;
-  secondCard = cardEl;
-  moves += 1;
-  movesEl.textContent = String(moves);
-  lockBoard = true;
-  // 记录曝光
-  const v1 = firstCard.dataset.value;
-  const v2 = secondCard.dataset.value;
-  seenCountMap.set(v1, (seenCountMap.get(v1) || 0) + 1);
-  seenCountMap.set(v2, (seenCountMap.get(v2) || 0) + 1);
-  const match = v1 === v2;
-  if (match) {
-    firstCard.classList.add('pointer-events-none', 'ring-2', getAccent().ring, 'match-pulse');
-    secondCard.classList.add('pointer-events-none', 'ring-2', getAccent().ring, 'match-pulse');
-    firstCard.setAttribute(
-      'aria-label',
-      `${getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
-    );
-    secondCard.setAttribute(
-      'aria-label',
-      `${getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
-    );
-    matchedPairs += 1;
-    sfx('match');
-    vibrateMs(40);
-    // combo logic
-    const now = performance.now();
-    if (now - lastMatchAt <= COMBO_WINDOW_MS) comboCount += 1;
-    else comboCount = 1;
-    lastMatchAt = now;
-    if (comboCount >= 2) {
-      maxComboThisGame = Math.max(maxComboThisGame, comboCount);
-      showCombo(comboCount);
-      if (settings.sound) beep(1400, 0.08, 'sine', Math.max(0.03, (settings.volume || 0.5) * 0.08));
+
+  if (result.isFirstCard) {
+    // 第一张卡
+    currentFirstCardEl = cardEl;
+    return;
+  }
+
+  if (result.isSecondCard) {
+    // 第二张卡
+    currentSecondCardEl = cardEl;
+    moves = gameManager.getState().moves;
+    movesEl.textContent = String(moves);
+
+    // 记录曝光
+    const v1 = currentFirstCardEl.dataset.value;
+    const v2 = currentSecondCardEl.dataset.value;
+    seenCountMap.set(v1, (seenCountMap.get(v1) || 0) + 1);
+    seenCountMap.set(v2, (seenCountMap.get(v2) || 0) + 1);
+
+    if (result.matched) {
+      // 匹配成功
+      currentFirstCardEl.classList.add(
+        'pointer-events-none',
+        'ring-2',
+        getAccent().ring,
+        'match-pulse'
+      );
+      currentSecondCardEl.classList.add(
+        'pointer-events-none',
+        'ring-2',
+        getAccent().ring,
+        'match-pulse'
+      );
+      currentFirstCardEl.setAttribute(
+        'aria-label',
+        `${getCardA11yLabel(resolveBoardTheme(), currentFirstCardEl.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
+      );
+      currentSecondCardEl.setAttribute(
+        'aria-label',
+        `${getCardA11yLabel(resolveBoardTheme(), currentSecondCardEl.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
+      );
+      matchedPairs = gameManager.getState().matchedPairs;
+      sfx('match');
+      vibrateMs(40);
+
+      // combo logic
+      const now = performance.now();
+      if (now - lastMatchAt <= COMBO_WINDOW_MS) comboCount += 1;
+      else comboCount = 1;
+      lastMatchAt = now;
+      if (comboCount >= 2) {
+        maxComboThisGame = Math.max(maxComboThisGame, comboCount);
+        showCombo(comboCount);
+        if (settings.sound)
+          beep(1400, 0.08, 'sine', Math.max(0.03, (settings.volume || 0.5) * 0.08));
+      }
+
+      // 重置当前卡片引用
+      currentFirstCardEl = null;
+      currentSecondCardEl = null;
+
+      updateProgressUI();
+      if (result.isWin) onWin();
+    } else {
+      // 匹配失败
+      sfx('mismatch');
+      vibrateMs(20);
+      setTimeout(() => {
+        if (currentFirstCardEl) {
+          currentFirstCardEl.classList.remove('flipped');
+          currentFirstCardEl.setAttribute('aria-pressed', 'false');
+          currentFirstCardEl.setAttribute(
+            'aria-label',
+            getCardA11yLabel(resolveBoardTheme(), currentFirstCardEl.dataset.value)
+          );
+        }
+        if (currentSecondCardEl) {
+          currentSecondCardEl.classList.remove('flipped');
+          currentSecondCardEl.setAttribute('aria-pressed', 'false');
+          currentSecondCardEl.setAttribute(
+            'aria-label',
+            getCardA11yLabel(resolveBoardTheme(), currentSecondCardEl.dataset.value)
+          );
+        }
+        gameManager.afterMismatchFlipBack();
+        currentFirstCardEl = null;
+        currentSecondCardEl = null;
+      }, MISMATCH_FLIP_BACK_MS);
+      comboCount = 0;
     }
-    resetBoardState();
-    const need = difficulties[currentDifficulty].pairs;
-    updateProgressUI();
-    if (matchedPairs === need) onWin();
-  } else {
-    sfx('mismatch');
-    vibrateMs(20);
-    setTimeout(() => {
-      firstCard.classList.remove('flipped');
-      secondCard.classList.remove('flipped');
-      firstCard.setAttribute('aria-pressed', 'false');
-      secondCard.setAttribute('aria-pressed', 'false');
-      firstCard.setAttribute(
-        'aria-label',
-        getCardA11yLabel(resolveBoardTheme(), firstCard.dataset.value)
-      );
-      secondCard.setAttribute(
-        'aria-label',
-        getCardA11yLabel(resolveBoardTheme(), secondCard.dataset.value)
-      );
-      resetBoardState();
-    }, MISMATCH_FLIP_BACK_MS);
-    comboCount = 0;
   }
 }
 
@@ -1219,6 +1219,25 @@ function initGame(diffKey) {
     currentDifficulty = diffKey;
   }
   const cfg = difficulties[currentDifficulty];
+
+  // 初始化 GameManager
+  const { GameManager } = __RememberGameManager__;
+  gameManager = new GameManager({
+    totalPairs: cfg.pairs,
+    onMatch: (card1, card2) => {
+      // 匹配回调（可选，目前逻辑在 onFlip 中处理）
+    },
+    onMismatch: (card1, card2) => {
+      // 不匹配回调（可选，目前逻辑在 onFlip 中处理）
+    },
+    onWin: () => {
+      // 胜利回调（可选，目前逻辑在 onFlip 中处理）
+    },
+    onProgress: (matched, total) => {
+      // 进度回调（可选，目前逻辑在 onFlip 中处理）
+    },
+  });
+
   clearGrid();
   setGridColumns(cfg.cols);
   const deck = createDeck(cfg.pairs);
@@ -1231,7 +1250,8 @@ function initGame(diffKey) {
   moves = 0;
   matchedPairs = 0;
   started = false;
-  resetBoardState();
+  currentFirstCardEl = null;
+  currentSecondCardEl = null;
   resetTimer();
   movesEl.textContent = '0';
   updateBestUI();
@@ -1378,6 +1398,10 @@ function maybeShowGuideOnFirstVisit() {
 
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
+    // 初始化 ModalManager
+    const { ModalManager } = __RememberModalManager__;
+    modalManager = new ModalManager();
+
     const ui = __RememberUI__.bind(document);
     ({
       gridEl,
