@@ -22,6 +22,25 @@ This is a zero-dependency browser-based memory training game built with Vanilla 
 
 ---
 
+## Architecture Overview
+
+### Three-Layer State Architecture
+
+```
+Settings (Persistent) → GameState (Runtime) → ModeState (On-Demand)
+```
+
+| Layer        | Module                | Responsibility                          |
+| ------------ | --------------------- | --------------------------------------- |
+| Settings     | `settings-manager.js` | User preferences, auto-persist          |
+| GameState    | `game-state.js`       | Runtime state coordinator               |
+| GameManager  | `game-manager.js`     | Card flip/match/win logic (deep module) |
+| ModalManager | `modal-manager.js`    | Modal + focus trap (deep module)        |
+| NBackState   | `nback-state.js`      | N-back mode state                       |
+| RecallState  | `recall-state.js`     | Delayed recall mode state               |
+
+---
+
 ## Coding Conventions
 
 ### JavaScript
@@ -34,9 +53,10 @@ This is a zero-dependency browser-based memory training game built with Vanilla 
 ### Module Loading Order
 
 ```
-src/keys.js → src/utils.js → src/stats.js → src/achievements.js → src/modes.js
-→ src/import-export.js → src/storage.js → src/i18n.js → src/effects.js
-→ src/pools.js → src/timer.js → src/confetti.js → src/ui-events.js → src/ui.js → app.js
+src/keys.js → src/utils.js → src/shared.js → src/stats.js → src/achievements.js → src/modes.js
+→ src/import-export.js → src/storage.js → src/fsrs.js → src/game-manager.js → src/modal-manager.js
+→ src/i18n.js → src/effects.js → src/pools.js → src/timer.js → src/confetti.js
+→ src/ui-events.js → src/ui.js → app.js
 ```
 
 ### CSS
@@ -44,6 +64,38 @@ src/keys.js → src/utils.js → src/stats.js → src/achievements.js → src/mo
 - Edit `styles/app.css` only
 - Run `npm run build:css` to compile
 - Never edit `assets/app.css` directly
+
+---
+
+## Deep Module Design
+
+### What is a Deep Module?
+
+Deep modules have a small interface but hide large implementation complexity.
+
+**Example: GameManager**
+
+```javascript
+// Small interface (3 methods)
+window.RememberGameManager = {
+  flip(cardIndex, cardValue),  // Returns { matched, won, state }
+  reset(totalPairs),
+  getState(),
+};
+
+// Hidden complexity:
+// - Card flip validation
+// - Match detection
+// - Win condition checking
+// - State transitions
+// - Move counting
+```
+
+### Benefits
+
+1. **Locality** — Bugs isolated to one module
+2. **Leverage** — High capability per interface unit
+3. **Testability** — Independent testing
 
 ---
 
@@ -78,7 +130,7 @@ src/keys.js → src/utils.js → src/stats.js → src/achievements.js → src/mo
 ### Commands
 
 ```bash
-npm test              # Run all tests
+npm test              # Run all tests (291 tests)
 npm run test:coverage # Run with coverage report
 npx jest __tests__/specific.test.js  # Run single test file
 ```
@@ -90,6 +142,7 @@ npx jest __tests__/specific.test.js  # Run single test file
 - Use Jest with jsdom environment
 - Mock localStorage and DOM elements as needed
 - Cover edge cases defined in specs
+- Test deep module interfaces (not internal implementation)
 
 ---
 
@@ -100,9 +153,16 @@ npx jest __tests__/specific.test.js  # Run single test file
 ├── app.js            # Game orchestrator (main loop)
 ├── sw.js             # Service Worker
 ├── src/              # Core modules
+│   ├── game-state.js     # State coordinator
+│   ├── game-manager.js   # Card logic (deep module)
+│   ├── modal-manager.js  # Modal management (deep module)
+│   ├── settings-manager.js # Settings
+│   ├── nback-state.js    # N-back state
+│   ├── recall-state.js   # Recall state
 │   ├── storage.js    # localStorage CRUD
 │   ├── stats.js      # Statistics aggregation
 │   ├── modes.js      # N-back and recall logic
+│   ├── fsrs.js       # FSRS-4.5 spaced repetition
 │   ├── i18n.js       # Internationalization
 │   └── ...           # Other modules
 ├── openspec/         # Specifications (source of truth)
@@ -151,7 +211,7 @@ Allowed scopes: `ci`, `deps`, `docs`, `ui`, `gameplay`, `tooling`, `storage`, `i
   'use strict';
 
   const NewModule = {
-    // Public API
+    // Public API - keep interface small (deep module)
     init() {
       /* ... */
     },
@@ -179,6 +239,23 @@ function safeParse(key, fallback) {
 }
 ```
 
+### Deep Module Pattern
+
+```javascript
+// Deep module: small interface, hidden complexity
+const DeepModule = {
+  // Public interface (keep minimal)
+  doSomething(input) {
+    return this._internalLogic(input);
+  },
+
+  // Private implementation (hide complexity)
+  _internalLogic(input) {
+    // Complex logic here...
+  },
+};
+```
+
 ---
 
 ## Quick Reference
@@ -191,3 +268,12 @@ function safeParse(key, fallback) {
 | Build CSS        | `npm run build:css`      |
 | Prepare deploy   | `npm run prepare:deploy` |
 | View specs       | `ls openspec/specs/`     |
+
+---
+
+## Related Documents
+
+- [CLAUDE.md](../CLAUDE.md) — Full development guide
+- [AGENTS.md](../AGENTS.md) — AI assistant guide
+- [CONTEXT.md](../CONTEXT.md) — Domain terminology
+- [openspec/specs/](../openspec/specs/) — Technical specifications

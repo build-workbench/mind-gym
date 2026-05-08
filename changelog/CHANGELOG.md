@@ -18,6 +18,31 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
+## [v1.11.0] - 2026-05-08
+
+### Added / 新增
+
+- `changelog/archive/v1.9.0.md` - FSRS-4.5 发布说明
+- `changelog/archive/v1.10.0.md` - 共享工具模块发布说明
+- `openspec/changes/.gitkeep` - OpenSpec 变更目录
+- `openspec/explorations/.gitkeep` - OpenSpec 探索目录
+
+### Changed / 变更
+
+- 更新所有文档中的模块加载顺序
+- 增强 `AGENTS.md` - 添加三层状态架构和深度模块设计原则
+- 增强 `CLAUDE.md` - 添加完整架构决策记录
+- 增强 `.github/copilot-instructions.md` - 补充深度模块设计模式
+- 更新 `CONTRIBUTING.md` - 补充新模块列表
+
+### Technical / 技术细节
+
+- 总测试数: 291 (19 测试套件)
+- 文档全面更新，深度注入项目业务逻辑
+- GitHub 仓库 homepage URL 更新
+
+---
+
 ## [v1.10.0] - 2026-04-29
 
 ### Added / 新增
@@ -290,7 +315,9 @@ For detailed changelogs in both English and Chinese, see the [`archive/`](./arch
 
 ---
 
-[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.11.0...HEAD
+[v1.11.0]: https://github.com/LessUp/mind-gym/compare/v1.10.0...v1.11.0
+[v1.10.0]: https://github.com/LessUp/mind-gym/compare/v1.9.0...v1.10.0
 [v1.9.0]: https://github.com/LessUp/mind-gym/compare/v1.8.0...v1.9.0
 [v1.8.0]: https://github.com/LessUp/mind-gym/compare/v1.6.1...v1.8.0
 [v1.6.1]: https://github.com/LessUp/mind-gym/compare/v1.6.0...v1.6.1

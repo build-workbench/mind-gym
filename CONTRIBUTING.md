@@ -156,6 +156,12 @@ mind-gym/
 │   ├── modes.js           # 训练模式
 │   ├── import-export.js   # 导入导出
 │   ├── fsrs.js            # FSRS-4.5 间隔重复
+│   ├── game-manager.js    # 游戏核心逻辑
+│   ├── modal-manager.js   # 模态框管理
+│   ├── settings-manager.js # 设置管理
+│   ├── game-state.js      # 游戏状态协调
+│   ├── nback-state.js     # N-back 状态
+│   ├── recall-state.js    # 延迟回忆状态
 │   ├── i18n.js            # 国际化
 │   ├── effects.js         # 音效震动
 │   ├── pools.js           # 卡面资源
