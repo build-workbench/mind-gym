@@ -20,10 +20,6 @@ require_file() {
   fi
 }
 
-# Build CSS first
-echo "[build] Building optimized CSS..."
-npm run build:css
-
 # Generate icons
 echo "[build] Generating PWA icons..."
 if [[ -f "$ROOT_DIR/scripts/generate-icons.sh" ]]; then
@@ -39,22 +35,27 @@ echo "[build] Minifying JavaScript files..."
 npx terser "$ROOT_DIR/app.js" -o "$TEMP_DIR/app.js" -c -m --comments '/^!/'
 echo "[build] ✓ app.js minified"
 
-# Minify all src modules
-mkdir -p "$TEMP_DIR/src"
-for file in "$ROOT_DIR"/src/*.js; do
-  filename=$(basename "$file")
-  npx terser "$file" -o "$TEMP_DIR/src/$filename" -c -m --comments '/^!/'
-  echo "[build] ✓ src/$filename minified"
-done
+# Minify all src modules in parallel (preserving directory structure)
+export TEMP_DIR ROOT_DIR
+find "$ROOT_DIR/src" -name "*.js" -print0 | xargs -0 -I {} -P "$(nproc)" bash -c '
+  file="{}"
+  relative_path="${file#$ROOT_DIR/}"
+  mkdir -p "$(dirname "$TEMP_DIR/$relative_path")"
+  npx terser "$file" -o "$TEMP_DIR/$relative_path" -c -m --comments "/^!/"
+  echo "[build] ✓ $relative_path minified"
+'
+echo "[build] All JavaScript files minified"
 
 # Copy static assets
 echo "[build] Copying static assets..."
 cp "$ROOT_DIR/index.html" "$DIST_DIR/"
-cp "$ROOT_DIR/sw.js" "$DIST_DIR/"
+npx terser "$ROOT_DIR/sw.js" -o "$DIST_DIR/sw.js" -c -m --comments '/^!/'
+echo "[build] ✓ sw.js minified"
 cp "$ROOT_DIR/manifest.webmanifest" "$DIST_DIR/"
 cp "$ROOT_DIR/offline.html" "$DIST_DIR/" 2>/dev/null || true
 cp "$ROOT_DIR/robots.txt" "$DIST_DIR/" 2>/dev/null || true
 cp "$ROOT_DIR/sitemap.xml" "$DIST_DIR/" 2>/dev/null || true
+cp "$ROOT_DIR/browserconfig.xml" "$DIST_DIR/" 2>/dev/null || true
 
 # Copy 404.html if exists, otherwise create it
 if [[ -f "$ROOT_DIR/404.html" ]]; then
