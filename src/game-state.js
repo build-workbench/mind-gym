@@ -28,12 +28,15 @@
   function (RememberGameManager, RememberTimer, RememberShared) {
     const COMBO_WINDOW_MS = 3000;
     const HINT_LIMITS = { easy: 3, medium: 2, hard: 1 };
+    const VALID_MODES = ['classic', 'countdown', 'daily', 'nback', 'recall'];
 
     class GameStateManager {
       constructor() {
         this._gameManager = null;
         this._timerId = null;
         this._listeners = [];
+        this._winListeners = [];
+        this._timeUpListeners = [];
 
         // 核心游戏状态
         this._difficulty = 'easy';
@@ -42,6 +45,10 @@
         this._paused = false;
         this._isPreviewing = false;
         this._timeUp = false;
+        this._lockBoard = false;
+
+        // 游戏模式
+        this._mode = 'classic';
 
         // 定时器状态
         this._elapsed = 0;
@@ -62,7 +69,13 @@
         this._dailyActive = false;
         this._dailySeed = 0;
 
-        // 回调
+        // FSRS 掌握度跟踪
+        this._seenCountMap = new Map();
+
+        // 回忆测试
+        this._lastGameValues = [];
+
+        // 回调（兼容旧接口）
         this._onWin = null;
         this._onTimeUp = null;
         this._onTimerUpdate = null;
@@ -86,6 +99,9 @@
         this._paused = false;
         this._isPreviewing = config.isPreviewing || false;
         this._timeUp = false;
+        this._lockBoard = false;
+
+        this._mode = config.mode || 'classic';
 
         this._elapsed = 0;
         this._countdownLeft = config.countdownLeft || 0;
@@ -102,6 +118,9 @@
 
         this._dailyActive = config.dailyActive || false;
         this._dailySeed = config.dailySeed || 0;
+
+        this._seenCountMap = new Map();
+        this._lastGameValues = [];
 
         this._onWin = config.onWin || null;
         this._onTimeUp = config.onTimeUp || null;
@@ -137,6 +156,9 @@
           paused: this._paused,
           isPreviewing: this._isPreviewing,
           timeUp: this._timeUp,
+          lockBoard: this._lockBoard,
+
+          mode: this._mode,
 
           hintsLeft: this._hintsLeft,
           hintsUsed: this._hintsUsed,
@@ -149,6 +171,12 @@
           dailySeed: this._dailySeed,
 
           isCountdownMode: this._isCountdownMode,
+
+          // FSRS 跟踪
+          seenCountMap: new Map(this._seenCountMap),
+
+          // 回忆测试
+          lastGameValues: [...this._lastGameValues],
         };
       }
 
@@ -172,8 +200,96 @@
         }
       }
 
+      // 游戏模式管理
+      setMode(mode) {
+        if (!VALID_MODES.includes(mode)) {
+          console.warn(`GameStateManager: Invalid mode "${mode}", falling back to "classic"`);
+          this._mode = 'classic';
+        } else {
+          this._mode = mode;
+        }
+        this._notifyChange(['mode']);
+      }
+
+      getMode() {
+        return this._mode;
+      }
+
+      // 棋盘锁定
+      setLockBoard(locked) {
+        this._lockBoard = !!locked;
+        this._notifyChange(['lockBoard']);
+      }
+
+      // FSRS 掌握度跟踪
+      recordSeenCard(cardValue) {
+        this._seenCountMap.set(cardValue, (this._seenCountMap.get(cardValue) || 0) + 1);
+      }
+
+      getSeenCountMap() {
+        return new Map(this._seenCountMap);
+      }
+
+      // 回忆测试
+      setLastGameValues(values) {
+        this._lastGameValues = [...new Set(values)];
+        this._notifyChange(['lastGameValues']);
+      }
+
+      getLastGameValues() {
+        return [...this._lastGameValues];
+      }
+
+      // 胜利/超时事件订阅
+      onWin(callback) {
+        if (typeof callback !== 'function') {
+          throw new Error('GameStateManager: onWin callback must be a function');
+        }
+        this._winListeners.push(callback);
+        return () => {
+          const index = this._winListeners.indexOf(callback);
+          if (index >= 0) {
+            this._winListeners.splice(index, 1);
+          }
+        };
+      }
+
+      onTimeUp(callback) {
+        if (typeof callback !== 'function') {
+          throw new Error('GameStateManager: onTimeUp callback must be a function');
+        }
+        this._timeUpListeners.push(callback);
+        return () => {
+          const index = this._timeUpListeners.indexOf(callback);
+          if (index >= 0) {
+            this._timeUpListeners.splice(index, 1);
+          }
+        };
+      }
+
+      _notifyWin() {
+        const state = this.getState();
+        this._winListeners.forEach(callback => {
+          try {
+            callback(state);
+          } catch (err) {
+            console.error('GameStateManager: onWin callback error', err);
+          }
+        });
+      }
+
+      _notifyTimeUp() {
+        const state = this.getState();
+        this._timeUpListeners.forEach(callback => {
+          try {
+            callback(state);
+          } catch (err) {
+            console.error('GameStateManager: onTimeUp callback error', err);
+          }
+        });
+      }
+
       update(partial) {
-        const oldState = this.getState();
         const changedKeys = [];
 
         for (const [key, value] of Object.entries(partial)) {
@@ -189,6 +305,14 @@
           } else if (key === 'timeUp') {
             this._timeUp = value;
             changedKeys.push(key);
+          } else if (key === 'lockBoard') {
+            this._lockBoard = !!value;
+            changedKeys.push(key);
+          } else if (key === 'mode') {
+            if (VALID_MODES.includes(value)) {
+              this._mode = value;
+              changedKeys.push(key);
+            }
           } else if (key === 'hintsLeft') {
             this._hintsLeft = RememberShared.clampInt(value, 0, HINT_LIMITS[this._difficulty]);
             changedKeys.push(key);
@@ -218,7 +342,7 @@
       }
 
       useHint() {
-        if (this._hintsLeft <= 0 || this._paused || this._isPreviewing) {
+        if (this._hintsLeft <= 0 || this._paused || this._isPreviewing || this._lockBoard) {
           return false;
         }
 
@@ -237,6 +361,10 @@
         }
         this._lastMatchAt = now;
         this._maxComboThisGame = Math.max(this._maxComboThisGame, this._comboCount);
+
+        // 记录已见卡片
+        this.recordSeenCard(card1Value);
+        this.recordSeenCard(card2Value);
 
         this._notifyChange(['comboCount', 'maxComboThisGame', 'lastMatchAt', 'matchedPairs']);
       }
@@ -265,6 +393,7 @@
           onTimeUp: () => {
             this._timeUp = true;
             this._notifyChange(['timeUp']);
+            this._notifyTimeUp();
             if (this._onTimeUp) {
               this._onTimeUp();
             }
@@ -310,8 +439,9 @@
         if (this._gameManager) {
           this._gameManager.locked = true;
         }
+        this._lockBoard = true;
 
-        this._notifyChange(['paused', 'isLocked']);
+        this._notifyChange(['paused', 'isLocked', 'lockBoard']);
       }
 
       resume() {
@@ -326,8 +456,9 @@
         if (this._gameManager) {
           this._gameManager.locked = false;
         }
+        this._lockBoard = false;
 
-        this._notifyChange(['paused', 'isLocked']);
+        this._notifyChange(['paused', 'isLocked', 'lockBoard']);
       }
 
       markStarted() {
@@ -342,6 +473,11 @@
         this._notifyChange(['isPreviewing']);
       }
 
+      // 触发胜利（供外部调用）
+      triggerWin() {
+        this._notifyWin();
+      }
+
       reset() {
         this.stopTimer();
 
@@ -352,6 +488,8 @@
         this._paused = false;
         this._isPreviewing = false;
         this._timeUp = false;
+        this._lockBoard = false;
+        this._mode = 'classic';
 
         this._elapsed = 0;
         this._countdownLeft = 0;
@@ -365,6 +503,9 @@
 
         this._dailyActive = false;
         this._dailySeed = 0;
+
+        this._seenCountMap = new Map();
+        this._lastGameValues = [];
 
         this._notifyChange();
       }
@@ -416,8 +557,20 @@
       setPreviewing: value => instance.setPreviewing(value),
       reset: () => instance.reset(),
       onChange: callback => instance.onChange(callback),
+      // 新增方法
+      setMode: mode => instance.setMode(mode),
+      getMode: () => instance.getMode(),
+      setLockBoard: locked => instance.setLockBoard(locked),
+      recordSeenCard: value => instance.recordSeenCard(value),
+      getSeenCountMap: () => instance.getSeenCountMap(),
+      setLastGameValues: values => instance.setLastGameValues(values),
+      getLastGameValues: () => instance.getLastGameValues(),
+      onWin: callback => instance.onWin(callback),
+      onTimeUp: callback => instance.onTimeUp(callback),
+      triggerWin: () => instance.triggerWin(),
       COMBO_WINDOW_MS,
       HINT_LIMITS,
+      VALID_MODES,
     };
   }
 );

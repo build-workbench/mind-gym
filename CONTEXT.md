@@ -150,8 +150,37 @@ Each module exposes a global object (UMD pattern).
 
 ---
 
+## Game Mode System
+
+**GameMode** (interface)
+
+- 每个游戏模式实现统一接口
+- 方法: `onInit()`, `onStart()`, `onEnd()`, `onFlip()`, `onKeyPress()`, `getState()`
+- 允许添加新模式无需修改 `app.js`
+
+**GameModeRegistry**
+
+- 管理所有游戏模式
+- 方法: `register()`, `get()`, `getCurrent()`, `switchTo()`
+- 当前模式: Classic, Countdown, Daily, NBack, Recall
+
+**WinPipeline**
+
+- 胜利时的步骤管道
+- 步骤: stopTimer → updateBestScore → updateStats → ... → openRecallTest
+- 可添加/删除/重排序步骤
+
+**UIRenderer**
+
+- UI 渲染抽象
+- 方法: `renderCard()`, `renderFlip()`, `renderMatch()`, `showModal()`, `playSound()`
+- 隔离 DOM 操作与业务逻辑
+
+---
+
 ## Related Documents
 
 - [Core Architecture](openspec/rfc/0001-core-architecture.md)
 - [i18n Strategy](openspec/rfc/0002-i18n-strategy.md)
 - [PWA & Offline](openspec/rfc/0003-pwa-offline.md)
+- [app.js Refactoring](openspec/rfc/0004-app-refactoring.md)

@@ -66,6 +66,18 @@ const __RememberModalManager__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/modal-manager.js')
     : __GLOBAL__.RememberModalManager;
+const __RememberGameState__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/game-state.js')
+    : __GLOBAL__.RememberGameState;
+const __RememberModeRegistry__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/modes/registry.js')
+    : __GLOBAL__.RememberModeRegistry;
+const __RememberSettings__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/settings-manager.js')
+    : __GLOBAL__.RememberSettings;
 const MODAL_FOCUS_PREV = new WeakMap();
 const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
 const DIFFS = ['easy', 'medium', 'hard'];
@@ -302,7 +314,7 @@ function applyImportedSnapshot(normalized) {
 }
 
 function afterImportApplied() {
-  settings = loadSettings();
+  settings = Settings.getAll();
   applyAccentToDOM();
   applyTheme();
   applyMotionPreference();
@@ -314,8 +326,8 @@ function afterImportApplied() {
 }
 
 function updateTimerState(value) {
-  elapsed = value.elapsed;
-  countdownLeft = value.countdownLeft;
+  // GameStateManager 已经更新了 elapsed 和 countdownLeft
+  // 这里只更新 UI 显示
   if (timeEl) timeEl.textContent = value.displayText;
 }
 
@@ -331,13 +343,6 @@ function getBackupFilename() {
 function persistImportedData(normalized) {
   applyImportedSnapshot(normalized);
   afterImportApplied();
-}
-
-function stopNBackTimer() {
-  if (nbackTimer) {
-    clearInterval(nbackTimer);
-    nbackTimer = null;
-  }
 }
 
 function handleModalBackdrop(e, modal, onClose) {
@@ -582,46 +587,104 @@ let guideBtn,
   guideShortcutsList,
   guideNoShowLabel,
   guideOpenHintEl;
-// GameManager 实例，管理翻牌匹配核心逻辑
-let gameManager = null;
-// 以下变量保留用于 UI 引用（从 GameManager.getState() 获取值）
+
+// ============================================================
+// 状态管理：使用 GameStateManager 替代内联状态变量
+// ============================================================
+// GameState 实例，统一管理所有运行时状态
+const GameState = __RememberGameState__;
+
+// 状态访问辅助函数
+function getGameState() {
+  return GameState.getState();
+}
+
+// 以下变量保留用于 UI 引用（从 GameState.getState() 获取值）
+// 这些是本地缓存，用于避免频繁调用 getState()
 let moves = 0;
 let matchedPairs = 0;
 let elapsed = 0;
 let countdownLeft = 0;
 let timeUp = false;
-let timerId = null;
 let started = false;
 let currentDifficulty = 'easy';
-const HINT_LIMITS = { easy: 3, medium: 2, hard: 1 };
-const GUIDE_KEY = 'memory_match_onboarding_v1';
 let paused = false;
 let lockBoard = false;
 let hintsLeft = 0;
 let isPreviewing = false;
 let hintsUsed = 0;
-let settings = { ...DEFAULT_SETTINGS };
 let dailyActive = false;
 let dailySeed = 0;
 let comboCount = 0;
 let maxComboThisGame = 0;
-let lastMatchAt = 0;
 let seenCountMap = new Map();
 let lastGameValues = [];
 let recallCorrectSet = new Set();
-// N-back state
+
+// 订阅 GameState 变更，同步到本地变量
+GameState.onChange((state, changedKeys) => {
+  moves = state.moves;
+  matchedPairs = state.matchedPairs;
+  elapsed = state.elapsed;
+  countdownLeft = state.countdownLeft;
+  timeUp = state.timeUp;
+  started = state.started;
+  currentDifficulty = state.difficulty;
+  paused = state.paused;
+  lockBoard = state.lockBoard;
+  hintsLeft = state.hintsLeft;
+  isPreviewing = state.isPreviewing;
+  hintsUsed = state.hintsUsed;
+  dailyActive = state.dailyActive;
+  dailySeed = state.dailySeed;
+  comboCount = state.comboCount;
+  maxComboThisGame = state.maxComboThisGame;
+  seenCountMap = state.seenCountMap;
+  lastGameValues = state.lastGameValues;
+});
+
+const HINT_LIMITS = GameState.HINT_LIMITS;
+const GUIDE_KEY = 'memory_match_onboarding_v1';
+
+// ============================================================
+// 设置管理：使用 SettingsManager 替代内联 settings 对象
+// ============================================================
+const Settings = __RememberSettings__;
+
+// 本地设置缓存（从 SettingsManager 同步）
+let settings = Settings.getAll();
+
+// 设置变更监听：自动同步到本地缓存
+const settingKeys = [
+  'sound',
+  'vibrate',
+  'previewSeconds',
+  'accent',
+  'theme',
+  'motion',
+  'volume',
+  'soundPack',
+  'cardFace',
+  'gameMode',
+  'countdown',
+  'language',
+  'adaptive',
+  'spaced',
+];
+settingKeys.forEach(key => {
+  Settings.onChange(key, newValue => {
+    settings[key] = newValue;
+    // 触发 UI 更新
+    if (key === 'theme') applyTheme();
+    if (key === 'motion') applyMotionPreference();
+    if (key === 'accent') applyAccentToDOM();
+  });
+});
+
+// N-back state (使用 NBackState 模块)
 let nbackRunning = false;
-let nbackTimer = null;
-let nbackSeq = [];
-let nbackIdx = 0;
-let nbackStepStart = 0;
-let nbackResponded = false;
-let nbackTargets = 0;
-let nbackHits = 0;
-let nbackMisses = 0;
-let nbackFalseAlarms = 0;
-let nbackRtSum = 0;
-let nbackRtCount = 0;
+let nbackState = null;
+let nbackLastFalseAlarms = 0;
 
 function formatTime(s) {
   return __RememberTimer__.formatTime(s);
@@ -750,8 +813,9 @@ function applyAccentToDOM() {
 }
 
 function updateProgressUI() {
-  const need = difficulties[currentDifficulty].pairs;
-  const done = matchedPairs;
+  const state = getGameState();
+  const need = difficulties[state.difficulty].pairs;
+  const done = state.matchedPairs;
   if (pairsLeftEl) pairsLeftEl.textContent = String(Math.max(0, need - done));
   const pct = need > 0 ? Math.min(100, Math.round((done / need) * 100)) : 0;
   if (progressBarEl) progressBarEl.style.width = pct + '%';
@@ -825,12 +889,13 @@ function updateStatsOnNewGame() {
   saveStats(recordGameStarted(loadStats()));
 }
 function updateStatsOnWin() {
+  const state = getGameState();
   saveStats(
     recordGameWon(loadStats(), {
-      elapsed,
-      moves,
-      hintsUsed,
-      maxCombo: maxComboThisGame,
+      elapsed: state.elapsed,
+      moves: state.moves,
+      hintsUsed: state.hintsUsed,
+      maxCombo: state.maxComboThisGame,
     })
   );
 }
@@ -871,7 +936,8 @@ function loadSettings() {
 }
 
 function saveSettings(s) {
-  __RememberStorage__.saveSettings(s);
+  Settings.setAll(s);
+  settings = Settings.getAll();
 }
 
 function applySettingsToUI() {
@@ -932,16 +998,18 @@ function updateLeaderboardUI() {
 }
 
 function updateHintUI() {
+  const state = getGameState();
   if (!hintBtn || !hintLeftEl) return;
-  hintLeftEl.textContent = String(hintsLeft);
-  hintBtn.disabled = hintsLeft <= 0 || paused || isPreviewing;
+  hintLeftEl.textContent = String(state.hintsLeft);
+  hintBtn.disabled = state.hintsLeft <= 0 || state.paused || state.isPreviewing;
 }
 
 function updateControlsUI() {
+  const state = getGameState();
   const t = i18n();
-  if (pauseBtn) pauseBtn.textContent = paused ? t.resume : t.pause;
+  if (pauseBtn) pauseBtn.textContent = state.paused ? t.resume : t.pause;
   if (pauseOverlay) {
-    if (paused) {
+    if (state.paused) {
       pauseOverlay.classList.remove('hidden');
       pauseOverlay.classList.add('flex');
     } else {
@@ -953,23 +1021,18 @@ function updateControlsUI() {
 }
 
 function togglePause() {
-  if (paused) resumeGame();
+  const state = getGameState();
+  if (state.paused) resumeGame();
   else pauseGame();
 }
 
 function pauseGame() {
-  if (paused) return;
-  paused = true;
-  stopTimer();
-  lockBoard = true;
+  GameState.pause();
   updateControlsUI();
 }
 
 function resumeGame() {
-  if (!paused) return;
-  paused = false;
-  if (started) startTimer();
-  lockBoard = false;
+  GameState.resume();
   updateControlsUI();
 }
 
@@ -996,40 +1059,17 @@ function updateBestUI() {
 }
 
 function stopTimer() {
-  timerId = __RememberTimer__.stopTimer(timerId);
+  GameState.stopTimer();
 }
 
 function resetTimer() {
-  stopTimer();
-  const res = __RememberTimer__.resetTimer({
-    isCountdownMode,
-    getCountdownFor,
-    currentDifficulty,
-  });
-  elapsed = res.elapsed;
-  countdownLeft = res.countdownLeft;
-  if (timeEl) timeEl.textContent = res.displayText;
+  GameState.resetTimer();
+  const state = getGameState();
+  if (timeEl) timeEl.textContent = __RememberTimer__.formatTime(state.elapsed);
 }
 
 function startTimer() {
-  const res = __RememberTimer__.startTimer({
-    timerId,
-    elapsed,
-    countdownLeft,
-    isCountdownMode,
-    getCountdownFor,
-    currentDifficulty,
-    onUpdate: updateTimerState,
-    onStop: () => {
-      timerId = null;
-    },
-    onTimeUp,
-    now: getNow,
-    tickMs: getTimerPollMs(),
-  });
-  timerId = res.timerId;
-  elapsed = res.elapsed;
-  countdownLeft = res.countdownLeft;
+  GameState.startTimer();
 }
 
 function setGridColumns(cols) {
@@ -1071,10 +1111,8 @@ function makeCard(item) {
 }
 
 function resetBoardState() {
-  // 委托给 GameManager
-  if (gameManager) {
-    gameManager.afterMismatchFlipBack();
-  }
+  // 委托给 GameStateManager
+  GameState.afterMismatchFlipBack();
 }
 
 // 当前翻开的卡片 DOM 元素（用于不匹配时翻回）
@@ -1082,14 +1120,13 @@ let currentFirstCardEl = null;
 let currentSecondCardEl = null;
 
 function onFlip(cardEl) {
-  if (paused || isPreviewing) return;
-  if (!gameManager) return;
-  const state = gameManager.getState();
-  if (state.isLocked) return;
+  const state = getGameState();
+  if (state.paused || state.isPreviewing) return;
+  if (state.isLocked || state.lockBoard) return;
   if (cardEl.classList.contains('flipped')) return;
-  if (!started) {
-    started = true;
-    startTimer();
+  if (!state.started) {
+    GameState.markStarted();
+    GameState.startTimer();
   }
   cardEl.classList.add('flipped');
   cardEl.setAttribute('aria-pressed', 'true');
@@ -1101,7 +1138,7 @@ function onFlip(cardEl) {
 
   const cardIndex = parseInt(cardEl.dataset.index, 10);
   const cardValue = cardEl.dataset.value;
-  const result = gameManager.flip(cardIndex, cardValue);
+  const result = GameState.flip(cardIndex, cardValue);
 
   if (!result.canFlip) {
     // 如果不允许翻转，移除翻转状态
@@ -1121,14 +1158,8 @@ function onFlip(cardEl) {
   if (result.isSecondCard) {
     // 第二张卡
     currentSecondCardEl = cardEl;
-    moves = gameManager.getState().moves;
-    movesEl.textContent = String(moves);
-
-    // 记录曝光
-    const v1 = currentFirstCardEl.dataset.value;
-    const v2 = currentSecondCardEl.dataset.value;
-    seenCountMap.set(v1, (seenCountMap.get(v1) || 0) + 1);
-    seenCountMap.set(v2, (seenCountMap.get(v2) || 0) + 1);
+    const newState = getGameState();
+    movesEl.textContent = String(newState.moves);
 
     if (result.matched) {
       // 匹配成功
@@ -1152,18 +1183,18 @@ function onFlip(cardEl) {
         'aria-label',
         `${getCardA11yLabel(resolveBoardTheme(), currentSecondCardEl.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
       );
-      matchedPairs = gameManager.getState().matchedPairs;
       sfx('match');
       vibrateMs(40);
 
-      // combo logic
-      const now = performance.now();
-      if (now - lastMatchAt <= COMBO_WINDOW_MS) comboCount += 1;
-      else comboCount = 1;
-      lastMatchAt = now;
-      if (comboCount >= 2) {
-        maxComboThisGame = Math.max(maxComboThisGame, comboCount);
-        showCombo(comboCount);
+      // 记录匹配（包含 combo 逻辑）
+      const v1 = currentFirstCardEl.dataset.value;
+      const v2 = currentSecondCardEl.dataset.value;
+      GameState.recordMatch(v1, v2);
+
+      // combo 显示
+      const comboState = getGameState();
+      if (comboState.comboCount >= 2) {
+        showCombo(comboState.comboCount);
         if (settings.sound)
           beep(1400, 0.08, 'sine', Math.max(0.03, (settings.volume || 0.5) * 0.08));
       }
@@ -1195,11 +1226,12 @@ function onFlip(cardEl) {
             getCardA11yLabel(resolveBoardTheme(), currentSecondCardEl.dataset.value)
           );
         }
-        gameManager.afterMismatchFlipBack();
+        GameState.afterMismatchFlipBack();
         currentFirstCardEl = null;
         currentSecondCardEl = null;
       }, MISMATCH_FLIP_BACK_MS);
-      comboCount = 0;
+      // 重置 combo
+      GameState.update({ comboCount: 0 });
     }
   }
 }
@@ -1220,22 +1252,23 @@ function initGame(diffKey) {
   }
   const cfg = difficulties[currentDifficulty];
 
-  // 初始化 GameManager
-  const { GameManager } = __RememberGameManager__;
-  gameManager = new GameManager({
+  // 使用 GameStateManager 初始化游戏状态
+  GameState.initGame({
+    difficulty: currentDifficulty,
     totalPairs: cfg.pairs,
-    onMatch: (card1, card2) => {
-      // 匹配回调（可选，目前逻辑在 onFlip 中处理）
+    mode: settings.gameMode || 'classic',
+    isCountdownMode: (settings.gameMode || 'classic') === 'countdown',
+    getCountdownFor: diff => {
+      const c = settings.countdown || DEFAULT_SETTINGS.countdown;
+      return Math.max(
+        10,
+        Math.min(999, parseInt((c && c[diff]) || DEFAULT_SETTINGS.countdown[diff]))
+      );
     },
-    onMismatch: (card1, card2) => {
-      // 不匹配回调（可选，目前逻辑在 onFlip 中处理）
-    },
-    onWin: () => {
-      // 胜利回调（可选，目前逻辑在 onFlip 中处理）
-    },
-    onProgress: (matched, total) => {
-      // 进度回调（可选，目前逻辑在 onFlip 中处理）
-    },
+    hintsLeft:
+      getAdaptiveAssist(currentDifficulty).hintLimit || HINT_LIMITS[currentDifficulty] || 0,
+    dailyActive: false,
+    dailySeed: 0,
   });
 
   clearGrid();
@@ -1246,13 +1279,13 @@ function initGame(diffKey) {
     el.dataset.index = String(idx);
     gridEl.appendChild(el);
   });
-  lastGameValues = Array.from(new Set(deck.map(d => d.v)));
-  moves = 0;
-  matchedPairs = 0;
-  started = false;
+
+  // 记录本局卡片值（用于回忆测试）
+  GameState.setLastGameValues(deck.map(d => d.v));
+
   currentFirstCardEl = null;
   currentSecondCardEl = null;
-  resetTimer();
+  GameState.resetTimer();
   movesEl.textContent = '0';
   updateBestUI();
   const assist = getAdaptiveAssist(currentDifficulty);
@@ -1262,15 +1295,6 @@ function initGame(diffKey) {
     previewSeconds: assist.previewSec,
     hintLimit: assist.hintLimit,
   });
-  hintsLeft = assist.hintLimit || 0;
-  hintsUsed = 0;
-  paused = false;
-  isPreviewing = false;
-  timeUp = false;
-  seenCountMap = new Map();
-  comboCount = 0;
-  maxComboThisGame = 0;
-  lastMatchAt = 0;
   updateControlsUI();
   updateLeaderboardUI();
   updateProgressUI();
@@ -1279,14 +1303,14 @@ function initGame(diffKey) {
   closeModalWithFocusRestore(winModal);
   const prevSec = Math.max(0, Number(assist.previewSec || 0));
   if (prevSec > 0) {
-    isPreviewing = true;
-    lockBoard = true;
+    GameState.setPreviewing(true);
+    GameState.setLockBoard(true);
     const cards = Array.from(gridEl.querySelectorAll('.card'));
     cards.forEach(c => c.classList.add('flipped'));
     setTimeout(() => {
       cards.forEach(c => c.classList.remove('flipped'));
-      isPreviewing = false;
-      lockBoard = false;
+      GameState.setPreviewing(false);
+      GameState.setLockBoard(false);
       updateControlsUI();
     }, prevSec * 1000);
   }
@@ -1294,24 +1318,31 @@ function initGame(diffKey) {
 
 function onWin() {
   stopTimer();
-  const prev = loadBest(currentDifficulty);
-  const curr = { time: elapsed, moves };
+  const state = getGameState();
+  const prev = loadBest(state.difficulty);
+  const curr = { time: state.elapsed, moves: state.moves };
   let better = false;
   if (!prev) better = true;
   else if (curr.time < prev.time) better = true;
   else if (curr.time === prev.time && curr.moves < prev.moves) better = true;
-  if (better) saveBest(currentDifficulty, curr);
+  if (better) saveBest(state.difficulty, curr);
   updateBestUI();
   const t = i18n();
-  winStatsEl.textContent = `${t.timeFmt} ${formatTime(elapsed)} · ${moves} ${t.stepsFmt}`;
-  const stars = getRating(elapsed, moves, currentDifficulty, hintsUsed, maxComboThisGame);
+  winStatsEl.textContent = `${t.timeFmt} ${formatTime(state.elapsed)} · ${state.moves} ${t.stepsFmt}`;
+  const stars = getRating(
+    state.elapsed,
+    state.moves,
+    state.difficulty,
+    state.hintsUsed,
+    state.maxComboThisGame
+  );
   logLifecycle('game_win', {
-    difficulty: currentDifficulty,
-    elapsed,
-    moves,
+    difficulty: state.difficulty,
+    elapsed: state.elapsed,
+    moves: state.moves,
     stars,
-    hintsUsed,
-    maxCombo: maxComboThisGame,
+    hintsUsed: state.hintsUsed,
+    maxCombo: state.maxComboThisGame,
   });
   renderRating(stars);
   openModalWithFocus(winModal);
@@ -1320,24 +1351,30 @@ function onWin() {
   updateStatsOnWin();
   updateAdaptiveOnEnd(
     true,
-    getRating(elapsed, moves, currentDifficulty, hintsUsed, maxComboThisGame),
-    currentDifficulty
+    getRating(
+      state.elapsed,
+      state.moves,
+      state.difficulty,
+      state.hintsUsed,
+      state.maxComboThisGame
+    ),
+    state.difficulty
   );
   // FSRS mastery update - use all exposed cards from seenCountMap
-  const matchedCards = Array.from(seenCountMap.keys());
+  const matchedCards = Array.from(state.seenCountMap.keys());
   updateMasteryAfterGame(settings.cardFace || 'emoji', matchedCards, {
-    elapsed,
-    moves,
-    difficulty: currentDifficulty,
-    hintsUsed,
-    maxCombo: maxComboThisGame,
+    elapsed: state.elapsed,
+    moves: state.moves,
+    difficulty: state.difficulty,
+    hintsUsed: state.hintsUsed,
+    maxCombo: state.maxComboThisGame,
     win: true,
   });
-  const arr = loadLeaderboard(currentDifficulty);
-  const updated = [...arr, { time: elapsed, moves, at: Date.now() }]
+  const arr = loadLeaderboard(state.difficulty);
+  const updated = [...arr, { time: state.elapsed, moves: state.moves, at: Date.now() }]
     .sort((a, b) => a.time - b.time || a.moves - b.moves)
     .slice(0, 3);
-  saveLeaderboard(currentDifficulty, updated);
+  saveLeaderboard(state.difficulty, updated);
   updateLeaderboardUI();
   runConfetti();
   const unlocked = checkAchievementsOnWin();
@@ -1345,22 +1382,26 @@ function onWin() {
   updateAchievementsUI();
   openRecallTest();
   // Daily complete
-  if (dailyActive) {
-    __RememberStorage__.markDailyDone(todayStr(), currentDifficulty);
+  if (state.dailyActive) {
+    __RememberStorage__.markDailyDone(todayStr(), state.difficulty);
     showToast(t.toastDailyDone);
   }
 }
 
 function onTimeUp() {
-  if (timeUp) return;
-  timeUp = true;
-  lockBoard = true;
-  paused = true;
-  logLifecycle('time_up', { difficulty: currentDifficulty, elapsed, moves });
+  const state = getGameState();
+  if (state.timeUp) return;
+  GameState.update({ timeUp: true, lockBoard: true, paused: true });
+  const newState = getGameState();
+  logLifecycle('time_up', {
+    difficulty: newState.difficulty,
+    elapsed: newState.elapsed,
+    moves: newState.moves,
+  });
   openModalWithFocus(loseModal);
   sfx('mismatch');
   vibrateMs(100);
-  updateAdaptiveOnEnd(false, 0, currentDifficulty);
+  updateAdaptiveOnEnd(false, 0, newState.difficulty);
 }
 
 function closeModal() {
@@ -1681,7 +1722,7 @@ if (typeof document !== 'undefined') {
 
     __RememberUIEvents__.bind(ui, events, document);
 
-    settings = loadSettings();
+    settings = Settings.getAll();
     applyAccentToDOM();
     applyTheme();
     applyMotionPreference();
@@ -1748,88 +1789,71 @@ function startNBack() {
     console.error('startNBack: emojiPool is empty or invalid');
     return;
   }
-  const pool = emojiPool.slice();
-  nbackSeq = Array.from(
-    { length: config.length },
-    () => pool[Math.floor(Math.random() * pool.length)]
-  );
-  nbackIdx = -1;
-  nbackTargets = 0;
-  nbackHits = 0;
-  nbackMisses = 0;
-  nbackFalseAlarms = 0;
-  nbackRtSum = 0;
-  nbackRtCount = 0;
+
+  // 使用 NBackState
+  const { default: NBackState } =
+    typeof module !== 'undefined' && module.exports
+      ? require('./src/nback-state.js')
+      : { default: __GLOBAL__.RememberNBack };
+
+  nbackState = new NBackState({
+    onComplete: summary => {
+      saveStats(
+        recordNBackAttempt(loadStats(), {
+          accuracy: summary.accuracy,
+          rtSum: summary.rtSum,
+          rtCount: summary.rtCount,
+        })
+      );
+      updateStatsUI();
+      const t = i18n();
+      showToast(
+        `${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`
+      );
+      nbackRunning = false;
+      if (nbackStartBtn) nbackStartBtn.textContent = t.nbackStart;
+    },
+    onStimulus: (stim, idx) => {
+      if (nbackStimEl) nbackStimEl.textContent = stim;
+    },
+    onProgress: progress => {
+      // 可选：显示进度
+    },
+    getPool: () => emojiPool.slice(),
+  });
+
+  nbackState.start(config);
   nbackRunning = true;
   if (nbackStartBtn) nbackStartBtn.textContent = i18n().nbackStop;
-  tickNBack(config.N, config.speed);
 }
 
 function stopNBack() {
+  if (nbackState) {
+    nbackState.stop();
+  }
   nbackRunning = false;
-  stopNBackTimer();
   if (nbackStartBtn) nbackStartBtn.textContent = i18n().nbackStart;
 }
 
-function tickNBack(N, speed) {
-  stopNBackTimer();
-  const period = speed;
-  nbackTimer = setInterval(() => {
-    // 统计上一拍漏报
-    if (nbackIdx >= N) {
-      const targetPrev = nbackSeq[nbackIdx] === nbackSeq[nbackIdx - N];
-      if (targetPrev && !nbackResponded) nbackMisses++;
-    }
-    // 前进到下一拍
-    nbackIdx += 1;
-    if (nbackIdx >= nbackSeq.length) {
-      finishNBack();
-      return;
-    }
-    const stim = nbackSeq[nbackIdx];
-    if (nbackStimEl) nbackStimEl.textContent = stim;
-    nbackResponded = false;
-    nbackStepStart = performance.now();
-    if (nbackIdx >= N && nbackSeq[nbackIdx] === nbackSeq[nbackIdx - N]) nbackTargets++;
-  }, period);
-}
-
 function onNBackKey() {
-  if (!nbackRunning) return;
-  if (nbackResponded) return;
-  nbackResponded = true;
-  const rt = Math.max(0, Math.round(performance.now() - nbackStepStart));
-  const N = Math.max(1, parseInt(nbackNSelect.value || '2'));
-  const isTarget = nbackIdx >= N && nbackSeq[nbackIdx] === nbackSeq[nbackIdx - N];
-  if (isTarget) {
-    nbackHits++;
-    nbackRtSum += rt;
-    nbackRtCount++;
-    sfx('match');
-  } else {
-    nbackFalseAlarms++;
+  if (!nbackRunning || !nbackState) return;
+  const state = nbackState.getState();
+  if (!state.running) return;
+
+  const wasTarget = nbackState.respond();
+  // NBackState.respond() 不返回是否是目标，需要从状态判断
+  // 播放音效
+  const currentState = nbackState.getState();
+  if (currentState.stats.falseAlarms > (nbackLastFalseAlarms || 0)) {
     sfx('mismatch');
+    nbackLastFalseAlarms = currentState.stats.falseAlarms;
+  } else {
+    sfx('match');
   }
 }
 
 function finishNBack() {
   stopNBack();
-  const summary = summarizeNBackResult({
-    targets: nbackTargets,
-    hits: nbackHits,
-    falseAlarms: nbackFalseAlarms,
-    length: nbackSeq.length,
-    rtSum: nbackRtSum,
-    rtCount: nbackRtCount,
-  });
-  saveStats(
-    recordNBackAttempt(loadStats(), {
-      accuracy: summary.accuracy,
-      rtSum: summary.rtSum,
-      rtCount: summary.rtCount,
-    })
-  );
-  updateStatsUI();
   const t = i18n();
   showToast(
     `${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`
@@ -1839,8 +1863,9 @@ function finishNBack() {
 function openRecallTest() {
   if (!recallModal || !recallChoicesEl) return;
   const theme = resolveBoardTheme();
+  const lastGameVals = GameState.getLastGameValues();
   const { items, correctSet } = buildRecallItems({
-    truthValues: lastGameValues,
+    truthValues: lastGameVals,
     poolValues: getPoolForTheme(theme).map(item => item.v),
     shuffle,
   });
@@ -2044,10 +2069,12 @@ function applyLanguage() {
 }
 
 function useHint() {
-  if (paused || isPreviewing) return;
-  if (lockBoard) return;
-  if (hintsLeft <= 0) return;
-  if (firstCard || secondCard) return;
+  const state = getGameState();
+  if (state.paused || state.isPreviewing) return;
+  if (state.lockBoard || state.isLocked) return;
+  if (state.hintsLeft <= 0) return;
+  // 检查是否有卡片已翻开
+  if (state.firstCard || state.secondCard) return;
   const cards = Array.from(gridEl.querySelectorAll('.card')).filter(
     c => !c.classList.contains('pointer-events-none') && !c.classList.contains('flipped')
   );
@@ -2061,7 +2088,7 @@ function useHint() {
   const candidates = Array.from(map.values()).filter(list => list.length >= 2);
   if (!candidates.length) return;
   const pair = candidates[Math.floor(Math.random() * candidates.length)].slice(0, 2);
-  lockBoard = true;
+  GameState.setLockBoard(true);
   pair[0].classList.add('flipped');
   pair[1].classList.add('flipped');
   sfx('flip');
@@ -2069,10 +2096,9 @@ function useHint() {
   setTimeout(() => {
     if (!pair[0].classList.contains('pointer-events-none')) pair[0].classList.remove('flipped');
     if (!pair[1].classList.contains('pointer-events-none')) pair[1].classList.remove('flipped');
-    lockBoard = false;
+    GameState.setLockBoard(false);
   }, HINT_DURATION_MS);
-  hintsLeft -= 1;
-  hintsUsed += 1;
+  GameState.useHint();
   updateHintUI();
 }
 
@@ -2186,12 +2212,13 @@ function saveAchievements(obj) {
 }
 
 function checkAchievementsOnWin() {
+  const state = getGameState();
   const result = checkAchievements(loadAchievements(), {
-    currentDifficulty,
-    elapsed,
-    hintsUsed,
-    moves,
-    pairs: difficulties[currentDifficulty].pairs,
+    currentDifficulty: state.difficulty,
+    elapsed: state.elapsed,
+    hintsUsed: state.hintsUsed,
+    moves: state.moves,
+    pairs: difficulties[state.difficulty].pairs,
   });
   if (result.newly.length) saveAchievements(result.store);
   return result.newly;
