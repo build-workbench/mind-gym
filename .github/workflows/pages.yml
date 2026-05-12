@@ -74,6 +74,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin imagemagick
+          echo "✓ librsvg2-bin (rsvg-convert) installed"
+          echo "✓ imagemagick (convert) installed"
+
       - name: Install dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci --prefer-offline
