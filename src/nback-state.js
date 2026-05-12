@@ -92,13 +92,21 @@
       }
     }
 
+    /**
+     * 响应当前刺激
+     * @returns {{ wasTarget: boolean, wasHit: boolean, wasFalseAlarm: boolean, responseTime: number } | null}
+     *   - wasTarget: 当前刺激是否是目标（与前 N 步相同）
+     *   - wasHit: 是否正确命中目标
+     *   - wasFalseAlarm: 是否误报（在非目标时响应）
+     *   - responseTime: 反应时间（毫秒）
+     */
     respond() {
       if (!this._running) {
-        return;
+        return null;
       }
 
       if (this._responded) {
-        return;
+        return null;
       }
 
       this._responded = true;
@@ -114,6 +122,13 @@
       } else {
         this._falseAlarms += 1;
       }
+
+      return {
+        wasTarget: isTarget,
+        wasHit: isTarget,
+        wasFalseAlarm: !isTarget,
+        responseTime: rt,
+      };
     }
 
     getState() {

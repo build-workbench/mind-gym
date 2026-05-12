@@ -224,7 +224,49 @@
       } catch {}
     }
 
+    /**
+     * 获取游戏快照（高层抽象）
+     * 一次性获取所有游戏相关数据，避免多次调用
+     * @returns {{
+     *   settings: object,
+     *   stats: object,
+     *   achievements: object,
+     *   bestScores: Record<string, object>,
+     *   adaptive: object,
+     *   leaderboards: Record<string, array>
+     * }}
+     */
+    function getGameSnapshot() {
+      return {
+        settings: loadSettings(),
+        stats: loadStats(),
+        achievements: loadAchievements(),
+        bestScores: {
+          easy: loadBest('easy'),
+          medium: loadBest('medium'),
+          hard: loadBest('hard'),
+        },
+        adaptive: loadAdaptive(),
+        leaderboards: {
+          easy: loadLeaderboard('easy'),
+          medium: loadLeaderboard('medium'),
+          hard: loadLeaderboard('hard'),
+        },
+      };
+    }
+
+    /**
+     * 重置所有数据（高层抽象）
+     * 清除所有游戏相关的 localStorage 数据
+     * @param {string} prefix - localStorage 键前缀
+     */
+    function resetAllData(prefix = 'memory_match_') {
+      const keys = listAllKeys();
+      removeKeysByPrefix(keys, prefix);
+    }
+
     return {
+      // 底层方法（保留向后兼容）
       loadAdaptive,
       saveAdaptive,
       loadSpaced,
@@ -248,6 +290,10 @@
       hideGuide,
       listAllKeys,
       removeKeysByPrefix,
+
+      // 高层抽象方法（新增）
+      getGameSnapshot,
+      resetAllData,
     };
   }
 );

@@ -64,25 +64,57 @@ describe('NBackState', () => {
   });
 
   describe('respond', () => {
-    test('tracks hits and false alarms', () => {
+    test('returns null when not running', () => {
+      const nback = new RememberNBack();
+      const result = nback.respond();
+      expect(result).toBeNull();
+    });
+
+    test('returns result object with wasTarget, wasHit, wasFalseAlarm, responseTime', done => {
       const pool = ['😀', '😎', '🎉', '🌟'];
-      const onComplete = jest.fn();
-      const onStimulus = jest.fn();
+      let responded = false;
       const nback = new RememberNBack({
         getPool: () => pool,
-        onComplete,
-        onStimulus,
+        onStimulus: () => {
+          if (!responded) {
+            responded = true;
+            const result = nback.respond();
+            expect(result).not.toBeNull();
+            expect(result).toHaveProperty('wasTarget');
+            expect(result).toHaveProperty('wasHit');
+            expect(result).toHaveProperty('wasFalseAlarm');
+            expect(result).toHaveProperty('responseTime');
+            expect(typeof result.responseTime).toBe('number');
+            // wasHit and wasFalseAlarm should be opposites
+            expect(result.wasHit).toBe(!result.wasFalseAlarm);
+            nback.stop();
+            done();
+          }
+        },
       });
 
-      // Start with very fast speed to finish quickly in test
-      nback.start({ N: 2, length: 6, speed: 50 });
+      nback.start({ N: 2, length: 10, speed: 100 });
+    });
 
-      // Wait for task to complete
-      setTimeout(() => {
-        const state = nback.getState();
-        expect(state.stats.hits + state.stats.falseAlarms).toBeGreaterThan(0);
-        expect(onComplete).toHaveBeenCalled();
-      }, 400);
+    test('returns null on second call (already responded)', done => {
+      const pool = ['😀', '😎', '🎉', '🌟'];
+      let callCount = 0;
+      const nback = new RememberNBack({
+        getPool: () => pool,
+        onStimulus: () => {
+          callCount++;
+          if (callCount === 1) {
+            const result1 = nback.respond();
+            expect(result1).not.toBeNull();
+            const result2 = nback.respond();
+            expect(result2).toBeNull(); // already responded
+            nback.stop();
+            done();
+          }
+        },
+      });
+
+      nback.start({ N: 2, length: 10, speed: 100 });
     });
   });
 

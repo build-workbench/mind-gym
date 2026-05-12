@@ -78,6 +78,14 @@ const __RememberSettings__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/settings-manager.js')
     : __GLOBAL__.RememberSettings;
+const __RememberRecall__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/recall-state.js')
+    : __GLOBAL__.RememberRecall;
+const __RememberDaily__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/daily.js')
+    : __GLOBAL__.RememberDaily;
 const MODAL_FOCUS_PREV = new WeakMap();
 const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
 const DIFFS = ['easy', 'medium', 'hard'];
@@ -619,7 +627,9 @@ let comboCount = 0;
 let maxComboThisGame = 0;
 let seenCountMap = new Map();
 let lastGameValues = [];
-let recallCorrectSet = new Set();
+
+// RecallState 实例 — 封装回忆测试的完整生命周期
+const recallState = new __RememberRecall__();
 
 // 订阅 GameState 变更，同步到本地变量
 GameState.onChange((state, changedKeys) => {
@@ -684,7 +694,6 @@ settingKeys.forEach(key => {
 // N-back state (使用 NBackState 模块)
 let nbackRunning = false;
 let nbackState = null;
-let nbackLastFalseAlarms = 0;
 
 function formatTime(s) {
   return __RememberTimer__.formatTime(s);
@@ -1383,7 +1392,7 @@ function onWin() {
   openRecallTest();
   // Daily complete
   if (state.dailyActive) {
-    __RememberStorage__.markDailyDone(todayStr(), state.difficulty);
+    __RememberDaily__.completeChallenge(state.difficulty);
     showToast(t.toastDailyDone);
   }
 }
@@ -1658,8 +1667,8 @@ if (typeof document !== 'undefined') {
       onDailyOpen: () => {
         if (dailyInfoEl) {
           const t = i18n();
-          const date = todayStr();
-          const status = __RememberStorage__.isDailyDone(date, difficultyEl.value)
+          const date = __RememberDaily__.todayStr();
+          const status = __RememberDaily__.isDone(difficultyEl.value)
             ? t.completed
             : t.notCompleted;
           dailyInfoEl.textContent = `${t.today} ${date} · ${t.difficulty}：${difficultyEl.options[difficultyEl.selectedIndex].text} · ${t.status}：${status}`;
@@ -1670,8 +1679,12 @@ if (typeof document !== 'undefined') {
         closeModalWithFocusRestore(dailyModal);
       },
       onDailyStart: () => {
+        const challenge = __RememberDaily__.startChallenge(
+          difficultyEl.value,
+          settings.cardFace || 'emoji'
+        );
         dailyActive = true;
-        dailySeed = seedFromDate(todayStr(), difficultyEl.value, settings.cardFace || 'emoji');
+        dailySeed = challenge.seed;
         closeModalWithFocusRestore(dailyModal);
         showToast(i18n().toastDailyStarted);
         initGame(difficultyEl.value);
@@ -1840,14 +1853,13 @@ function onNBackKey() {
   const state = nbackState.getState();
   if (!state.running) return;
 
-  const wasTarget = nbackState.respond();
-  // NBackState.respond() 不返回是否是目标，需要从状态判断
-  // 播放音效
-  const currentState = nbackState.getState();
-  if (currentState.stats.falseAlarms > (nbackLastFalseAlarms || 0)) {
+  const result = nbackState.respond();
+  if (!result) return;
+
+  // 播放音效：命中目标或误报
+  if (result.wasFalseAlarm) {
     sfx('mismatch');
-    nbackLastFalseAlarms = currentState.stats.falseAlarms;
-  } else {
+  } else if (result.wasHit) {
     sfx('match');
   }
 }
@@ -1864,12 +1876,11 @@ function openRecallTest() {
   if (!recallModal || !recallChoicesEl) return;
   const theme = resolveBoardTheme();
   const lastGameVals = GameState.getLastGameValues();
-  const { items, correctSet } = buildRecallItems({
-    truthValues: lastGameVals,
-    poolValues: getPoolForTheme(theme).map(item => item.v),
-    shuffle,
-  });
-  recallCorrectSet = correctSet;
+
+  // 使用 RecallState 生成测试（而非直接调用 buildRecallItems）
+  recallState.recordGame(lastGameVals);
+  const { items } = recallState.generateTest(getPoolForTheme(theme).map(item => item.v));
+
   recallChoicesEl.innerHTML = items
     .map((item, index) => {
       const value = String(item.v);
@@ -1886,7 +1897,10 @@ function openRecallTest() {
 }
 function submitRecallTest() {
   if (!recallModal || !recallChoicesEl) return;
-  const result = scoreRecall(recallCorrectSet, getSelectedRecallValues(recallChoicesEl));
+
+  // 使用 RecallState 提交答案（而非直接调用 scoreRecall）
+  const result = recallState.submitAnswer(getSelectedRecallValues(recallChoicesEl));
+
   saveStats(
     recordRecallAttempt(loadStats(), {
       precision: result.precision,

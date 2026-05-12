@@ -184,3 +184,32 @@ Each module exposes a global object (UMD pattern).
 - [i18n Strategy](openspec/rfc/0002-i18n-strategy.md)
 - [PWA & Offline](openspec/rfc/0003-pwa-offline.md)
 - [app.js Refactoring](openspec/rfc/0004-app-refactoring.md)
+
+---
+
+## Changelog
+
+### 2026-05-13: Architecture Improvements
+
+**NBackState.respond()** — 接口完善
+
+- 添加返回值：`{ wasTarget, wasHit, wasFalseAlarm, responseTime }`
+- 消除冗余：删除 `app.js` 中的 `nbackLastFalseAlarms` 变量
+- 局部性：命中判断逻辑集中在模块内部
+
+**RecallState** — 正确使用
+
+- `app.js` 现在使用 `recallState.recordGame()`, `generateTest()`, `submitAnswer()`
+- 删除全局变量 `recallCorrectSet`
+- 局部性：回忆测试逻辑封装在深层模块
+
+**DailyChallengeManager** — 深层模块
+
+- 从委托层升级为完整的每日挑战管理器
+- 新增 `startChallenge()`, `completeChallenge()` 方法
+- 杠杆：简化调用，封装生命周期
+
+**Storage** — 高层抽象
+
+- 新增 `getGameSnapshot()`, `resetAllData()` 方法
+- 杠杆：一次性获取所有游戏数据
