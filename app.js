@@ -1864,14 +1864,6 @@ function onNBackKey() {
   }
 }
 
-function finishNBack() {
-  stopNBack();
-  const t = i18n();
-  showToast(
-    `${t.nbackResult} · ${t.nbackAccuracy} ${Math.round(summary.accuracy * 100)}%${summary.rtCount > 0 ? ` · ${t.nbackAvgRt} ${summary.avgRt}ms` : ''}`
-  );
-}
-
 function openRecallTest() {
   if (!recallModal || !recallChoicesEl) return;
   const theme = resolveBoardTheme();
