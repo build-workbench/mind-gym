@@ -281,6 +281,23 @@
     <!-- Preconnect to required origins -->
     <link rel="prefetch" href="./app.js" />
     <link rel="prefetch" href="./src/storage.js" />
+
+    <!-- Early language detection to prevent FOUC -->
+    <script>
+      (function () {
+        var lang = 'auto';
+        try {
+          var s = localStorage.getItem('memory_match__settings');
+          if (s) lang = JSON.parse(s).language || 'auto';
+        } catch (e) {}
+        if (lang === 'auto') {
+          var nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+          lang = nav.startsWith('zh') ? 'zh' : 'en';
+        }
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
+      })();
+    </script>
   </head>
 
   <body
@@ -318,15 +335,24 @@
       <!-- Main Game UI -->
       <div class="max-w-5xl mx-auto p-4 sm:p-6">
         <header class="mb-4 sm:mb-6">
-          <h1 id="pageTitle" class="text-2xl sm:text-3xl font-bold">记忆力训练 · 翻牌配对</h1>
+          <h1 id="pageTitle" class="text-2xl sm:text-3xl font-bold">
+            <span data-i18n-zh>记忆力训练 · 翻牌配对</span>
+            <span data-i18n-en>Memory Training · Card Match</span>
+          </h1>
           <p id="pageSubtitle" class="text-slate-500 mt-1 text-sm">
-            选择难度，开始翻牌配对训练记忆。完成后将记录你的最佳成绩。
+            <span data-i18n-zh>选择难度，开始翻牌配对训练记忆。完成后将记录你的最佳成绩。</span>
+            <span data-i18n-en
+              >Pick a difficulty and start matching cards. Your best runs are recorded.</span
+            >
           </p>
         </header>
 
         <section class="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div class="flex items-center gap-2">
-            <label id="difficultyLabel" for="difficulty" class="text-sm text-slate-600">难度</label>
+            <label id="difficultyLabel" for="difficulty" class="text-sm text-slate-600">
+              <span data-i18n-zh>难度</span>
+              <span data-i18n-en>Difficulty</span>
+            </label>
             <select
               id="difficulty"
               class="px-2 py-1.5 rounded-md border border-slate-300 bg-white text-sm"
@@ -346,10 +372,16 @@
             class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
           >
             <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-              <h2 id="nbackTitle" class="text-lg font-semibold mb-2">N-back 训练</h2>
+              <h2 id="nbackTitle" class="text-lg font-semibold mb-2">
+                <span data-i18n-zh>N-back 训练</span>
+                <span data-i18n-en>N-back Training</span>
+              </h2>
               <div class="grid grid-cols-3 gap-2 text-sm mb-3">
                 <label class="flex items-center justify-between">
-                  <span id="nbackNLabel" class="text-slate-700">N 值</span>
+                  <span id="nbackNLabel" class="text-slate-700">
+                    <span data-i18n-zh>N 值</span>
+                    <span data-i18n-en>N</span>
+                  </span>
                   <select id="nbackNSelect" class="px-2 py-1 rounded-md border border-slate-300">
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -357,7 +389,10 @@
                   </select>
                 </label>
                 <label class="flex items-center justify-between">
-                  <span id="nbackSpeedLabel" class="text-slate-700">节奏(ms)</span>
+                  <span id="nbackSpeedLabel" class="text-slate-700">
+                    <span data-i18n-zh>节奏(ms)</span>
+                    <span data-i18n-en>Pace(ms)</span>
+                  </span>
                   <select
                     id="nbackSpeedSelect"
                     class="px-2 py-1 rounded-md border border-slate-300"
@@ -368,7 +403,10 @@
                   </select>
                 </label>
                 <label class="flex items-center justify-between">
-                  <span id="nbackLenLabel" class="text-slate-700">长度</span>
+                  <span id="nbackLenLabel" class="text-slate-700">
+                    <span data-i18n-zh>长度</span>
+                    <span data-i18n-en>Length</span>
+                  </span>
                   <select id="nbackLenSelect" class="px-2 py-1 rounded-md border border-slate-300">
                     <option value="20">20</option>
                     <option value="30">30</option>
@@ -384,19 +422,24 @@
                   —
                 </div>
               </div>
-              <p id="nbackHint" class="text-xs text-slate-500 mb-3">按 J 判定"与 N 步前相同"</p>
+              <p id="nbackHint" class="text-xs text-slate-500 mb-3">
+                <span data-i18n-zh>按 J 判定"与 N 步前相同"</span>
+                <span data-i18n-en>Press J when it matches N-back</span>
+              </p>
               <div class="flex justify-end gap-3">
                 <button
                   id="nbackClose"
                   class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
                 >
-                  关闭
+                  <span data-i18n-zh>关闭</span>
+                  <span data-i18n-en>Close</span>
                 </button>
                 <button
                   id="nbackStart"
                   class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
                 >
-                  开始
+                  <span data-i18n-zh>开始</span>
+                  <span data-i18n-en>Start</span>
                 </button>
               </div>
             </div>
@@ -411,20 +454,25 @@
             class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
           >
             <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-              <h2 id="dailyTitle" class="text-lg font-semibold mb-2">每日挑战</h2>
+              <h2 id="dailyTitle" class="text-lg font-semibold mb-2">
+                <span data-i18n-zh>每日挑战</span>
+                <span data-i18n-en>Daily Challenge</span>
+              </h2>
               <p id="dailyInfo" class="text-sm text-slate-600 dark:text-slate-300 mb-3"></p>
               <div class="mt-2 flex justify-end gap-3">
                 <button
                   id="dailyClose"
                   class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
-                  关闭
+                  <span data-i18n-zh>关闭</span>
+                  <span data-i18n-en>Close</span>
                 </button>
                 <button
                   id="dailyStart"
                   class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
                 >
-                  开始挑战
+                  <span data-i18n-zh>开始挑战</span>
+                  <span data-i18n-en>Start</span>
                 </button>
               </div>
             </div>
@@ -434,49 +482,58 @@
               id="newGameBtn"
               class="px-3 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 active:bg-indigo-800"
             >
-              开始/重开
+              <span data-i18n-zh>开始/重开</span>
+              <span data-i18n-en>New/Restart</span>
             </button>
             <button
               id="pauseBtn"
               class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
             >
-              暂停
+              <span data-i18n-zh>暂停</span>
+              <span data-i18n-en>Pause</span>
             </button>
             <button
               id="hintBtn"
               class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
             >
-              提示 <span id="hintLeft" class="ml-1">0</span>
+              <span data-i18n-zh>提示</span>
+              <span data-i18n-en>Hint</span>
+              <span id="hintLeft" class="ml-1">0</span>
             </button>
             <button
               id="settingsBtn"
               class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
             >
-              设置
+              <span data-i18n-zh>设置</span>
+              <span data-i18n-en>Settings</span>
             </button>
             <button
               id="guideBtn"
               class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
             >
-              指南
+              <span data-i18n-zh>指南</span>
+              <span data-i18n-en>Guide</span>
             </button>
             <button
               id="achievementsBtn"
               class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
             >
-              成就
+              <span data-i18n-zh>成就</span>
+              <span data-i18n-en>Achievements</span>
             </button>
             <button
               id="statsBtn"
               class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
             >
-              统计
+              <span data-i18n-zh>统计</span>
+              <span data-i18n-en>Stats</span>
             </button>
             <button
               id="dailyBtn"
               class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
             >
-              每日
+              <span data-i18n-zh>每日</span>
+              <span data-i18n-en>Daily</span>
             </button>
             <button
               id="nbackBtn"
@@ -488,7 +545,10 @@
           <div class="flex-1"></div>
           <div class="flex items-center gap-4 text-sm">
             <div>
-              <span id="timeLabel">用时</span>
+              <span id="timeLabel">
+                <span data-i18n-zh>用时</span>
+                <span data-i18n-en>Time</span>
+              </span>
               <span
                 id="time"
                 class="font-semibold"
@@ -499,7 +559,10 @@
               >
             </div>
             <div>
-              <span id="movesLabel">步数</span>
+              <span id="movesLabel">
+                <span data-i18n-zh>步数</span>
+                <span data-i18n-en>Moves</span>
+              </span>
               <span
                 id="moves"
                 class="font-semibold"
@@ -510,14 +573,22 @@
               >
             </div>
             <div class="text-slate-500 dark:text-slate-400">
-              <span id="bestLabel">最佳</span>
+              <span id="bestLabel">
+                <span data-i18n-zh>最佳</span>
+                <span data-i18n-en>Best</span>
+              </span>
               <span id="best" class="font-semibold text-slate-700 dark:text-slate-200">—</span>
             </div>
           </div>
         </section>
         <div class="mb-3">
           <div class="flex items-center justify-between text-xs text-slate-500">
-            <span>进度</span><span><span id="pairsLeft">0</span> 对剩余</span>
+            <span data-i18n-zh>进度</span>
+            <span data-i18n-en>Progress</span>
+            <span
+              ><span id="pairsLeft">0</span> <span data-i18n-zh>对剩余</span
+              ><span data-i18n-en>pairs left</span></span
+            >
           </div>
           <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
             <div id="progressBar" class="h-full bg-indigo-500" style="width: 0%"></div>
@@ -529,7 +600,8 @@
         </main>
         <section class="mt-4 sm:mt-6">
           <h3 id="leaderboardTitle" class="text-sm font-semibold text-slate-600">
-            排行榜（当前难度）
+            <span data-i18n-zh>排行榜（当前难度）</span>
+            <span data-i18n-en>Leaderboard (current difficulty)</span>
           </h3>
           <ul id="leaderboardList" class="mt-2 text-sm text-slate-700 space-y-1"></ul>
         </section>
@@ -551,7 +623,10 @@
             >
               🎉
             </div>
-            <h2 id="winTitle" class="text-xl font-semibold mb-2">太棒了！全部配对完成</h2>
+            <h2 id="winTitle" class="text-xl font-semibold mb-2">
+              <span data-i18n-zh>太棒了！全部配对完成</span>
+              <span data-i18n-en>Great! All matched</span>
+            </h2>
             <div id="ratingStars" class="mb-1 text-lg"></div>
             <p id="winStats" class="text-slate-600 dark:text-slate-300 mb-4 text-sm"></p>
             <div class="flex items-center justify-center gap-3">
@@ -559,19 +634,22 @@
                 id="playAgain"
                 class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
               >
-                再来一局
+                <span data-i18n-zh>再来一局</span>
+                <span data-i18n-en>Play Again</span>
               </button>
               <button
                 id="shareBtn"
                 class="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
               >
-                分享战绩
+                <span data-i18n-zh>分享战绩</span>
+                <span data-i18n-en>Share</span>
               </button>
               <button
                 id="closeModal"
                 class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 dark:text-slate-200 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
-                返回
+                <span data-i18n-zh>返回</span>
+                <span data-i18n-en>Back</span>
               </button>
             </div>
           </div>
@@ -594,22 +672,28 @@
             >
               ⏳
             </div>
-            <h2 id="loseTitle" class="text-xl font-semibold mb-2">时间到，挑战失败</h2>
+            <h2 id="loseTitle" class="text-xl font-semibold mb-2">
+              <span data-i18n-zh>时间到，挑战失败</span>
+              <span data-i18n-en>Time Up</span>
+            </h2>
             <p id="loseDesc" class="text-slate-600 dark:text-slate-300 mb-4 text-sm">
-              可在设置中调整"限时时长"，或重试本局。
+              <span data-i18n-zh>可在设置中调整"限时时长"，或重试本局。</span>
+              <span data-i18n-en>You can adjust countdown in Settings or retry this round.</span>
             </p>
             <div class="flex items-center justify-center gap-3">
               <button
                 id="failRetry"
                 class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
               >
-                重试
+                <span data-i18n-zh>重试</span>
+                <span data-i18n-en>Retry</span>
               </button>
               <button
                 id="failClose"
                 class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 dark:text-slate-200 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
-                返回
+                <span data-i18n-zh>返回</span>
+                <span data-i18n-en>Back</span>
               </button>
             </div>
           </div>
@@ -633,13 +717,20 @@
           >
             ⏸️
           </div>
-          <h2 id="pauseTitle" class="text-xl font-semibold mb-2">已暂停</h2>
-          <p class="text-slate-600 mb-4 text-sm">点击继续恢复游戏</p>
+          <h2 id="pauseTitle" class="text-xl font-semibold mb-2">
+            <span data-i18n-zh>已暂停</span>
+            <span data-i18n-en>Paused</span>
+          </h2>
+          <p class="text-slate-600 mb-4 text-sm">
+            <span data-i18n-zh>点击继续恢复游戏</span>
+            <span data-i18n-en>Click resume to continue</span>
+          </p>
           <button
             id="resumeBtn"
             class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
           >
-            继续
+            <span data-i18n-zh>继续</span>
+            <span data-i18n-en>Resume</span>
           </button>
         </div>
       </div>
@@ -654,18 +745,30 @@
         class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
       >
         <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-          <h2 id="settingsTitle" class="text-lg font-semibold mb-4">设置</h2>
+          <h2 id="settingsTitle" class="text-lg font-semibold mb-4">
+            <span data-i18n-zh>设置</span>
+            <span data-i18n-en>Settings</span>
+          </h2>
           <div class="space-y-4">
             <label class="flex items-center justify-between">
-              <span id="settingSoundLabel" class="text-sm text-slate-700">声音</span>
+              <span id="settingSoundLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>声音</span>
+                <span data-i18n-en>Sound</span>
+              </span>
               <input id="settingSound" type="checkbox" class="h-4 w-4" />
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingVibrateLabel" class="text-sm text-slate-700">震动</span>
+              <span id="settingVibrateLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>震动</span>
+                <span data-i18n-en>Vibration</span>
+              </span>
               <input id="settingVibrate" type="checkbox" class="h-4 w-4" />
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingPreviewLabel" class="text-sm text-slate-700">开局预览秒数</span>
+              <span id="settingPreviewLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>开局预览秒数</span>
+                <span data-i18n-en>Preview seconds</span>
+              </span>
               <input
                 id="settingPreview"
                 type="number"
@@ -676,7 +779,10 @@
               />
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingAccentLabel" class="text-sm text-slate-700">主题色</span>
+              <span id="settingAccentLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>主题色</span>
+                <span data-i18n-en>Accent color</span>
+              </span>
               <select id="settingAccent" class="px-2 py-1 rounded-md border border-slate-300">
                 <option id="accentIndigo" value="indigo">靛蓝</option>
                 <option id="accentEmerald" value="emerald">翡翠绿</option>
@@ -684,7 +790,10 @@
               </select>
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingThemeLabel" class="text-sm text-slate-700">暗色模式</span>
+              <span id="settingThemeLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>暗色模式</span>
+                <span data-i18n-en>Theme mode</span>
+              </span>
               <select id="settingTheme" class="px-2 py-1 rounded-md border border-slate-300">
                 <option id="themeAuto" value="auto">自动</option>
                 <option id="themeLight" value="light">浅色</option>
@@ -692,7 +801,10 @@
               </select>
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingMotionLabel" class="text-sm text-slate-700">减少动画</span>
+              <span id="settingMotionLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>减少动画</span>
+                <span data-i18n-en>Motion</span>
+              </span>
               <select id="settingMotion" class="px-2 py-1 rounded-md border border-slate-300">
                 <option id="motionAuto" value="auto">自动</option>
                 <option id="motionOn" value="on">开启</option>
@@ -700,14 +812,20 @@
               </select>
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingVolumeLabel" class="text-sm text-slate-700">音量</span>
+              <span id="settingVolumeLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>音量</span>
+                <span data-i18n-en>Volume</span>
+              </span>
               <div class="flex items-center gap-2">
                 <input id="settingVolume" type="range" min="0" max="100" step="1" class="w-40" />
                 <span id="settingVolumeValue" class="text-xs text-slate-500">50%</span>
               </div>
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingSoundPackLabel" class="text-sm text-slate-700">音效风格</span>
+              <span id="settingSoundPackLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>音效风格</span>
+                <span data-i18n-en>Sound pack</span>
+              </span>
               <select id="settingSoundPack" class="px-2 py-1 rounded-md border border-slate-300">
                 <option id="soundPackClear" value="clear">清亮</option>
                 <option id="soundPackElectro" value="electro">电子</option>
@@ -715,15 +833,24 @@
               </select>
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingAdaptiveLabel" class="text-sm text-slate-700">自适应训练</span>
+              <span id="settingAdaptiveLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>自适应训练</span>
+                <span data-i18n-en>Adaptive assist</span>
+              </span>
               <input id="settingAdaptive" type="checkbox" class="h-4 w-4" />
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingSpacedLabel" class="text-sm text-slate-700">间隔复现（易错卡）</span>
+              <span id="settingSpacedLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>间隔复现（易错卡）</span>
+                <span data-i18n-en>Spaced reinforcement</span>
+              </span>
               <input id="settingSpaced" type="checkbox" class="h-4 w-4" />
             </label>
             <label class="flex items-center justify-between">
-              <span id="settingLanguageLabel" class="text-sm text-slate-700">语言</span>
+              <span id="settingLanguageLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>语言</span>
+                <span data-i18n-en>Language</span>
+              </span>
               <select id="settingLanguage" class="px-2 py-1 rounded-md border border-slate-300">
                 <option id="languageAuto" value="auto">自动</option>
                 <option id="languageZh" value="zh">中文</option>
@@ -732,7 +859,10 @@
             </label>
             <div class="h-px bg-slate-200"></div>
             <label class="flex items-center justify-between">
-              <span id="settingGameModeLabel" class="text-sm text-slate-700">玩法</span>
+              <span id="settingGameModeLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>玩法</span>
+                <span data-i18n-en>Mode</span>
+              </span>
               <select id="settingGameMode" class="px-2 py-1 rounded-md border border-slate-300">
                 <option id="gameModeClassic" value="classic">经典</option>
                 <option id="gameModeCountdown" value="countdown">限时</option>
@@ -740,7 +870,10 @@
             </label>
             <div id="countdownConfig" class="grid grid-cols-3 gap-2 text-sm">
               <label class="flex items-center justify-between col-span-1">
-                <span id="countdownEasyLabel" class="text-slate-700">简单(s)</span>
+                <span id="countdownEasyLabel" class="text-slate-700">
+                  <span data-i18n-zh>简单(s)</span>
+                  <span data-i18n-en>Easy (s)</span>
+                </span>
                 <input
                   id="settingCountdownEasy"
                   type="number"
@@ -751,7 +884,10 @@
                 />
               </label>
               <label class="flex items-center justify-between col-span-1">
-                <span id="countdownMediumLabel" class="text-slate-700">中等(s)</span>
+                <span id="countdownMediumLabel" class="text-slate-700">
+                  <span data-i18n-zh>中等(s)</span>
+                  <span data-i18n-en>Medium (s)</span>
+                </span>
                 <input
                   id="settingCountdownMedium"
                   type="number"
@@ -762,7 +898,10 @@
                 />
               </label>
               <label class="flex items-center justify-between col-span-1">
-                <span id="countdownHardLabel" class="text-slate-700">困难(s)</span>
+                <span id="countdownHardLabel" class="text-slate-700">
+                  <span data-i18n-zh>困难(s)</span>
+                  <span data-i18n-en>Hard (s)</span>
+                </span>
                 <input
                   id="settingCountdownHard"
                   type="number"
@@ -775,7 +914,10 @@
             </div>
             <div class="h-px bg-slate-200"></div>
             <label class="flex items-center justify-between">
-              <span id="settingCardFaceLabel" class="text-sm text-slate-700">卡面主题</span>
+              <span id="settingCardFaceLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>卡面主题</span>
+                <span data-i18n-en>Card face</span>
+              </span>
               <select id="settingCardFace" class="px-2 py-1 rounded-md border border-slate-300">
                 <option id="cardFaceEmoji" value="emoji">Emoji</option>
                 <option id="cardFaceNumbers" value="numbers">数字</option>
@@ -786,19 +928,24 @@
             </label>
             <div class="h-px bg-slate-200"></div>
             <div class="flex items-center justify-between">
-              <span id="backupLabel" class="text-sm text-slate-700">数据备份</span>
+              <span id="backupLabel" class="text-sm text-slate-700">
+                <span data-i18n-zh>数据备份</span>
+                <span data-i18n-en>Backup</span>
+              </span>
               <div class="flex items-center gap-2">
                 <button
                   id="exportBtn"
                   class="px-2 py-1 rounded-md border border-slate-300 text-sm bg-white hover:bg-slate-50"
                 >
-                  导出
+                  <span data-i18n-zh>导出</span>
+                  <span data-i18n-en>Export</span>
                 </button>
                 <button
                   id="importBtn"
                   class="px-2 py-1 rounded-md border border-slate-300 text-sm bg-white hover:bg-slate-50"
                 >
-                  导入
+                  <span data-i18n-zh>导入</span>
+                  <span data-i18n-en>Import</span>
                 </button>
                 <input id="importFile" type="file" accept="application/json" class="hidden" />
               </div>
@@ -809,19 +956,22 @@
               id="settingsCancel"
               class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
             >
-              取消
+              <span data-i18n-zh>取消</span>
+              <span data-i18n-en>Cancel</span>
             </button>
             <button
               id="settingsSave"
               class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
             >
-              保存
+              <span data-i18n-zh>保存</span>
+              <span data-i18n-en>Save</span>
             </button>
             <button
               id="resetData"
               class="px-4 py-2 rounded-md border border-rose-300 text-rose-700 text-sm bg-white hover:bg-rose-50"
             >
-              重置数据
+              <span data-i18n-zh>重置数据</span>
+              <span data-i18n-en>Reset data</span>
             </button>
           </div>
         </div>
@@ -839,9 +989,13 @@
         <div class="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
           <div class="flex items-start justify-between mb-4">
             <div>
-              <h2 id="guideTitle" class="text-lg font-semibold">快速上手指南</h2>
+              <h2 id="guideTitle" class="text-lg font-semibold">
+                <span data-i18n-zh>快速上手指南</span>
+                <span data-i18n-en>Quick Start Guide</span>
+              </h2>
               <p id="guideIntro" class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-                第一次游玩？按照下面的步骤开始训练。
+                <span data-i18n-zh>第一次游玩？按照下面的步骤开始训练。</span>
+                <span data-i18n-en>New here? Follow these steps to begin your training.</span>
               </p>
             </div>
             <span class="text-2xl" aria-hidden="true">🧭</span>
@@ -853,7 +1007,8 @@
                 id="guideBasicsTitle"
                 class="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
-                基础操作
+                <span data-i18n-zh>基础操作</span>
+                <span data-i18n-en>Basics</span>
               </h3>
               <ul id="guideBasicsList" class="mt-2 list-disc pl-5 space-y-1"></ul>
             </section>
@@ -862,7 +1017,8 @@
                 id="guideAdvancedTitle"
                 class="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
-                进阶技巧
+                <span data-i18n-zh>进阶技巧</span>
+                <span data-i18n-en>Pro Tips</span>
               </h3>
               <ul id="guideAdvancedList" class="mt-2 list-disc pl-5 space-y-1"></ul>
             </section>
@@ -871,7 +1027,8 @@
                 id="guideShortcutsTitle"
                 class="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
-                常用快捷键
+                <span data-i18n-zh>常用快捷键</span>
+                <span data-i18n-en>Shortcuts</span>
               </h3>
               <ul id="guideShortcutsList" class="mt-2 space-y-1"></ul>
             </section>
@@ -881,17 +1038,22 @@
               class="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400"
             >
               <input id="guideNoShow" type="checkbox" class="h-4 w-4" />
-              <span id="guideNoShowLabel">下次不再显示</span>
+              <span id="guideNoShowLabel">
+                <span data-i18n-zh>下次不再显示</span>
+                <span data-i18n-en>Don't show again</span>
+              </span>
             </label>
             <div class="flex items-center gap-3">
-              <span id="guideOpenHint" class="text-xs text-slate-400"
-                >随时可点击上方"指南"查看</span
-              >
+              <span id="guideOpenHint" class="text-xs text-slate-400">
+                <span data-i18n-zh>随时可点击上方"指南"查看</span>
+                <span data-i18n-en>You can reopen the guide anytime from the toolbar</span>
+              </span>
               <button
                 id="guideClose"
                 class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
               >
-                开始训练
+                <span data-i18n-zh>开始训练</span>
+                <span data-i18n-en>Start training</span>
               </button>
             </div>
           </div>
@@ -917,14 +1079,18 @@
         class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
       >
         <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-          <h2 id="statsTitle" class="text-lg font-semibold mb-2">统计</h2>
+          <h2 id="statsTitle" class="text-lg font-semibold mb-2">
+            <span data-i18n-zh>统计</span>
+            <span data-i18n-en>Statistics</span>
+          </h2>
           <ul id="statsList" class="space-y-2 text-sm"></ul>
           <div class="mt-5 flex justify-end">
             <button
               id="statsClose"
               class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
-              关闭
+              <span data-i18n-zh>关闭</span>
+              <span data-i18n-en>Close</span>
             </button>
           </div>
         </div>
@@ -940,7 +1106,10 @@
         class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
       >
         <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-          <h2 id="achievementsTitle" class="text-lg font-semibold mb-2">成就</h2>
+          <h2 id="achievementsTitle" class="text-lg font-semibold mb-2">
+            <span data-i18n-zh>成就</span>
+            <span data-i18n-en>Achievements</span>
+          </h2>
           <p id="achievementsNew" class="text-sm text-emerald-600 mb-2 hidden"></p>
           <ul id="achievementsList" class="space-y-2 text-sm"></ul>
           <div class="mt-5 flex justify-end">
@@ -948,7 +1117,8 @@
               id="achievementsClose"
               class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
-              关闭
+              <span data-i18n-zh>关闭</span>
+              <span data-i18n-en>Close</span>
             </button>
           </div>
         </div>
@@ -964,9 +1134,13 @@
         class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
       >
         <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
-          <h2 id="recallTitle" class="text-lg font-semibold mb-2">回忆测验</h2>
+          <h2 id="recallTitle" class="text-lg font-semibold mb-2">
+            <span data-i18n-zh>回忆测验</span>
+            <span data-i18n-en>Recall Test</span>
+          </h2>
           <p id="recallDesc" class="text-sm text-slate-600 dark:text-slate-300 mb-3">
-            请从下列选项中勾选本局中出现过的卡面。
+            <span data-i18n-zh>请从下列选项中勾选本局中出现过的卡面。</span>
+            <span data-i18n-en>Please select all items that appeared this round.</span>
           </p>
           <div id="recallChoices" class="grid grid-cols-3 gap-2 mb-4"></div>
           <div class="mt-2 flex justify-end gap-3">
@@ -974,13 +1148,15 @@
               id="recallSkip"
               class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
-              跳过
+              <span data-i18n-zh>跳过</span>
+              <span data-i18n-en>Skip</span>
             </button>
             <button
               id="recallSubmit"
               class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
             >
-              提交
+              <span data-i18n-zh>提交</span>
+              <span data-i18n-en>Submit</span>
             </button>
           </div>
         </div>

@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Early language switching to prevent FOUC */
+[data-lang='en'] [data-i18n-zh] {
+  display: none !important;
+}
+[data-lang='zh'] [data-i18n-en] {
+  display: none !important;
+}
+
 /* Reduce animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

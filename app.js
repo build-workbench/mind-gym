@@ -1997,6 +1997,38 @@ const I18N_TEXT_MAP = [
 ];
 
 function applyLanguage() {
+  const lang = currentLang();
+
+  // 清理临时双语元素，将当前语言的文本保留到父元素
+  document.querySelectorAll('[data-i18n-zh], [data-i18n-en]').forEach(el => {
+    const parent = el.parentNode;
+    if (!parent) return;
+    // 检查是否是需要移除的元素
+    const isZh = el.hasAttribute('data-i18n-zh');
+    const isEn = el.hasAttribute('data-i18n-en');
+    const shouldRemove = (lang === 'zh' && isEn) || (lang === 'en' && isZh);
+    const shouldKeep = (lang === 'zh' && isZh) || (lang === 'en' && isEn);
+
+    if (shouldRemove) {
+      el.remove();
+    } else if (shouldKeep && parent.id) {
+      // 如果这是应该保留的元素，将其文本复制到父元素，然后移除
+      const spans = parent.querySelectorAll('[data-i18n-zh], [data-i18n-en]');
+      if (spans.length <= 2 && el.textContent) {
+        // 检查父元素是否只有双语 span 作为子元素
+        const hasOnlySpans = Array.from(parent.childNodes).every(node =>
+          node.nodeType === 3
+            ? !node.textContent.trim()
+            : node.nodeType === 1 &&
+              (node.hasAttribute('data-i18n-zh') || node.hasAttribute('data-i18n-en'))
+        );
+        if (hasOnlySpans) {
+          parent.textContent = el.textContent;
+        }
+      }
+    }
+  });
+
   const t = i18n();
   // Batch: set textContent for all mapped elements
   for (const entry of I18N_TEXT_MAP) {
