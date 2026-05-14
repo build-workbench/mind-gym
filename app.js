@@ -54,6 +54,14 @@ const __RememberUIEvents__ =
     : __GLOBAL__.RememberUIEvents;
 const __RememberUI__ =
   typeof module !== 'undefined' && module.exports ? require('./src/ui.js') : __GLOBAL__.RememberUI;
+const __RememberUIRenderer__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/ui/renderer.js')
+    : __GLOBAL__.RememberUIRenderer;
+const __RememberWinPipeline__ =
+  typeof module !== 'undefined' && module.exports
+    ? require('./src/pipeline/win-pipeline.js')
+    : __GLOBAL__.RememberWinPipeline;
 const __RememberFSRS__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/fsrs.js')
@@ -92,6 +100,9 @@ const DIFFS = ['easy', 'medium', 'hard'];
 
 // 全局 ModalManager 实例
 let modalManager = null;
+let renderer = null;
+let pipeline = null;
+let winContext = null;
 
 const CARD_LABELS = {
   emoji: 'emoji',
@@ -711,27 +722,6 @@ function vibrateMs(ms) {
   __RememberEffects__.vibrateMs(ms, settings);
 }
 
-const ACCENTS = {
-  indigo: {
-    frontBg: 'bg-indigo-100',
-    frontText: 'text-indigo-700',
-    progressBg: 'bg-indigo-500',
-    ring: 'ring-indigo-400',
-  },
-  emerald: {
-    frontBg: 'bg-emerald-100',
-    frontText: 'text-emerald-700',
-    progressBg: 'bg-emerald-500',
-    ring: 'ring-emerald-400',
-  },
-  rose: {
-    frontBg: 'bg-rose-100',
-    frontText: 'text-rose-700',
-    progressBg: 'bg-rose-500',
-    ring: 'ring-rose-400',
-  },
-};
-
 function escapeHtml(str) {
   return __RememberUtils__.escapeHtml(str);
 }
@@ -785,57 +775,23 @@ function openModalWithFocus(el) {
 function closeModalWithFocusRestore(el) {
   hideModal(el);
 }
-function getAccent() {
-  const a = settings.accent || 'indigo';
-  return ACCENTS[a] || ACCENTS.indigo;
-}
-
-function removeClasses(el, list) {
-  list.forEach(c => el.classList.remove(c));
-}
 
 function applyAccentToDOM() {
-  const allProgress = [
-    ACCENTS.indigo.progressBg,
-    ACCENTS.emerald.progressBg,
-    ACCENTS.rose.progressBg,
-  ];
-  if (progressBarEl) {
-    removeClasses(progressBarEl, allProgress);
-    progressBarEl.classList.add(getAccent().progressBg);
-  }
-  const allFrontBg = [ACCENTS.indigo.frontBg, ACCENTS.emerald.frontBg, ACCENTS.rose.frontBg];
-  const allFrontText = [
-    ACCENTS.indigo.frontText,
-    ACCENTS.emerald.frontText,
-    ACCENTS.rose.frontText,
-  ];
-  const allRings = [ACCENTS.indigo.ring, ACCENTS.emerald.ring, ACCENTS.rose.ring];
-  document.querySelectorAll('.card-front').forEach(el => {
-    removeClasses(el, [...allFrontBg, ...allFrontText]);
-    el.classList.add(getAccent().frontBg, getAccent().frontText);
-  });
-  document.querySelectorAll('.card.pointer-events-none').forEach(el => {
-    removeClasses(el, allRings);
-    el.classList.add(getAccent().ring);
-  });
+  if (!renderer) return;
+  renderer.applyAccent(settings.accent || 'indigo');
 }
 
 function updateProgressUI() {
+  if (!renderer) return;
   const state = getGameState();
   const need = difficulties[state.difficulty].pairs;
   const done = state.matchedPairs;
-  if (pairsLeftEl) pairsLeftEl.textContent = String(Math.max(0, need - done));
-  const pct = need > 0 ? Math.min(100, Math.round((done / need) * 100)) : 0;
-  if (progressBarEl) progressBarEl.style.width = pct + '%';
+  renderer.renderProgress(done, need);
 }
 
 function applyTheme() {
-  const theme = settings.theme || 'auto';
-  const prefersDark =
-    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDark = theme === 'dark' || (theme === 'auto' && prefersDark);
-  document.documentElement.classList.toggle('dark', !!isDark);
+  if (!renderer) return;
+  renderer.applyTheme(settings.theme || 'auto');
 }
 
 function isReducedMotion() {
@@ -847,7 +803,8 @@ function isReducedMotion() {
 }
 
 function applyMotionPreference() {
-  document.body.classList.toggle('no-anim', isReducedMotion());
+  if (!renderer) return;
+  renderer.applyMotionPreference(settings.motion || 'auto');
 }
 
 function resizeConfettiCanvas() {
@@ -897,32 +854,10 @@ function saveStats(s) {
 function updateStatsOnNewGame() {
   saveStats(recordGameStarted(loadStats()));
 }
-function updateStatsOnWin() {
-  const state = getGameState();
-  saveStats(
-    recordGameWon(loadStats(), {
-      elapsed: state.elapsed,
-      moves: state.moves,
-      hintsUsed: state.hintsUsed,
-      maxCombo: state.maxComboThisGame,
-    })
-  );
-}
 function updateStatsUI() {
-  if (!statsListEl) return;
+  if (!renderer) return;
   const s = loadStats();
-  const summary = buildStatsSummary(s);
-  const t = i18n();
-  statsListEl.innerHTML = [
-    `<li>${t.statsTotalGames}：<span class="font-semibold">${s.games}</span></li>`,
-    `<li>${t.statsWins}：<span class="font-semibold">${s.wins}</span>（${t.statsWinRate} ${summary.winRate}）</li>`,
-    `<li>${t.statsAvgTime}：<span class="font-semibold">${summary.avgTime}</span></li>`,
-    `<li>${t.statsAvgMoves}：<span class="font-semibold">${summary.avgMoves}</span></li>`,
-    `<li>${t.statsAvgHints}：<span class="font-semibold">${summary.avgHints}</span></li>`,
-    `<li>${t.statsAvgCombo}：<span class="font-semibold">${summary.avgCombo}</span>，${t.statsHistoryBest}：<span class="font-semibold">${s.bestCombo || 0}</span></li>`,
-    `<li>${t.statsRecallLabel}（${s.recallAttempts || 0} ${t.statsTimes}）${t.statsPrecision}：<span class="font-semibold">${summary.avgPrecision}</span> · ${t.statsRecall}：<span class="font-semibold">${summary.avgRecall}</span></li>`,
-    `<li>${t.statsNbackLabel}（${s.nbackAttempts || 0} ${t.statsTimes}）${t.statsAvgAcc}：<span class="font-semibold">${summary.avgNBackAcc}</span> · ${t.statsAvgRt}：<span class="font-semibold">${summary.avgNBackRt}</span></li>`,
-  ].join('');
+  renderer.renderStats(s, buildStatsSummary(s), i18n());
 }
 function openStats() {
   updateStatsUI();
@@ -933,11 +868,8 @@ function closeStats() {
 }
 
 function renderRating(stars) {
-  if (!ratingStarsEl) return;
-  const filled = '⭐'.repeat(stars);
-  const empty = '☆'.repeat(5 - stars);
-  ratingStarsEl.textContent = filled + empty;
-  ratingStarsEl.setAttribute('aria-label', `${stars} 星`);
+  if (!renderer) return;
+  renderer.renderRating(stars);
 }
 
 function loadSettings() {
@@ -989,44 +921,22 @@ function saveLeaderboard(k, arr) {
 }
 
 function updateLeaderboardUI() {
-  if (!leaderboardList) return;
-  const list = loadLeaderboard(currentDifficulty);
-  const t = i18n();
-  if (!list.length) {
-    leaderboardList.innerHTML = `<li class="text-slate-500">${t.leaderboardEmpty}</li>`;
-    return;
-  }
-  const html = list
-    .map((e, i) => {
-      const d = new Date(e.at || Date.now());
-      const dateStr = `${d.getMonth() + 1}-${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
-      return `<li>${i + 1}. ${formatTime(e.time)} · ${e.moves} ${t.stepsFmt} <span class="text-slate-400">• ${dateStr}</span></li>`;
-    })
-    .join('');
-  leaderboardList.innerHTML = html;
+  if (!renderer) return;
+  renderer.renderLeaderboard(loadLeaderboard(currentDifficulty), i18n(), formatTime);
 }
 
 function updateHintUI() {
+  if (!renderer) return;
   const state = getGameState();
-  if (!hintBtn || !hintLeftEl) return;
-  hintLeftEl.textContent = String(state.hintsLeft);
-  hintBtn.disabled = state.hintsLeft <= 0 || state.paused || state.isPreviewing;
+  renderer.renderHint(state.hintsLeft);
+  if (hintBtn) hintBtn.disabled = state.hintsLeft <= 0 || state.paused || state.isPreviewing;
 }
 
 function updateControlsUI() {
+  if (!renderer) return;
   const state = getGameState();
-  const t = i18n();
-  if (pauseBtn) pauseBtn.textContent = state.paused ? t.resume : t.pause;
-  if (pauseOverlay) {
-    if (state.paused) {
-      pauseOverlay.classList.remove('hidden');
-      pauseOverlay.classList.add('flex');
-    } else {
-      pauseOverlay.classList.add('hidden');
-      pauseOverlay.classList.remove('flex');
-    }
-  }
-  updateHintUI();
+  renderer.renderControls(state);
+  if (hintBtn) hintBtn.disabled = state.hintsLeft <= 0 || state.paused || state.isPreviewing;
 }
 
 function togglePause() {
@@ -1058,13 +968,8 @@ function saveBest(k, data) {
 }
 
 function updateBestUI() {
-  const b = loadBest(currentDifficulty);
-  if (!b) {
-    bestEl.textContent = '—';
-  } else {
-    const t = i18n();
-    bestEl.textContent = `${formatTime(b.time)} · ${b.moves}${t.bestSteps}`;
-  }
+  if (!renderer) return;
+  renderer.renderBest(loadBest(currentDifficulty));
 }
 
 function stopTimer() {
@@ -1085,36 +990,9 @@ function setGridColumns(cols) {
   gridEl.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
 }
 
-function makeCard(item) {
-  const btn = document.createElement('button');
-  btn.className =
-    'relative card w-full aspect-square rounded-xl bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500';
-  btn.dataset.value = item.v;
-  btn.dataset.id = item.id;
-  btn.setAttribute('aria-label', getCardA11yLabel(resolveBoardTheme(), item.v));
-  btn.setAttribute('aria-pressed', 'false');
-
-  const inner = document.createElement('div');
-  inner.className = 'card-inner relative w-full h-full';
-
-  const front = document.createElement('div');
-  const ac = getAccent();
-  front.className = `card-face card-front rounded-xl ${ac.frontBg} ${ac.frontText} text-2xl sm:text-3xl`;
-  front.textContent = '?';
-
-  const back = document.createElement('div');
-  back.className = 'card-face card-back rounded-xl bg-white text-3xl sm:text-4xl';
-  if (item.type === 'color') {
-    back.style.backgroundColor = item.color;
-    back.textContent = '';
-  } else {
-    back.textContent = item.v;
-  }
-
-  inner.appendChild(front);
-  inner.appendChild(back);
-  btn.appendChild(inner);
-
+function makeCard(item, index) {
+  if (!renderer) return null;
+  const btn = renderer.renderCard(item, index);
   btn.addEventListener('click', () => onFlip(btn));
   return btn;
 }
@@ -1133,27 +1011,23 @@ function onFlip(cardEl) {
   if (state.paused || state.isPreviewing) return;
   if (state.isLocked || state.lockBoard) return;
   if (cardEl.classList.contains('flipped')) return;
+
+  const cardIndex = parseInt(cardEl.dataset.index, 10);
+  const cardValue = cardEl.dataset.value;
+
   if (!state.started) {
     GameState.markStarted();
     GameState.startTimer();
   }
-  cardEl.classList.add('flipped');
-  cardEl.setAttribute('aria-pressed', 'true');
-  cardEl.setAttribute(
-    'aria-label',
-    `${getCardA11yLabel(resolveBoardTheme(), cardEl.dataset.value)} · ${currentLang() === 'zh' ? '已翻开' : 'revealed'}`
-  );
+  if (renderer) renderer.renderFlip(cardEl, cardValue, resolveBoardTheme());
   sfx('flip');
 
-  const cardIndex = parseInt(cardEl.dataset.index, 10);
-  const cardValue = cardEl.dataset.value;
   const result = GameState.flip(cardIndex, cardValue);
 
   if (!result.canFlip) {
     // 如果不允许翻转，移除翻转状态
-    if (!result.isFirstCard) {
-      cardEl.classList.remove('flipped');
-      cardEl.setAttribute('aria-pressed', 'false');
+    if (!result.isFirstCard && renderer) {
+      renderer.renderFlipBack(cardEl, cardValue, resolveBoardTheme());
     }
     return;
   }
@@ -1168,30 +1042,18 @@ function onFlip(cardEl) {
     // 第二张卡
     currentSecondCardEl = cardEl;
     const newState = getGameState();
-    movesEl.textContent = String(newState.moves);
+    if (renderer) renderer.renderMoves(newState.moves);
 
     if (result.matched) {
       // 匹配成功
-      currentFirstCardEl.classList.add(
-        'pointer-events-none',
-        'ring-2',
-        getAccent().ring,
-        'match-pulse'
-      );
-      currentSecondCardEl.classList.add(
-        'pointer-events-none',
-        'ring-2',
-        getAccent().ring,
-        'match-pulse'
-      );
-      currentFirstCardEl.setAttribute(
-        'aria-label',
-        `${getCardA11yLabel(resolveBoardTheme(), currentFirstCardEl.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
-      );
-      currentSecondCardEl.setAttribute(
-        'aria-label',
-        `${getCardA11yLabel(resolveBoardTheme(), currentSecondCardEl.dataset.value)} · ${currentLang() === 'zh' ? '已配对' : 'matched'}`
-      );
+      if (renderer) {
+        renderer.renderMatch(
+          currentFirstCardEl,
+          currentSecondCardEl,
+          settings.accent || 'indigo',
+          resolveBoardTheme()
+        );
+      }
       sfx('match');
       vibrateMs(40);
 
@@ -1219,20 +1081,18 @@ function onFlip(cardEl) {
       sfx('mismatch');
       vibrateMs(20);
       setTimeout(() => {
-        if (currentFirstCardEl) {
-          currentFirstCardEl.classList.remove('flipped');
-          currentFirstCardEl.setAttribute('aria-pressed', 'false');
-          currentFirstCardEl.setAttribute(
-            'aria-label',
-            getCardA11yLabel(resolveBoardTheme(), currentFirstCardEl.dataset.value)
+        if (currentFirstCardEl && renderer) {
+          renderer.renderFlipBack(
+            currentFirstCardEl,
+            currentFirstCardEl.dataset.value,
+            resolveBoardTheme()
           );
         }
-        if (currentSecondCardEl) {
-          currentSecondCardEl.classList.remove('flipped');
-          currentSecondCardEl.setAttribute('aria-pressed', 'false');
-          currentSecondCardEl.setAttribute(
-            'aria-label',
-            getCardA11yLabel(resolveBoardTheme(), currentSecondCardEl.dataset.value)
+        if (currentSecondCardEl && renderer) {
+          renderer.renderFlipBack(
+            currentSecondCardEl,
+            currentSecondCardEl.dataset.value,
+            resolveBoardTheme()
           );
         }
         GameState.afterMismatchFlipBack();
@@ -1284,9 +1144,8 @@ function initGame(diffKey) {
   setGridColumns(cfg.cols);
   const deck = createDeck(cfg.pairs);
   deck.forEach((item, idx) => {
-    const el = makeCard(item);
-    el.dataset.index = String(idx);
-    gridEl.appendChild(el);
+    const el = makeCard(item, idx);
+    if (el) gridEl.appendChild(el);
   });
 
   // 记录本局卡片值（用于回忆测试）
@@ -1295,7 +1154,7 @@ function initGame(diffKey) {
   currentFirstCardEl = null;
   currentSecondCardEl = null;
   GameState.resetTimer();
-  movesEl.textContent = '0';
+  if (renderer) renderer.renderMoves(0);
   updateBestUI();
   const assist = getAdaptiveAssist(currentDifficulty);
   logLifecycle('init_game', {
@@ -1326,18 +1185,7 @@ function initGame(diffKey) {
 }
 
 function onWin() {
-  stopTimer();
   const state = getGameState();
-  const prev = loadBest(state.difficulty);
-  const curr = { time: state.elapsed, moves: state.moves };
-  let better = false;
-  if (!prev) better = true;
-  else if (curr.time < prev.time) better = true;
-  else if (curr.time === prev.time && curr.moves < prev.moves) better = true;
-  if (better) saveBest(state.difficulty, curr);
-  updateBestUI();
-  const t = i18n();
-  winStatsEl.textContent = `${t.timeFmt} ${formatTime(state.elapsed)} · ${state.moves} ${t.stepsFmt}`;
   const stars = getRating(
     state.elapsed,
     state.moves,
@@ -1353,46 +1201,13 @@ function onWin() {
     hintsUsed: state.hintsUsed,
     maxCombo: state.maxComboThisGame,
   });
-  renderRating(stars);
-  openModalWithFocus(winModal);
-  sfx('win');
-  vibrateMs(120);
-  updateStatsOnWin();
-  updateAdaptiveOnEnd(
-    true,
-    getRating(
-      state.elapsed,
-      state.moves,
-      state.difficulty,
-      state.hintsUsed,
-      state.maxComboThisGame
-    ),
-    state.difficulty
-  );
-  // FSRS mastery update - use all exposed cards from seenCountMap
-  const matchedCards = Array.from(state.seenCountMap.keys());
-  updateMasteryAfterGame(settings.cardFace || 'emoji', matchedCards, {
-    elapsed: state.elapsed,
-    moves: state.moves,
-    difficulty: state.difficulty,
-    hintsUsed: state.hintsUsed,
-    maxCombo: state.maxComboThisGame,
-    win: true,
-  });
-  const arr = loadLeaderboard(state.difficulty);
-  const updated = [...arr, { time: state.elapsed, moves: state.moves, at: Date.now() }]
-    .sort((a, b) => a.time - b.time || a.moves - b.moves)
-    .slice(0, 3);
-  saveLeaderboard(state.difficulty, updated);
-  updateLeaderboardUI();
-  runConfetti();
-  const unlocked = checkAchievementsOnWin();
-  if (unlocked.length) showToast(`${t.toastUnlockAchievement} ×${unlocked.length}`);
-  updateAchievementsUI();
-  openRecallTest();
-  // Daily complete
+
+  if (pipeline && winContext) {
+    pipeline.execute(state, winContext);
+  }
+
   if (state.dailyActive) {
-    __RememberDaily__.completeChallenge(state.difficulty);
+    const t = i18n();
     showToast(t.toastDailyDone);
   }
 }
@@ -1542,6 +1357,167 @@ if (typeof document !== 'undefined') {
       guideNoShowLabel,
       guideOpenHintEl,
     } = ui);
+
+    renderer = (typeof __GLOBAL__ !== 'undefined' ? __GLOBAL__ : __RememberUIRenderer__).create({
+      elements: ui,
+      getSettings: () => Settings.getAll(),
+      i18n: () => RememberI18n.i18n(currentLang()),
+      currentLang,
+    });
+
+    pipeline = (typeof __GLOBAL__ !== 'undefined' ? __GLOBAL__ : __RememberWinPipeline__).create();
+    pipeline.removeStep('showWinModal');
+    pipeline.removeStep('checkAchievements');
+
+    pipeline.addStep(
+      'updateBestUI',
+      (state, ctx) => {
+        if (ctx.ui?.updateBestUI) ctx.ui.updateBestUI();
+      },
+      2
+    );
+
+    pipeline.addStep(
+      'showWinModal',
+      (state, ctx) => {
+        const { renderRating, renderWinStats, showModal } = ctx.ui || {};
+        const { formatTime, getRating, i18n } = ctx.helpers || {};
+
+        if (renderRating) {
+          const stars = getRating?.(
+            state.elapsed,
+            state.moves,
+            state.difficulty,
+            state.hintsUsed,
+            state.maxComboThisGame
+          );
+          renderRating(stars);
+        }
+
+        if (renderWinStats && formatTime && i18n) {
+          const t = i18n();
+          renderWinStats(
+            `${t.timeFmt} ${formatTime(state.elapsed)} · ${state.moves} ${t.stepsFmt}`
+          );
+        }
+
+        if (showModal && ctx.elements?.winModal) {
+          showModal(ctx.elements.winModal);
+        }
+      },
+      3
+    );
+
+    pipeline.addStep(
+      'playWinEffects',
+      (state, ctx) => {
+        if (ctx.effects?.sfx) ctx.effects.sfx('win');
+        if (ctx.effects?.vibrate) ctx.effects.vibrate(120);
+      },
+      4
+    );
+
+    pipeline.addStep('updateLeaderboardUI', (state, ctx) => {
+      if (ctx.ui?.updateLeaderboardUI) ctx.ui.updateLeaderboardUI();
+    });
+
+    pipeline.addStep('showAchievementsToast', (state, ctx) => {
+      const { loadAchievements, saveAchievements, checkAchievements, difficulties } =
+        ctx.achievements || {};
+      if (!loadAchievements || !saveAchievements || !checkAchievements) return;
+      const result = checkAchievements(loadAchievements(), {
+        currentDifficulty: state.difficulty,
+        elapsed: state.elapsed,
+        hintsUsed: state.hintsUsed,
+        moves: state.moves,
+        pairs: difficulties?.[state.difficulty]?.pairs || 0,
+      });
+      if (result.newly.length) saveAchievements(result.store);
+      if (result.newly.length && ctx.ui?.showToast) {
+        const t = i18n();
+        ctx.ui.showToast(`${t.toastUnlockAchievement} ×${result.newly.length}`);
+      }
+      if (ctx.ui?.updateAchievementsUI) ctx.ui.updateAchievementsUI();
+    });
+
+    pipeline.reorderSteps([
+      'stopTimer',
+      'updateBestScore',
+      'updateBestUI',
+      'showWinModal',
+      'playWinEffects',
+      'updateStats',
+      'updateAdaptive',
+      'updateMastery',
+      'updateLeaderboard',
+      'updateLeaderboardUI',
+      'runConfetti',
+      'showAchievementsToast',
+      'openRecallTest',
+      'markDailyDone',
+    ]);
+
+    winContext = {
+      gameState: GameState,
+      storage: {
+        loadBest,
+        saveBest,
+        loadLeaderboard,
+        saveLeaderboard,
+        loadStats,
+        saveStats,
+        loadAchievements,
+        saveAchievements,
+        markDailyDone: diff => __RememberDaily__.completeChallenge(diff),
+        todayStr,
+      },
+      stats: {
+        loadStats,
+        saveStats,
+        recordGameWon: RECORD_GAME_WON,
+      },
+      achievements: {
+        loadAchievements,
+        saveAchievements,
+        checkAchievements: CHECK_ACHIEVEMENTS,
+        difficulties,
+      },
+      adaptive: {
+        updateAdaptiveOnEnd,
+        getRating,
+      },
+      fsrs: {
+        updateMasteryAfterGame,
+        settings: () => settings,
+      },
+      effects: {
+        runConfetti,
+        sfx,
+        vibrate: ms => vibrateMs(ms),
+      },
+      ui: {
+        showModal: openModalWithFocus,
+        renderRating,
+        renderWinStats: html => {
+          if (winStatsEl) winStatsEl.textContent = html;
+        },
+        updateBestUI,
+        updateLeaderboardUI,
+        updateAchievementsUI,
+        showToast,
+      },
+      helpers: {
+        formatTime,
+        getRating,
+        i18n,
+      },
+      recall: {
+        openRecallTest,
+      },
+      elements: {
+        winModal,
+      },
+    };
 
     const events = {
       onDifficultyChange: () => initGame(difficultyEl.value),
@@ -2249,33 +2225,9 @@ function saveAchievements(obj) {
   __RememberStorage__.saveAchievements(obj);
 }
 
-function checkAchievementsOnWin() {
-  const state = getGameState();
-  const result = checkAchievements(loadAchievements(), {
-    currentDifficulty: state.difficulty,
-    elapsed: state.elapsed,
-    hintsUsed: state.hintsUsed,
-    moves: state.moves,
-    pairs: difficulties[state.difficulty].pairs,
-  });
-  if (result.newly.length) saveAchievements(result.store);
-  return result.newly;
-}
-
 function updateAchievementsUI() {
-  if (!achievementsList) return;
-  const store = loadAchievements();
-  const t = i18n();
-  const html = achievementsDef
-    .map(def => {
-      const hit = !!store[def.id];
-      const when = hit ? formatAchievementTime(store[def.id].at) : '';
-      const title = t[def.titleKey] || def.titleKey;
-      const desc = t[def.descKey] || def.descKey;
-      return `<li class="flex items-center justify-between ${hit ? 'text-emerald-600' : 'text-slate-500'}"><span>${hit ? '✅' : '⬜️'} ${escapeHtml(title)} <span class="text-xs text-slate-400">${escapeHtml(desc)}</span></span>${when ? `<span class="text-xs text-slate-400">${escapeHtml(when)}</span>` : ''}</li>`;
-    })
-    .join('');
-  achievementsList.innerHTML = html;
+  if (!renderer) return;
+  renderer.renderAchievements(loadAchievements(), achievementsDef, i18n(), formatAchievementTime);
 }
 
 function openAchievements(newIds) {
@@ -2291,19 +2243,13 @@ function openAchievements(newIds) {
 }
 
 function showToast(msg) {
-  if (!toastEl) return;
-  toastEl.textContent = msg;
-  toastEl.classList.remove('hidden');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toastEl.classList.add('hidden'), TOAST_DURATION_MS);
+  if (!renderer) return;
+  renderer.showToast(msg, TOAST_DURATION_MS);
 }
 
 function showCombo(n) {
-  if (!comboToastEl) return;
-  comboToastEl.textContent = `${i18n().comboLabel} ×${n}`;
-  comboToastEl.classList.remove('hidden');
-  clearTimeout(showCombo._t);
-  showCombo._t = setTimeout(() => comboToastEl.classList.add('hidden'), 900);
+  if (!renderer) return;
+  renderer.renderCombo(n);
 }
 
 function collectExportData() {

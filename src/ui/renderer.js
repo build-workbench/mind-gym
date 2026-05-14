@@ -32,6 +32,11 @@
     // ========== 卡片渲染 ==========
 
     function renderCard(item, index) {
+      const settings = getSettings();
+      const theme = settings.cardFace || 'emoji';
+      const accent = settings.accent || 'indigo';
+      const { frontBg, frontText } = getFrontClasses(accent);
+
       const btn = document.createElement('button');
       btn.className =
         'relative card w-full aspect-square rounded-xl bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500';
@@ -39,7 +44,7 @@
       btn.dataset.index = String(index);
       btn.setAttribute(
         'aria-label',
-        `${getCardLabel(item.v)} · ${i18n().cardUnflipped || '未翻开'}`
+        `${getCardLabel(item.v, theme)} · ${i18n().cardUnflipped || '未翻开'}`
       );
       btn.setAttribute('aria-pressed', 'false');
 
@@ -47,28 +52,23 @@
       inner.className = 'card-inner relative w-full h-full';
 
       const front = document.createElement('div');
-      front.className = 'card-front absolute inset-0 flex items-center justify-center rounded-xl';
-      applyCardFrontStyle(front, item);
+      front.className = `card-face card-front rounded-xl ${frontBg} ${frontText} text-2xl sm:text-3xl`;
+      front.textContent = '?';
 
       const back = document.createElement('div');
-      back.className =
-        'card-back absolute inset-0 flex items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800';
-      back.innerHTML = '<span class="text-2xl text-slate-400">?</span>';
+      back.className = 'card-face card-back rounded-xl bg-white text-3xl sm:text-4xl';
+      if (item.type === 'color' || item.type === 'colors') {
+        back.style.backgroundColor = item.color || item.v;
+        back.textContent = '';
+      } else {
+        back.textContent = item.v;
+      }
 
       inner.appendChild(front);
       inner.appendChild(back);
       btn.appendChild(inner);
 
       return btn;
-    }
-
-    function applyCardFrontStyle(front, item) {
-      if (item.type === 'colors') {
-        front.style.backgroundColor = item.v;
-        front.innerHTML = '';
-      } else {
-        front.innerHTML = `<span class="text-3xl select-none">${escapeHtml(item.v)}</span>`;
-      }
     }
 
     function renderFlip(cardEl, value, theme) {
@@ -144,7 +144,7 @@
       if (best) {
         elements.bestEl.textContent = `${formatTime(best.time)} · ${best.moves}${t.bestSteps}`;
       } else {
-        elements.bestEl.textContent = '--';
+        elements.bestEl.textContent = '—';
       }
     }
 
@@ -154,6 +154,67 @@
       const empty = '☆'.repeat(5 - stars);
       elements.ratingStarsEl.textContent = filled + empty;
       elements.ratingStarsEl.setAttribute('aria-label', `${stars} 星`);
+    }
+
+    function renderControls(state) {
+      const t = i18n();
+      if (elements.pauseBtn) {
+        elements.pauseBtn.textContent = state.paused ? t.resume : t.pause;
+      }
+      if (elements.pauseOverlay) {
+        if (state.paused) {
+          elements.pauseOverlay.classList.remove('hidden');
+          elements.pauseOverlay.classList.add('flex');
+        } else {
+          elements.pauseOverlay.classList.add('hidden');
+          elements.pauseOverlay.classList.remove('flex');
+        }
+      }
+      renderHint(state.hintsLeft);
+    }
+
+    function renderLeaderboard(entries, t, formatTimeFn) {
+      if (!elements.leaderboardList) return;
+      if (!entries.length) {
+        elements.leaderboardList.innerHTML = `<li class="text-slate-500">${t.leaderboardEmpty}</li>`;
+        return;
+      }
+      const html = entries
+        .map((e, i) => {
+          const d = new Date(e.at || Date.now());
+          const dateStr = `${d.getMonth() + 1}-${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+          return `<li>${i + 1}. ${formatTimeFn(e.time)} · ${e.moves} ${t.stepsFmt} <span class="text-slate-400">• ${dateStr}</span></li>`;
+        })
+        .join('');
+      elements.leaderboardList.innerHTML = html;
+    }
+
+    function renderAchievements(store, defs, t, formatTimeFn) {
+      if (!elements.achievementsList) return;
+      const html = defs
+        .map(def => {
+          const hit = !!store[def.id];
+          const when = hit ? formatTimeFn(store[def.id].at) : '';
+          const title = t[def.titleKey] || def.titleKey;
+          const desc = t[def.descKey] || def.descKey;
+          return `<li class="flex items-center justify-between ${hit ? 'text-emerald-600' : 'text-slate-500'}"><span>${hit ? '✅' : '⬜️'} ${escapeHtml(title)} <span class="text-xs text-slate-400">${escapeHtml(desc)}</span></span>${when ? `<span class="text-xs text-slate-400">${escapeHtml(when)}</span>` : ''}</li>`;
+        })
+        .join('');
+      elements.achievementsList.innerHTML = html;
+    }
+
+    function renderStats(stats, summary, t) {
+      if (!elements.statsListEl) return;
+      elements.statsListEl.innerHTML = [
+        `<li>${t.statsTotalGames}：<span class="font-semibold">${stats.games}</span></li>`,
+        `<li>${t.statsWins}：<span class="font-semibold">${stats.wins}</span>（${t.statsWinRate} ${summary.winRate}）</li>`,
+        `<li>${t.statsAvgTime}：<span class="font-semibold">${summary.avgTime}</span></li>`,
+        `<li>${t.statsAvgMoves}：<span class="font-semibold">${summary.avgMoves}</span></li>`,
+        `<li>${t.statsAvgHints}：<span class="font-semibold">${summary.avgHints}</span></li>`,
+        `<li>${t.statsAvgCombo}：<span class="font-semibold">${summary.avgCombo}</span>，${t.statsHistoryBest}：<span class="font-semibold">${stats.bestCombo || 0}</span></li>`,
+        `<li>${t.statsRecallLabel}（${stats.recallAttempts || 0} ${t.statsTimes}）${t.statsPrecision}：<span class="font-semibold">${summary.avgPrecision}</span> · ${t.statsRecall}：<span class="font-semibold">${summary.avgRecall}</span></li>`,
+        `<li>${t.statsNbackLabel}（${stats.nbackAttempts || 0} ${t.statsTimes}）${t.statsAvgAcc}：<span class="font-semibold">${summary.avgNBackAcc}</span> · ${t.statsAvgRt}：<span class="font-semibold">${summary.avgNBackRt}</span></li>`,
+      ].join('');
     }
 
     // ========== 模态框 ==========
@@ -296,6 +357,10 @@
       renderCombo,
       renderBest,
       renderRating,
+      renderControls,
+      renderLeaderboard,
+      renderAchievements,
+      renderStats,
 
       // 模态框
       showModal,

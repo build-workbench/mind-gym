@@ -165,6 +165,109 @@ describe('UIRenderer', () => {
     });
   });
 
+  describe('renderControls', () => {
+    it('sets pause button text when paused', () => {
+      const pauseBtn = { textContent: '' };
+      const pauseOverlay = { classList: { remove: jest.fn(), add: jest.fn() } };
+      const r = create({
+        elements: { pauseBtn, pauseOverlay, hintLeftEl: { textContent: '' } },
+        i18n: () => ({ resume: 'Resume', pause: 'Pause' }),
+      });
+      r.renderControls({ paused: true, hintsLeft: 2 });
+      expect(pauseBtn.textContent).toBe('Resume');
+      expect(pauseOverlay.classList.remove).toHaveBeenCalledWith('hidden');
+      expect(pauseOverlay.classList.add).toHaveBeenCalledWith('flex');
+    });
+
+    it('sets pause button text when not paused', () => {
+      const pauseBtn = { textContent: '' };
+      const pauseOverlay = { classList: { remove: jest.fn(), add: jest.fn() } };
+      const r = create({
+        elements: { pauseBtn, pauseOverlay, hintLeftEl: { textContent: '' } },
+        i18n: () => ({ resume: 'Resume', pause: 'Pause' }),
+      });
+      r.renderControls({ paused: false, hintsLeft: 1 });
+      expect(pauseBtn.textContent).toBe('Pause');
+      expect(pauseOverlay.classList.add).toHaveBeenCalledWith('hidden');
+      expect(pauseOverlay.classList.remove).toHaveBeenCalledWith('flex');
+    });
+  });
+
+  describe('renderLeaderboard', () => {
+    it('renders leaderboard entries', () => {
+      const leaderboardList = { innerHTML: '' };
+      const r = create({
+        elements: { leaderboardList },
+        i18n: () => ({ leaderboardEmpty: 'No entries', stepsFmt: 'steps' }),
+      });
+      const entries = [{ time: 30, moves: 10, at: Date.now() }];
+      r.renderLeaderboard(
+        entries,
+        { leaderboardEmpty: 'No entries', stepsFmt: 'steps' },
+        t => `${t}s`
+      );
+      expect(leaderboardList.innerHTML).toContain('1. 30s');
+    });
+
+    it('renders empty message when no entries', () => {
+      const leaderboardList = { innerHTML: '' };
+      const r = create({ elements: { leaderboardList } });
+      r.renderLeaderboard([], { leaderboardEmpty: 'Empty' }, t => t);
+      expect(leaderboardList.innerHTML).toContain('Empty');
+    });
+  });
+
+  describe('renderAchievements', () => {
+    it('renders achievements list', () => {
+      const achievementsList = { innerHTML: '' };
+      const r = create({ elements: { achievementsList } });
+      const defs = [{ id: 'first_win', titleKey: 'firstWin', descKey: 'firstWinDesc' }];
+      const t = { firstWin: 'First Win', firstWinDesc: 'Win once' };
+      r.renderAchievements({ first_win: { at: Date.now() } }, defs, t, at => '2024-01-01');
+      expect(achievementsList.innerHTML).toContain('First Win');
+      expect(achievementsList.innerHTML).toContain('✅');
+    });
+  });
+
+  describe('renderStats', () => {
+    it('renders stats list', () => {
+      const statsListEl = { innerHTML: '' };
+      const r = create({ elements: { statsListEl } });
+      const stats = { games: 5, wins: 3, bestCombo: 2 };
+      const summary = {
+        winRate: '60%',
+        avgTime: '1:00',
+        avgMoves: '10',
+        avgHints: '0',
+        avgCombo: '1',
+        avgPrecision: '80%',
+        avgRecall: '70%',
+        avgNBackAcc: '90%',
+        avgNBackRt: '500ms',
+      };
+      const t = {
+        statsTotalGames: 'Games',
+        statsWins: 'Wins',
+        statsWinRate: 'Win Rate',
+        statsAvgTime: 'Avg Time',
+        statsAvgMoves: 'Avg Moves',
+        statsAvgHints: 'Avg Hints',
+        statsAvgCombo: 'Avg Combo',
+        statsHistoryBest: 'Best',
+        statsRecallLabel: 'Recall',
+        statsPrecision: 'Precision',
+        statsRecall: 'Recall',
+        statsTimes: 'times',
+        statsNbackLabel: 'N-back',
+        statsAvgAcc: 'Accuracy',
+        statsAvgRt: 'RT',
+      };
+      r.renderStats(stats, summary, t);
+      expect(statsListEl.innerHTML).toContain('5');
+      expect(statsListEl.innerHTML).toContain('3');
+    });
+  });
+
   describe('getElements', () => {
     it('returns elements reference', () => {
       const elements = renderer.getElements();
