@@ -229,6 +229,7 @@
     setAll: partial => instance.setAll(partial),
     onChange: (key, callback) => instance.onChange(key, callback),
     reset: () => instance.reset(),
+    DEFAULT_SETTINGS,
     _setWithoutValidation: (key, value) => instance._setWithoutValidation(key, value),
     _reload: () => {
       instance._settings = instance._loadFromStorage();

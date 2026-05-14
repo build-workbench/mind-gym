@@ -78,10 +78,6 @@ const __RememberGameState__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/game-state.js')
     : __GLOBAL__.RememberGameState;
-const __RememberModeRegistry__ =
-  typeof module !== 'undefined' && module.exports
-    ? require('./src/modes/registry.js')
-    : __GLOBAL__.RememberModeRegistry;
 const __RememberSettings__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/settings-manager.js')
@@ -94,7 +90,6 @@ const __RememberDaily__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/daily.js')
     : __GLOBAL__.RememberDaily;
-const MODAL_FOCUS_PREV = new WeakMap();
 const THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
 const DIFFS = ['easy', 'medium', 'hard'];
 
@@ -121,22 +116,7 @@ const CARD_LABELS_ZH = {
 const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-const DEFAULT_SETTINGS = {
-  sound: true,
-  vibrate: true,
-  previewSeconds: 1,
-  accent: 'indigo',
-  theme: 'auto',
-  motion: 'auto',
-  volume: 0.5,
-  soundPack: 'clear',
-  cardFace: 'emoji',
-  gameMode: 'classic',
-  countdown: { easy: 90, medium: 150, hard: 240 },
-  language: 'auto',
-  adaptive: false,
-  spaced: false,
-};
+// 从 SettingsManager 获取默认设置（避免重复定义）
 const achievementsDef = __RememberAchievements__.achievementsDef;
 const NORMALIZE_SETTINGS = __RememberImportExport__.normalizeSettings;
 const NORMALIZE_IMPORT = __RememberImportExport__.normalizeImportData;
@@ -674,6 +654,9 @@ const Settings = __RememberSettings__;
 
 // 本地设置缓存（从 SettingsManager 同步）
 let settings = Settings.getAll();
+
+// 从 SettingsManager 获取默认设置（单一来源）
+const DEFAULT_SETTINGS = Settings.DEFAULT_SETTINGS;
 
 // 设置变更监听：自动同步到本地缓存
 const settingKeys = [
