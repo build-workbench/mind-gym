@@ -19,28 +19,48 @@ const log = DEBUG ? console.log.bind(console, '[SW]') : () => {};
 const warn = console.warn.bind(console, '[SW]');
 const error = console.error.bind(console, '[SW]');
 
-// Precache list - critical assets
+// Precache list - critical assets (synced with index.html script tags)
 const PRECACHE_ASSETS = [
+  // Core pages
   './',
   './index.html',
   './app.js',
   './404.html',
   './offline.html',
+  // Modules in load order (matches index.html script tag order)
   './src/keys.js',
   './src/utils.js',
-  './src/storage.js',
+  './src/shared.js',
   './src/stats.js',
   './src/achievements.js',
   './src/modes.js',
   './src/import-export.js',
+  './src/storage.js',
+  './src/settings-manager.js',
+  './src/fsrs.js',
+  './src/nback-state.js',
+  './src/recall-state.js',
+  './src/adaptive.js',
+  './src/daily.js',
+  './src/game-manager.js',
+  './src/modal-manager.js',
+  './src/game-state.js',
+  './src/modes/registry.js',
+  './src/modes/classic.js',
+  './src/modes/countdown.js',
+  './src/modes/daily.js',
+  './src/modes/nback.js',
+  './src/modes/recall.js',
   './src/i18n.js',
   './src/effects.js',
-  './src/fsrs.js',
   './src/pools.js',
   './src/timer.js',
   './src/confetti.js',
   './src/ui-events.js',
   './src/ui.js',
+  './src/ui/renderer.js',
+  './src/pipeline/win-pipeline.js',
+  // Manifest and assets
   './manifest.webmanifest',
   './assets/icon.svg',
   './assets/icon-192.png',
