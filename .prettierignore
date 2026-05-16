@@ -9,3 +9,6 @@ lhci-reports/
 
 # Generated CSS (built by Tailwind)
 assets/app.css
+
+# Generated play demo output
+docs/public/play/

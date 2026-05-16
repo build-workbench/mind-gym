@@ -86,7 +86,7 @@ describe('sync-play-assets script', () => {
     <main>Playable app</main>
   </body>
 </html>
-`,
+`
     );
     writeFile('dist/assets/app.css', 'body { color: rebeccapurple; }');
     writeFile('docs/public/play/index.html', '<!doctype html><title>Placeholder</title>');
@@ -99,12 +99,10 @@ describe('sync-play-assets script', () => {
     expect(output).toContain('copied dist/ to docs/public/play/');
     expect(stagedIndex).toContain('Playable app');
     expect(stagedIndex).toContain('https://lessup.github.io/mind-gym/play/');
-    expect(stagedIndex).toContain(
-      'https://lessup.github.io/mind-gym/play/assets/og-image.png',
-    );
+    expect(stagedIndex).toContain('https://lessup.github.io/mind-gym/play/assets/og-image.png');
     expect(stagedIndex).not.toContain('<title>Placeholder</title>');
     expect(readFileSync(path.join(playDir, 'assets', 'app.css'), 'utf8')).toContain(
-      'rebeccapurple',
+      'rebeccapurple'
     );
   });
 });
