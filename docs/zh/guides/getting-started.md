@@ -12,11 +12,11 @@ description: 面向读者、贡献者与文档作者的实用入门页。
 
 ## 按目标选择起点
 
-| 目标 | 第一步 | 第二步 |
-| --- | --- | --- |
-| 快速理解产品 | 先读论纲和架构页 | 再打开在线试玩，用文档视角观察界面 |
-| 评审实现质量 | 先读模块总览 | 再检查 `app.js`、深模块和 `sw.js` |
-| 贡献文档 | 先读本页与相关章节 | 再在本地构建文档站 |
+| 目标           | 第一步               | 第二步                                |
+| -------------- | -------------------- | ------------------------------------- |
+| 快速理解产品   | 先读论纲和架构页     | 再打开在线试玩，用文档视角观察界面    |
+| 评审实现质量   | 先读模块总览         | 再检查 `app.js`、深模块和 `sw.js`     |
+| 贡献文档       | 先读本页与相关章节   | 再在本地构建文档站                    |
 | 贡献运行时行为 | 先读本页与相关架构页 | 修改前回到 `openspec/specs/` 交叉核对 |
 
 ## 仓库基础命令
@@ -29,13 +29,13 @@ npm install
 
 仓库中已建立的核心验证命令如下：
 
-| 命令 | 用途 |
-| --- | --- |
-| `npm test` | 运行 Jest 测试，覆盖运行时模块与玩法行为 |
-| `npm run lint` | 检查格式与仓库风格要求 |
-| `npm run build:css` | 将 `styles/app.css` 编译成实际交付的 CSS |
-| `npm run docs:install` | 在全新克隆后安装文档工作区依赖 |
-| `npm run docs:build` | 构建 VitePress 白皮书站点（并先安装文档依赖） |
+| 命令                   | 用途                                          |
+| ---------------------- | --------------------------------------------- |
+| `npm test`             | 运行 Jest 测试，覆盖运行时模块与玩法行为      |
+| `npm run lint`         | 检查格式与仓库风格要求                        |
+| `npm run build:css`    | 将 `styles/app.css` 编译成实际交付的 CSS      |
+| `npm run docs:install` | 在全新克隆后安装文档工作区依赖                |
+| `npm run docs:build`   | 构建 VitePress 白皮书站点（并先安装文档依赖） |
 
 ## 修改前至少要建立的心智模型
 
@@ -65,14 +65,14 @@ npm install
 
 ## 新贡献者建议的源码阅读顺序
 
-| 关注方向 | 从哪里开始 | 然后继续看 |
-| --- | --- | --- |
-| 玩法主循环 | `app.js` | `src/game-state.js` → `src/game-manager.js` |
-| 持久化 | `src/storage.js` | `src/keys.js` → `src/settings-manager.js` |
-| 专项模式 | `src/modes.js` | `src/nback-state.js` / `src/recall-state.js` / `src/modes/*.js` |
-| 离线能力 | `sw.js` | `manifest.webmanifest` → `index.html` |
-| UI 与可访问性 | `src/ui.js` | `src/ui-events.js` → `src/ui/renderer.js` → `src/modal-manager.js` |
-| 胜利 / 结算流程 | `src/pipeline/win-pipeline.js` | `app.js` 中的回调以及 stats / achievements 模块 |
+| 关注方向        | 从哪里开始                     | 然后继续看                                                         |
+| --------------- | ------------------------------ | ------------------------------------------------------------------ |
+| 玩法主循环      | `app.js`                       | `src/game-state.js` → `src/game-manager.js`                        |
+| 持久化          | `src/storage.js`               | `src/keys.js` → `src/settings-manager.js`                          |
+| 专项模式        | `src/modes.js`                 | `src/nback-state.js` / `src/recall-state.js` / `src/modes/*.js`    |
+| 离线能力        | `sw.js`                        | `manifest.webmanifest` → `index.html`                              |
+| UI 与可访问性   | `src/ui.js`                    | `src/ui-events.js` → `src/ui/renderer.js` → `src/modal-manager.js` |
+| 胜利 / 结算流程 | `src/pipeline/win-pipeline.js` | `app.js` 中的回调以及 stats / achievements 模块                    |
 
 ## 实际验证闭环
 

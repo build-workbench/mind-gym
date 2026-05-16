@@ -7,10 +7,17 @@ description: Architecture map for the app runtime, docs shell, and operational b
 
 Mind Gym is two related systems shipped from one repository:
 
-1. **The game runtime** — a browser-native memory training application served as static files.
-2. **The docs shell** — a VitePress whitepaper layer that explains the runtime to humans.
+1. **The game runtime:** a browser-native memory training application served as static files.
+2. **The docs shell:** a VitePress whitepaper layer that explains the runtime to humans.
 
 The important architectural point is that neither system depends on a custom backend. The game leans on browser primitives, while the docs site leans on static generation.
+
+<div class="mind-rail">
+  <div class="mind-rail__label">How to read this page</div>
+  <div>
+    <p>Treat the diagram and tables as an audit path. Start at the browser shell, move into the runtime coordinator, then follow the state and persistence boundaries down to concrete files.</p>
+  </div>
+</div>
 
 ## Runtime map
 
@@ -34,14 +41,16 @@ flowchart LR
   Storage --> Local[(localStorage)]
 ```
 
+<p class="mind-caption">Read left to right: the browser loads either the playable shell or the docs shell, then hands the runtime to <code>app.js</code>, which coordinates UI, state, modes, storage, and offline behavior.</p>
+
 ## Deployment model
 
-| Surface | Technology | Why it fits |
-| --- | --- | --- |
-| **Playable app** | Static HTML + Vanilla JS + compiled Tailwind CSS | Minimal runtime complexity, direct source-to-runtime mapping |
-| **Documentation site** | VitePress with Mermaid support | Lightweight publishing layer for architecture-heavy pages |
-| **Persistence** | localStorage | Sufficient for settings, scores, stats, mastery, and offline ownership |
-| **Offline delivery** | Service Worker + Web App Manifest | Supports repeat visits, installability, and resilient short sessions |
+| Surface                | Technology                                       | Why it fits                                                            |
+| ---------------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
+| **Playable app**       | Static HTML + Vanilla JS + compiled Tailwind CSS | Minimal runtime complexity and direct source-to-runtime mapping        |
+| **Documentation site** | VitePress with Mermaid support                   | Lightweight publishing layer for architecture-heavy pages              |
+| **Persistence**        | localStorage                                     | Sufficient for settings, scores, stats, mastery, and offline ownership |
+| **Offline delivery**   | Service Worker + Web App Manifest                | Supports repeat visits, installability, and resilient short sessions   |
 
 ## Major runtime boundaries
 
@@ -51,7 +60,7 @@ The application is assembled through script tags in dependency order. This matte
 
 ### `app.js` as orchestrator
 
-`app.js` remains the broad coordinator for the game loop, UI reactions, and mode dispatch. The architectural intent is not to make `app.js` tiny; it is to keep `app.js` from being the only place where complex logic can live.
+`app.js` remains the broad coordinator for the game loop, UI reactions, and mode dispatch. The architectural intent is not to make `app.js` tiny. It is to keep `app.js` from being the only place where complex logic can live.
 
 ### Deep modules for concentrated complexity
 
@@ -79,7 +88,7 @@ That separation is the main reason multiple training modes can coexist without c
 1. Browser loads `index.html` and compiled CSS.
 2. Script tags load source modules in declared order.
 3. `app.js` binds DOM references from `src/ui.js`.
-4. Settings and persisted data are loaded from `src/storage.js` / localStorage.
+4. Settings and persisted data are loaded from `src/storage.js` and localStorage.
 5. The app applies theme, language, motion, and current gameplay defaults.
 6. The Service Worker registers to support caching and updates.
 
@@ -96,15 +105,15 @@ Win handling does more than open a modal. The win pipeline can stop timers, upda
 
 ## File-system shape
 
-| Zone | Representative files | Responsibility |
-| --- | --- | --- |
-| **Shell** | `index.html`, `assets/app.css`, `manifest.webmanifest` | Entry point, styling artifact, install metadata |
-| **Runtime orchestration** | `app.js`, `src/game-state.js`, `src/settings-manager.js` | Session coordination and high-level state policy |
-| **Domain logic** | `src/game-manager.js`, `src/modes.js`, `src/fsrs.js`, `src/adaptive.js`, `src/daily.js` | Gameplay rules and progression logic |
-| **Mode specialization** | `src/nback-state.js`, `src/recall-state.js`, `src/modes/*.js` | Mode-specific workflows |
-| **UI infrastructure** | `src/ui.js`, `src/ui-events.js`, `src/ui/renderer.js`, `src/modal-manager.js` | Bindings, events, rendering, accessibility |
-| **Persistence/offline** | `src/storage.js`, `src/keys.js`, `sw.js` | Durable local state and cached delivery |
-| **Docs shell** | `docs/.vitepress/*`, `docs/en/*`, `docs/zh/*` | Whitepaper navigation and publishing |
+| Zone                        | Representative files                                                                    | Responsibility                                   |
+| --------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| **Shell**                   | `index.html`, `assets/app.css`, `manifest.webmanifest`                                  | Entry point, styling artifact, install metadata  |
+| **Runtime orchestration**   | `app.js`, `src/game-state.js`, `src/settings-manager.js`                                | Session coordination and high-level state policy |
+| **Domain logic**            | `src/game-manager.js`, `src/modes.js`, `src/fsrs.js`, `src/adaptive.js`, `src/daily.js` | Gameplay rules and progression logic             |
+| **Mode specialization**     | `src/nback-state.js`, `src/recall-state.js`, `src/modes/*.js`                           | Mode-specific workflows                          |
+| **UI infrastructure**       | `src/ui.js`, `src/ui-events.js`, `src/ui/renderer.js`, `src/modal-manager.js`           | Bindings, events, rendering, accessibility       |
+| **Persistence and offline** | `src/storage.js`, `src/keys.js`, `sw.js`                                                | Durable local state and cached delivery          |
+| **Docs shell**              | `docs/.vitepress/*`, `docs/en/*`, `docs/zh/*`                                           | Whitepaper navigation and publishing             |
 
 ## Why senior reviewers care
 

@@ -12,7 +12,29 @@ Mind Gym exists at the intersection of two observations:
 
 The project therefore argues for a different shape of product: a memory-training system that is immediately usable, technically inspectable, and operationally light enough to stay dependable on static hosting.
 
+<div class="mind-rail">
+  <div class="mind-rail__label">Reading posture</div>
+  <div>
+    <p>This page defines the argument that the rest of the whitepaper must prove: product value, architectural discipline, and operational restraint should reinforce one another rather than compete for attention.</p>
+  </div>
+</div>
+
 ## Core thesis
+
+<div class="mind-proof-list">
+  <div class="mind-proof">
+    <strong>Fit the web</strong>
+    <span>Use browser primitives directly so startup stays fast and implementation remains inspectable.</span>
+  </div>
+  <div class="mind-proof">
+    <strong>Architect the small system</strong>
+    <span>Treat state, offline delivery, and complexity boundaries seriously even when the product footprint is compact.</span>
+  </div>
+  <div class="mind-proof">
+    <strong>Let progress belong to the player</strong>
+    <span>Keep routine progress on-device unless the player explicitly exports it elsewhere.</span>
+  </div>
+</div>
 
 ### 1. Training should fit the web, not fight it
 
@@ -28,11 +50,11 @@ Mind Gym stores routine progress locally. Best scores, stats, achievements, adap
 
 ## Who the project is for
 
-| Audience | What they get from Mind Gym |
-| --- | --- |
-| **Players with short sessions** | A game that loads quickly, works offline after the first visit, and supports multiple training styles without setup friction. |
-| **Technically curious readers** | A concrete example of how far browser-native JavaScript can go when module boundaries are treated seriously. |
-| **Contributors** | A repository where major responsibilities are visible in file names and backed by OpenSpec documentation. |
+| Audience                              | What they get from Mind Gym                                                                                                      |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Players with short sessions**       | A game that loads quickly, works offline after the first visit, and supports multiple training styles without setup friction.    |
+| **Technically curious readers**       | A concrete example of how far browser-native JavaScript can go when module boundaries are treated seriously.                     |
+| **Contributors**                      | A repository where major responsibilities are visible in file names and backed by OpenSpec documentation.                        |
 | **Interviewers and senior reviewers** | A compact codebase that exposes architectural judgment: state ownership, offline strategy, and control of accidental complexity. |
 
 ## Product value proposition
@@ -54,13 +76,13 @@ Mind Gym stores routine progress locally. Best scores, stats, achievements, adap
 
 ## Engineering value proposition
 
-| Engineering choice | Leverage created |
-| --- | --- |
-| **Zero runtime dependencies** | Low operational drag and direct observability into the runtime. |
-| **Three-layer state model** | Cleaner ownership boundaries between persistent settings, live session state, and specialized modes. |
-| **Deep modules** | Complex areas such as matching logic, modal behavior, win handling, and DOM rendering remain locally understandable. |
-| **Static deployment** | GitHub Pages can host both the game and the whitepaper without introducing backend maintenance. |
-| **Bilingual documentation** | The project can explain itself to a broader contributor audience without forking its architecture story. |
+| Engineering choice            | Leverage created                                                                                                     |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Zero runtime dependencies** | Low operational drag and direct observability into the runtime.                                                      |
+| **Three-layer state model**   | Cleaner ownership boundaries between persistent settings, live session state, and specialized modes.                 |
+| **Deep modules**              | Complex areas such as matching logic, modal behavior, win handling, and DOM rendering remain locally understandable. |
+| **Static deployment**         | GitHub Pages can host both the game and the whitepaper without introducing backend maintenance.                      |
+| **Bilingual documentation**   | The project can explain itself to a broader contributor audience without forking its architecture story.             |
 
 ## What Mind Gym optimizes for
 
@@ -77,7 +99,7 @@ The project is intentionally conservative in several areas:
 - It is **not** a research platform claiming clinical outcomes.
 - It is **not** a multiplayer or cloud-synced service.
 - It is **not** a framework showcase attempting to maximize novelty.
-- It is **not** trying to replace specialist spaced-repetition tools; FSRS mastery here supports game-based review patterns, not full curriculum management.
+- It is **not** trying to replace specialist spaced-repetition tools. FSRS mastery here supports game-based review patterns, not full curriculum management.
 
 ## Evolution notes
 

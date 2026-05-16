@@ -12,12 +12,12 @@ This page is for two audiences:
 
 ## Start here based on your goal
 
-| Goal | First step | Second step |
-| --- | --- | --- |
-| Understand the product quickly | Read the thesis and architecture pages | Open the live demo and inspect the UI with the docs in mind |
-| Review implementation quality | Read the module catalog | Inspect `app.js`, deep modules, and `sw.js` |
-| Contribute to docs | Read this page and the relevant docs section | Build the docs site locally |
-| Contribute to runtime behavior | Read this page and the relevant architecture page | Cross-check `openspec/specs/` before editing |
+| Goal                           | First step                                        | Second step                                                 |
+| ------------------------------ | ------------------------------------------------- | ----------------------------------------------------------- |
+| Understand the product quickly | Read the thesis and architecture pages            | Open the live demo and inspect the UI with the docs in mind |
+| Review implementation quality  | Read the module catalog                           | Inspect `app.js`, deep modules, and `sw.js`                 |
+| Contribute to docs             | Read this page and the relevant docs section      | Build the docs site locally                                 |
+| Contribute to runtime behavior | Read this page and the relevant architecture page | Cross-check `openspec/specs/` before editing                |
 
 ## Repository basics
 
@@ -29,13 +29,13 @@ npm install
 
 Core validation commands already used by the repository:
 
-| Command | Purpose |
-| --- | --- |
-| `npm test` | Run the Jest suite for runtime modules and gameplay behavior |
-| `npm run lint` | Check formatting / repository style expectations |
-| `npm run build:css` | Compile `styles/app.css` into the shipped CSS artifact |
-| `npm run docs:install` | Install the docs workspace dependencies on a fresh clone |
-| `npm run docs:build` | Build the VitePress whitepaper site (and install docs deps first) |
+| Command                | Purpose                                                           |
+| ---------------------- | ----------------------------------------------------------------- |
+| `npm test`             | Run the Jest suite for runtime modules and gameplay behavior      |
+| `npm run lint`         | Check formatting / repository style expectations                  |
+| `npm run build:css`    | Compile `styles/app.css` into the shipped CSS artifact            |
+| `npm run docs:install` | Install the docs workspace dependencies on a fresh clone          |
+| `npm run docs:build`   | Build the VitePress whitepaper site (and install docs deps first) |
 
 ## Minimum mental model before editing
 
@@ -65,14 +65,14 @@ Core validation commands already used by the repository:
 
 ## Suggested file-reading order for new contributors
 
-| Area of interest | Start with | Then inspect |
-| --- | --- | --- |
-| Gameplay loop | `app.js` | `src/game-state.js` → `src/game-manager.js` |
-| Persistence | `src/storage.js` | `src/keys.js` → `src/settings-manager.js` |
-| Specialized modes | `src/modes.js` | `src/nback-state.js` / `src/recall-state.js` / `src/modes/*.js` |
-| Offline behavior | `sw.js` | `manifest.webmanifest` → `index.html` |
-| UI and accessibility | `src/ui.js` | `src/ui-events.js` → `src/ui/renderer.js` → `src/modal-manager.js` |
-| Win/completion flow | `src/pipeline/win-pipeline.js` | `app.js` callbacks and stats / achievements modules |
+| Area of interest     | Start with                     | Then inspect                                                       |
+| -------------------- | ------------------------------ | ------------------------------------------------------------------ |
+| Gameplay loop        | `app.js`                       | `src/game-state.js` → `src/game-manager.js`                        |
+| Persistence          | `src/storage.js`               | `src/keys.js` → `src/settings-manager.js`                          |
+| Specialized modes    | `src/modes.js`                 | `src/nback-state.js` / `src/recall-state.js` / `src/modes/*.js`    |
+| Offline behavior     | `sw.js`                        | `manifest.webmanifest` → `index.html`                              |
+| UI and accessibility | `src/ui.js`                    | `src/ui-events.js` → `src/ui/renderer.js` → `src/modal-manager.js` |
+| Win/completion flow  | `src/pipeline/win-pipeline.js` | `app.js` callbacks and stats / achievements modules                |
 
 ## Practical verification loop
 

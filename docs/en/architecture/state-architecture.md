@@ -5,11 +5,18 @@ description: Detailed explanation of the three-layer state model and the deep mo
 
 # State Architecture
 
-Mind Gym’s central architectural move is to separate state by **time horizon** and **responsibility** rather than by UI component. The result is a three-layer model:
+Mind Gym's central architectural move is to separate state by **time horizon** and **responsibility** rather than by UI component. The result is a three-layer model:
 
-- **Settings** — durable preferences that should survive sessions.
-- **GameState** — the live session coordinator for the currently running game.
-- **ModeState** — specialized state machines for modes such as N-back and delayed recall.
+- **Settings:** durable preferences that should survive sessions.
+- **GameState:** the live session coordinator for the currently running game.
+- **ModeState:** specialized state machines for modes such as N-back and delayed recall.
+
+<div class="mind-rail">
+  <div class="mind-rail__label">Placement rule</div>
+  <div>
+    <p>If a value should survive reloads, start with Settings. If it only matters during the current round, start with GameState. If it exists for one training mode only, it probably belongs in ModeState.</p>
+  </div>
+</div>
 
 ## The three-layer model
 
@@ -23,6 +30,8 @@ flowchart TD
   Settings --> Storage[src/storage.js + localStorage]
   ModeState --> Modes[src/modes.js + src/modes/*.js]
 ```
+
+<p class="mind-caption">The main separation is vertical: persistent policy flows into live session control, then into mode-specific state only when a selected mode needs specialized behavior.</p>
 
 ## Why this split works
 
@@ -40,14 +49,14 @@ N-back and delayed recall have different temporal structures from classic matchi
 
 ## Ownership matrix
 
-| State concern | Owning module | Why it belongs there |
-| --- | --- | --- |
-| Theme, sound, language, countdown presets | `src/settings-manager.js` | These are persistent user preferences, not round data. |
-| Elapsed time, lock state, hints, combo, daily flags | `src/game-state.js` | These are runtime session concerns shared across the main gameplay loop. |
-| First-card / second-card / match resolution | `src/game-manager.js` | Matching is complex enough to deserve a focused deep module. |
-| N-back sequence, targets, hits, response time | `src/nback-state.js` | The mode is sequential and timed in a way classic mode is not. |
-| Recall candidate generation and scoring | `src/recall-state.js` | Delayed recall has its own construction and scoring rules. |
-| Durable persistence primitives | `src/storage.js` | Storage should normalize and load/save data, not coordinate gameplay. |
+| State concern                                       | Owning module             | Why it belongs there                                                     |
+| --------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------ |
+| Theme, sound, language, countdown presets           | `src/settings-manager.js` | These are persistent user preferences, not round data.                   |
+| Elapsed time, lock state, hints, combo, daily flags | `src/game-state.js`       | These are runtime session concerns shared across the main gameplay loop. |
+| First-card / second-card / match resolution         | `src/game-manager.js`     | Matching is complex enough to deserve a focused deep module.             |
+| N-back sequence, targets, hits, response time       | `src/nback-state.js`      | The mode is sequential and timed in a way classic mode is not.           |
+| Recall candidate generation and scoring             | `src/recall-state.js`     | Delayed recall has its own construction and scoring rules.               |
+| Durable persistence primitives                      | `src/storage.js`          | Storage should normalize and load/save data, not coordinate gameplay.    |
 
 ## Deep modules as state discipline
 
@@ -55,7 +64,7 @@ The three-layer model is reinforced by deep modules. They matter because state a
 
 ### `src/game-manager.js`
 
-This module encapsulates flip validation, second-card handling, move counting, match detection, win checks, and board lock behavior. Consumers call a small interface; they do not manipulate card-pair internals directly.
+This module encapsulates flip validation, second-card handling, move counting, match detection, win checks, and board lock behavior. Consumers call a small interface. They do not manipulate card-pair internals directly.
 
 ### `src/modal-manager.js`
 
@@ -91,7 +100,7 @@ A single giant state object would make simple reads easy at first and long-term 
 - generic gameplay and specialized modes,
 - state ownership and state observation.
 
-Mind Gym chooses explicit boundaries instead. The benefit is not theoretical purity; it is localized reasoning.
+Mind Gym chooses explicit boundaries instead. The benefit is not theoretical purity. It is localized reasoning.
 
 ## Contributor guidance
 

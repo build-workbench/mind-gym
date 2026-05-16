@@ -17,29 +17,29 @@ description: 以文件为单位梳理 Mind Gym 主要运行时模块及其架构
 
 ## 主要运行时模块
 
-| 区域 | 文件 | 角色 |
-| --- | --- | --- |
-| **应用壳** | `index.html`、`app.js` | 入口与顶层编排 |
-| **键与共享原语** | `src/keys.js`、`src/utils.js`、`src/shared.js` | 键名规则、工具函数、校验辅助 |
-| **持久化** | `src/storage.js`、`src/settings-manager.js` | 数据规范化、localStorage CRUD、设置策略 |
-| **玩法状态** | `src/game-state.js`、`src/game-manager.js` | 会话协调与配对状态机 |
-| **模式** | `src/modes.js`、`src/modes/*.js`、`src/modes/registry.js` | 模式逻辑、注册与切换 |
-| **模式专属状态** | `src/nback-state.js`、`src/recall-state.js`、`src/daily.js`、`src/adaptive.js` | 专项流程与进展辅助 |
-| **进展与评分** | `src/stats.js`、`src/achievements.js`、`src/fsrs.js` | 指标、解锁逻辑与掌握度调度 |
-| **UI 基础设施** | `src/ui.js`、`src/ui-events.js`、`src/ui/renderer.js`、`src/modal-manager.js` | DOM 绑定、事件接线、渲染与无障碍 |
-| **反馈与效果** | `src/effects.js`、`src/timer.js`、`src/confetti.js`、`src/pools.js` | 计时、音效、动画与卡面池 |
-| **结算管道** | `src/pipeline/win-pipeline.js` | 胜利后的有序副作用 |
-| **离线交付** | `sw.js`、`manifest.webmanifest` | 缓存、安装能力与韧性交付 |
+| 区域             | 文件                                                                           | 角色                                    |
+| ---------------- | ------------------------------------------------------------------------------ | --------------------------------------- |
+| **应用壳**       | `index.html`、`app.js`                                                         | 入口与顶层编排                          |
+| **键与共享原语** | `src/keys.js`、`src/utils.js`、`src/shared.js`                                 | 键名规则、工具函数、校验辅助            |
+| **持久化**       | `src/storage.js`、`src/settings-manager.js`                                    | 数据规范化、localStorage CRUD、设置策略 |
+| **玩法状态**     | `src/game-state.js`、`src/game-manager.js`                                     | 会话协调与配对状态机                    |
+| **模式**         | `src/modes.js`、`src/modes/*.js`、`src/modes/registry.js`                      | 模式逻辑、注册与切换                    |
+| **模式专属状态** | `src/nback-state.js`、`src/recall-state.js`、`src/daily.js`、`src/adaptive.js` | 专项流程与进展辅助                      |
+| **进展与评分**   | `src/stats.js`、`src/achievements.js`、`src/fsrs.js`                           | 指标、解锁逻辑与掌握度调度              |
+| **UI 基础设施**  | `src/ui.js`、`src/ui-events.js`、`src/ui/renderer.js`、`src/modal-manager.js`  | DOM 绑定、事件接线、渲染与无障碍        |
+| **反馈与效果**   | `src/effects.js`、`src/timer.js`、`src/confetti.js`、`src/pools.js`            | 计时、音效、动画与卡面池                |
+| **结算管道**     | `src/pipeline/win-pipeline.js`                                                 | 胜利后的有序副作用                      |
+| **离线交付**     | `sw.js`、`manifest.webmanifest`                                                | 缓存、安装能力与韧性交付                |
 
 ## 值得特别关注的深模块
 
-| 文件 | 为什么算深模块 |
-| --- | --- |
-| `src/game-manager.js` | 小接口背后隐藏了匹配校验、锁盘、步数统计与胜利判定。 |
-| `src/modal-manager.js` | 看似只是开关模态框，实际上还负责焦点陷阱、堆栈管理与焦点恢复。 |
-| `src/ui/renderer.js` | 将 DOM 渲染细节封装起来，让编排层不必处处手写界面变更。 |
-| `src/pipeline/win-pipeline.js` | 把多步骤结算流程变成有顺序、可检查的管道。 |
-| `src/game-state.js` | 对外提供统一会话表面，同时把专项复杂度委托给更深的模块。 |
+| 文件                           | 为什么算深模块                                                 |
+| ------------------------------ | -------------------------------------------------------------- |
+| `src/game-manager.js`          | 小接口背后隐藏了匹配校验、锁盘、步数统计与胜利判定。           |
+| `src/modal-manager.js`         | 看似只是开关模态框，实际上还负责焦点陷阱、堆栈管理与焦点恢复。 |
+| `src/ui/renderer.js`           | 将 DOM 渲染细节封装起来，让编排层不必处处手写界面变更。        |
+| `src/pipeline/win-pipeline.js` | 把多步骤结算流程变成有顺序、可检查的管道。                     |
+| `src/game-state.js`            | 对外提供统一会话表面，同时把专项复杂度委托给更深的模块。       |
 
 ## 模块边界说明
 
@@ -87,15 +87,15 @@ src/keys.js → src/utils.js → src/shared.js → src/stats.js → src/achievem
 
 ## 常见修改从哪里开始
 
-| 如果你要改... | 先看 | 再交叉核对 |
-| --- | --- | --- |
-| 配对 / 翻牌规则 | `src/game-manager.js` | `src/game-state.js`、测试 |
-| 持久化设置 | `src/settings-manager.js` | `src/storage.js`、`src/keys.js` |
-| 排行榜 / 统计 / 成就 | `src/storage.js`、`src/stats.js`、`src/achievements.js` | 胜利管道与相关 UI |
-| N-back 行为 | `src/nback-state.js`、`src/modes/nback.js` | `src/modes.js` |
-| 回忆测试行为 | `src/recall-state.js`、`src/modes/recall.js` | `src/modes.js` |
-| 离线交付 | `sw.js` | `manifest.webmanifest`、`index.html` |
-| 文档结构 | `docs/.vitepress/config.ts` 与对应页面 | 中文 / 英文对照页 |
+| 如果你要改...        | 先看                                                    | 再交叉核对                           |
+| -------------------- | ------------------------------------------------------- | ------------------------------------ |
+| 配对 / 翻牌规则      | `src/game-manager.js`                                   | `src/game-state.js`、测试            |
+| 持久化设置           | `src/settings-manager.js`                               | `src/storage.js`、`src/keys.js`      |
+| 排行榜 / 统计 / 成就 | `src/storage.js`、`src/stats.js`、`src/achievements.js` | 胜利管道与相关 UI                    |
+| N-back 行为          | `src/nback-state.js`、`src/modes/nback.js`              | `src/modes.js`                       |
+| 回忆测试行为         | `src/recall-state.js`、`src/modes/recall.js`            | `src/modes.js`                       |
+| 离线交付             | `sw.js`                                                 | `manifest.webmanifest`、`index.html` |
+| 文档结构             | `docs/.vitepress/config.ts` 与对应页面                  | 中文 / 英文对照页                    |
 
 ## 最后的定位建议
 

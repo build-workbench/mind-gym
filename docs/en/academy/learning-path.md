@@ -9,16 +9,16 @@ Treat this documentation set as a compact technical course. It is not arranged a
 
 ## Choose your track
 
-| Track | Best for | Primary outcome |
-| --- | --- | --- |
-| **Executive scan** | Reviewers who need signal quickly | Understand why the project exists and whether the architecture is coherent |
-| **Architecture study** | Senior developers and interviewers | Trace runtime boundaries, deep modules, and offline strategy |
-| **Contributor onboarding** | Engineers preparing to change code or docs | Learn where behavior lives, how specs fit in, and how to verify work |
-| **Research context** | Readers interested in training patterns and precedent | See how Mind Gym connects product choices to broader ideas |
+| Track                      | Best for                                              | Primary outcome                                                            |
+| -------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------- |
+| **Executive scan**         | Reviewers who need signal quickly                     | Understand why the project exists and whether the architecture is coherent |
+| **Architecture study**     | Senior developers and interviewers                    | Trace runtime boundaries, deep modules, and offline strategy               |
+| **Contributor onboarding** | Engineers preparing to change code or docs            | Learn where behavior lives, how specs fit in, and how to verify work       |
+| **Research context**       | Readers interested in training patterns and precedent | See how Mind Gym connects product choices to broader ideas                 |
 
 ## Recommended curriculum
 
-### Stage 1 — Orient yourself
+### Stage 1: Orient yourself
 
 Read in this order:
 
@@ -28,7 +28,7 @@ Read in this order:
 
 Goal: understand the product, the constraints, and the shape of the system before touching file-level detail.
 
-### Stage 2 — Understand the runtime
+### Stage 2: Understand the runtime
 
 Read in this order:
 
@@ -38,7 +38,7 @@ Read in this order:
 
 Goal: learn who owns persistence, who owns live session state, and where complexity is deliberately concentrated.
 
-### Stage 3 — Prepare to contribute
+### Stage 3: Prepare to contribute
 
 Read in this order:
 
@@ -49,7 +49,7 @@ Read in this order:
 
 Goal: understand not only the code, but also the repository’s decision history and verification workflow.
 
-### Stage 4 — Add context and nuance
+### Stage 4: Add context and nuance
 
 Read in this order:
 
@@ -60,11 +60,11 @@ Goal: connect implementation choices to larger ideas without over-claiming what 
 
 ## Time-boxed routes
 
-| If you have... | Read this |
-| --- | --- |
-| **10 minutes** | Thesis → System Overview → Module Catalog |
-| **30 minutes** | Thesis → State Architecture → Offline Strategy → Getting Started |
-| **60 minutes** | Thesis → all Architecture pages → Module Catalog → OpenSpec specs |
+| If you have... | Read this                                                                 |
+| -------------- | ------------------------------------------------------------------------- |
+| **10 minutes** | Thesis → System Overview → Module Catalog                                 |
+| **30 minutes** | Thesis → State Architecture → Offline Strategy → Getting Started          |
+| **60 minutes** | Thesis → all Architecture pages → Module Catalog → OpenSpec specs         |
 | **Half a day** | Full docs pass, then inspect `app.js`, deep modules, and `sw.js` directly |
 
 ## What to notice while reading

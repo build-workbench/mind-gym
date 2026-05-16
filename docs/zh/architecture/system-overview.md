@@ -7,10 +7,17 @@ description: 总结 Mind Gym 的运行时、文档外壳与主要系统边界。
 
 Mind Gym 仓库里实际上承载了两个彼此相关的系统：
 
-1. **游戏运行时** —— 以静态文件交付的浏览器原生记忆训练应用。
-2. **文档外壳** —— 以 VitePress 构建的白皮书层，用来向人类解释运行时。
+1. **游戏运行时：** 以静态文件交付的浏览器原生记忆训练应用。
+2. **文档外壳：** 以 VitePress 构建的白皮书层，用来向人类解释运行时。
 
-最关键的架构特征是：这两个系统都不依赖自定义后端。游戏依赖浏览器原语，文档依赖静态生成。
+最关键的架构特征是，这两个系统都不依赖自定义后端。游戏依赖浏览器原语，文档依赖静态生成。
+
+<div class="mind-rail">
+  <div class="mind-rail__label">如何阅读本页</div>
+  <div>
+    <p>把图和表当作一条可审计的路径来读：先从浏览器壳层开始，再进入运行时编排器，最后顺着状态与持久化边界落到具体文件。</p>
+  </div>
+</div>
 
 ## 运行时地图
 
@@ -34,14 +41,16 @@ flowchart LR
   Storage --> Local[(localStorage)]
 ```
 
+<p class="mind-caption">从左到右理解这张图：浏览器先装载可玩的应用壳或文档壳，再把运行时交给 <code>app.js</code>，由它协调 UI、状态、模式、存储与离线能力。</p>
+
 ## 部署模型
 
-| 表面 | 技术 | 为什么适合 |
-| --- | --- | --- |
-| **可玩的应用** | 静态 HTML + Vanilla JS + 编译后的 Tailwind CSS | 运行时复杂度低，源码与行为的映射直接 |
-| **文档站点** | 带 Mermaid 支持的 VitePress | 适合承载架构密集型页面的轻量发布层 |
-| **持久化** | localStorage | 足以承载设置、成绩、统计、掌握度与离线进度 |
-| **离线交付** | Service Worker + Web App Manifest | 支持重复访问、安装体验与碎片化短会话 |
+| 表面           | 技术                                           | 为什么适合                                 |
+| -------------- | ---------------------------------------------- | ------------------------------------------ |
+| **可玩的应用** | 静态 HTML + Vanilla JS + 编译后的 Tailwind CSS | 运行时复杂度低，源码与行为的映射直接       |
+| **文档站点**   | 带 Mermaid 支持的 VitePress                    | 适合承载架构密集型页面的轻量发布层         |
+| **持久化**     | localStorage                                   | 足以承载设置、成绩、统计、掌握度与离线进度 |
+| **离线交付**   | Service Worker + Web App Manifest              | 支持重复访问、安装体验与碎片化短会话       |
 
 ## 主要运行时边界
 
@@ -79,7 +88,7 @@ Mind Gym 现在明确区分：
 1. 浏览器加载 `index.html` 与编译后的 CSS。
 2. 脚本标签按声明顺序加载源码模块。
 3. `app.js` 从 `src/ui.js` 绑定 DOM 引用。
-4. 设置与持久化数据通过 `src/storage.js` / localStorage 读入。
+4. 设置与持久化数据通过 `src/storage.js` 和 localStorage 读入。
 5. 应用主题、语言、动效和默认玩法被应用到界面上。
 6. 注册 Service Worker，为缓存和更新做准备。
 
@@ -96,15 +105,15 @@ Mind Gym 现在明确区分：
 
 ## 文件系统分区
 
-| 区域 | 代表文件 | 职责 |
-| --- | --- | --- |
-| **壳层** | `index.html`、`assets/app.css`、`manifest.webmanifest` | 入口、样式产物、安装元数据 |
-| **运行时编排** | `app.js`、`src/game-state.js`、`src/settings-manager.js` | 会话协调与高层状态策略 |
-| **领域逻辑** | `src/game-manager.js`、`src/modes.js`、`src/fsrs.js`、`src/adaptive.js`、`src/daily.js` | 玩法规则与进展逻辑 |
-| **模式专项** | `src/nback-state.js`、`src/recall-state.js`、`src/modes/*.js` | 模式专属流程 |
-| **UI 基础设施** | `src/ui.js`、`src/ui-events.js`、`src/ui/renderer.js`、`src/modal-manager.js` | 绑定、事件、渲染、可访问性 |
-| **持久化 / 离线** | `src/storage.js`、`src/keys.js`、`sw.js` | 本地持久化与缓存交付 |
-| **文档外壳** | `docs/.vitepress/*`、`docs/en/*`、`docs/zh/*` | 白皮书导航与发布 |
+| 区域             | 代表文件                                                                                | 职责                       |
+| ---------------- | --------------------------------------------------------------------------------------- | -------------------------- |
+| **壳层**         | `index.html`、`assets/app.css`、`manifest.webmanifest`                                  | 入口、样式产物、安装元数据 |
+| **运行时编排**   | `app.js`、`src/game-state.js`、`src/settings-manager.js`                                | 会话协调与高层状态策略     |
+| **领域逻辑**     | `src/game-manager.js`、`src/modes.js`、`src/fsrs.js`、`src/adaptive.js`、`src/daily.js` | 玩法规则与进展逻辑         |
+| **模式专项**     | `src/nback-state.js`、`src/recall-state.js`、`src/modes/*.js`                           | 模式专属流程               |
+| **UI 基础设施**  | `src/ui.js`、`src/ui-events.js`、`src/ui/renderer.js`、`src/modal-manager.js`           | 绑定、事件、渲染、可访问性 |
+| **持久化与离线** | `src/storage.js`、`src/keys.js`、`sw.js`                                                | 本地持久化与缓存交付       |
+| **文档外壳**     | `docs/.vitepress/*`、`docs/en/*`、`docs/zh/*`                                           | 白皮书导航与发布           |
 
 ## 为什么资深评审会在意
 

@@ -17,29 +17,29 @@ When in doubt, prefer three questions over one giant search:
 
 ## Primary runtime modules
 
-| Area | File(s) | Role |
-| --- | --- | --- |
-| **App shell** | `index.html`, `app.js` | Entry point and top-level orchestration |
-| **Keys and shared primitives** | `src/keys.js`, `src/utils.js`, `src/shared.js` | Key naming, utility functions, validation helpers |
-| **Persistence** | `src/storage.js`, `src/settings-manager.js` | Data normalization, localStorage CRUD, settings policy |
-| **Gameplay state** | `src/game-state.js`, `src/game-manager.js` | Session coordination and pair-matching state machine |
-| **Modes** | `src/modes.js`, `src/modes/*.js`, `src/modes/registry.js` | Mode logic, registration, and specialization |
-| **Mode-specific state** | `src/nback-state.js`, `src/recall-state.js`, `src/daily.js`, `src/adaptive.js` | Specialized workflows and progression helpers |
-| **Progression and scoring** | `src/stats.js`, `src/achievements.js`, `src/fsrs.js` | Metrics, unlock logic, mastery scheduling |
-| **UI infrastructure** | `src/ui.js`, `src/ui-events.js`, `src/ui/renderer.js`, `src/modal-manager.js` | DOM bindings, event wiring, rendering, accessibility |
-| **Feedback and effects** | `src/effects.js`, `src/timer.js`, `src/confetti.js`, `src/pools.js` | Timers, audiovisual feedback, card-face pools |
-| **Completion pipeline** | `src/pipeline/win-pipeline.js` | Ordered post-win side effects |
-| **Offline delivery** | `sw.js`, `manifest.webmanifest` | Caching, installability, and resilient asset delivery |
+| Area                           | File(s)                                                                        | Role                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| **App shell**                  | `index.html`, `app.js`                                                         | Entry point and top-level orchestration                |
+| **Keys and shared primitives** | `src/keys.js`, `src/utils.js`, `src/shared.js`                                 | Key naming, utility functions, validation helpers      |
+| **Persistence**                | `src/storage.js`, `src/settings-manager.js`                                    | Data normalization, localStorage CRUD, settings policy |
+| **Gameplay state**             | `src/game-state.js`, `src/game-manager.js`                                     | Session coordination and pair-matching state machine   |
+| **Modes**                      | `src/modes.js`, `src/modes/*.js`, `src/modes/registry.js`                      | Mode logic, registration, and specialization           |
+| **Mode-specific state**        | `src/nback-state.js`, `src/recall-state.js`, `src/daily.js`, `src/adaptive.js` | Specialized workflows and progression helpers          |
+| **Progression and scoring**    | `src/stats.js`, `src/achievements.js`, `src/fsrs.js`                           | Metrics, unlock logic, mastery scheduling              |
+| **UI infrastructure**          | `src/ui.js`, `src/ui-events.js`, `src/ui/renderer.js`, `src/modal-manager.js`  | DOM bindings, event wiring, rendering, accessibility   |
+| **Feedback and effects**       | `src/effects.js`, `src/timer.js`, `src/confetti.js`, `src/pools.js`            | Timers, audiovisual feedback, card-face pools          |
+| **Completion pipeline**        | `src/pipeline/win-pipeline.js`                                                 | Ordered post-win side effects                          |
+| **Offline delivery**           | `sw.js`, `manifest.webmanifest`                                                | Caching, installability, and resilient asset delivery  |
 
 ## Deep modules worth special attention
 
-| File | Why it is deep |
-| --- | --- |
-| `src/game-manager.js` | A tiny interface hides match validation, board lock behavior, move counting, and win detection. |
-| `src/modal-manager.js` | Open/close looks simple, but the module also owns focus trapping, stack management, and focus restoration. |
-| `src/ui/renderer.js` | It packages DOM rendering concerns so orchestration code can request effects without hand-writing DOM mutations everywhere. |
-| `src/pipeline/win-pipeline.js` | It turns a many-step completion flow into an ordered, inspectable pipeline. |
-| `src/game-state.js` | It presents a unified session surface while delegating specialized responsibilities to deeper modules. |
+| File                           | Why it is deep                                                                                                              |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `src/game-manager.js`          | A tiny interface hides match validation, board lock behavior, move counting, and win detection.                             |
+| `src/modal-manager.js`         | Open/close looks simple, but the module also owns focus trapping, stack management, and focus restoration.                  |
+| `src/ui/renderer.js`           | It packages DOM rendering concerns so orchestration code can request effects without hand-writing DOM mutations everywhere. |
+| `src/pipeline/win-pipeline.js` | It turns a many-step completion flow into an ordered, inspectable pipeline.                                                 |
+| `src/game-state.js`            | It presents a unified session surface while delegating specialized responsibilities to deeper modules.                      |
 
 ## Module boundary notes
 
@@ -87,15 +87,15 @@ This order is part of the architecture, not incidental trivia.
 
 ## Where to start for common edits
 
-| If you want to change... | Start with | Cross-check |
-| --- | --- | --- |
-| Match / flip rules | `src/game-manager.js` | `src/game-state.js`, tests |
-| Persistent settings | `src/settings-manager.js` | `src/storage.js`, `src/keys.js` |
-| Leaderboards / stats / achievements | `src/storage.js`, `src/stats.js`, `src/achievements.js` | win pipeline and related UI |
-| N-back behavior | `src/nback-state.js`, `src/modes/nback.js` | `src/modes.js` |
-| Recall behavior | `src/recall-state.js`, `src/modes/recall.js` | `src/modes.js` |
-| Offline delivery | `sw.js` | `manifest.webmanifest`, `index.html` |
-| Docs structure | `docs/.vitepress/config.ts` and relevant docs page | bilingual counterpart page |
+| If you want to change...            | Start with                                              | Cross-check                          |
+| ----------------------------------- | ------------------------------------------------------- | ------------------------------------ |
+| Match / flip rules                  | `src/game-manager.js`                                   | `src/game-state.js`, tests           |
+| Persistent settings                 | `src/settings-manager.js`                               | `src/storage.js`, `src/keys.js`      |
+| Leaderboards / stats / achievements | `src/storage.js`, `src/stats.js`, `src/achievements.js` | win pipeline and related UI          |
+| N-back behavior                     | `src/nback-state.js`, `src/modes/nback.js`              | `src/modes.js`                       |
+| Recall behavior                     | `src/recall-state.js`, `src/modes/recall.js`            | `src/modes.js`                       |
+| Offline delivery                    | `sw.js`                                                 | `manifest.webmanifest`, `index.html` |
+| Docs structure                      | `docs/.vitepress/config.ts` and relevant docs page      | bilingual counterpart page           |
 
 ## Final orientation
 

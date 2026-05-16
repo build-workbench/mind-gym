@@ -11,28 +11,28 @@ Mind Gym 并不把自己包装成原创研究成果。它是一个小型产品�
 
 这里有两类参考同时重要：
 
-1. **训练相关参考** —— 例如 N-back、回忆测试、间隔重复。
-2. **工程相关参考** —— 例如 PWA、离线优先交付，以及强调清晰模块边界的架构方法。
+1. **训练相关参考：** 例如 N-back、回忆测试、间隔重复。
+2. **工程相关参考：** 例如 PWA、离线优先交付，以及强调清晰模块边界的架构方法。
 
 ## 概念参考地图
 
-| 参考领域 | 对 Mind Gym 的意义 |
-| --- | --- |
-| **N-back 任务** | 影响工作记忆模式的设计，以及目标、漏报、误报和反应时等指标。 |
-| **识别与延迟回忆测试** | 影响赛后回忆流程，即让用户从混合候选中识别先前出现过的项目。 |
-| **间隔重复 / FSRS-4.5** | 影响掌握度追踪以及复习调度逻辑。 |
-| **刻意练习** | 支撑产品的大方向：短、可重复、且可被度量的会话。 |
-| **游戏化激励系统** | 有助于解释成就、排行榜、每日挑战和进度循环的存在。 |
+| 参考领域                | 对 Mind Gym 的意义                                           |
+| ----------------------- | ------------------------------------------------------------ |
+| **N-back 任务**         | 影响工作记忆模式的设计，以及目标、漏报、误报和反应时等指标。 |
+| **识别与延迟回忆测试**  | 影响赛后回忆流程，即让用户从混合候选中识别先前出现过的项目。 |
+| **间隔重复 / FSRS-4.5** | 影响掌握度追踪以及复习调度逻辑。                             |
+| **刻意练习**            | 支撑产品的大方向：短、可重复、且可被度量的会话。             |
+| **游戏化激励系统**      | 有助于解释成就、排行榜、每日挑战和进度循环的存在。           |
 
 ## 工程参考地图
 
-| 工程思想 | 在仓库中的体现 |
-| --- | --- |
-| **渐进式 Web 应用（PWA）** | `manifest.webmanifest`、安装行为、独立窗口启动 |
-| **Service Worker 缓存** | `sw.js` 中的资源缓存、更新行为与离线回退 |
-| **离线优先产品设计** | 由 localStorage 进度与应用壳预缓存共同支撑 |
-| **深模块** | `game-manager`、`modal-manager`、`ui/renderer`、`win-pipeline` |
-| **静态站点架构** | 游戏与白皮书都通过 GitHub Pages 发布 |
+| 工程思想                   | 在仓库中的体现                                                 |
+| -------------------------- | -------------------------------------------------------------- |
+| **渐进式 Web 应用（PWA）** | `manifest.webmanifest`、安装行为、独立窗口启动                 |
+| **Service Worker 缓存**    | `sw.js` 中的资源缓存、更新行为与离线回退                       |
+| **离线优先产品设计**       | 由 localStorage 进度与应用壳预缓存共同支撑                     |
+| **深模块**                 | `game-manager`、`modal-manager`、`ui/renderer`、`win-pipeline` |
+| **静态站点架构**           | 游戏与白皮书都通过 GitHub Pages 发布                           |
 
 ## 具名参考与相邻工具
 
@@ -50,24 +50,24 @@ Mind Gym 继承了经典专注力 / 配对游戏的基本机制，但又加入�
 
 ### 相邻项目
 
-| 项目或类别 | 与 Mind Gym 的关系 |
-| --- | --- |
+| 项目或类别              | 与 Mind Gym 的关系                                                              |
+| ----------------------- | ------------------------------------------------------------------------------- |
 | **Anki / 间隔重复工具** | 在复习调度层面是更强的参考点；Mind Gym 借鉴其思想，但并不试图替代专业学习系统。 |
-| **传统浏览器记忆游戏** | 提供了基础机制，但通常缺少更丰富的进展层与架构说明。 |
-| **离线可用的 PWA** | 提供了安装体验与缓存韧性的工程先例。 |
-| **架构导向型文档站** | 启发了将项目呈现为白皮书，而不是只保留最小 README。 |
+| **传统浏览器记忆游戏**  | 提供了基础机制，但通常缺少更丰富的进展层与架构说明。                            |
+| **离线可用的 PWA**      | 提供了安装体验与缓存韧性的工程先例。                                            |
+| **架构导向型文档站**    | 启发了将项目呈现为白皮书，而不是只保留最小 README。                             |
 
 ## 具体参考
 
 下面这些链接是上文主张的具体出处：
 
-- [Jaeggi 等（2008），*Improving fluid intelligence with training on working memory*](https://doi.org/10.1073/pnas.0801268105) —— 经典 dual n-back 参考。
-- [Klingberg（2010），*Training and plasticity of working memory*](https://doi.org/10.1016/j.tics.2009.06.004) —— 工作记忆训练综述。
-- [MDN：Web App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) —— 安装能力与独立窗口启动。
-- [MDN：Service Worker API](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) —— 离线缓存与更新流程。
-- [FSRS 项目](https://github.com/open-spaced-repetition/fsrs4anki) —— Mind Gym 参考的间隔重复调度器。
-- [Anki 手册](https://docs.ankiweb.net/) —— 多数读者都熟悉的相邻工具。
-- [Mnemosyne 项目](https://mnemosyne-proj.org/) —— 另一条成熟的间隔重复参考线。
+- [Jaeggi 等（2008），_Improving fluid intelligence with training on working memory_](https://doi.org/10.1073/pnas.0801268105) ：经典 dual n-back 参考。
+- [Klingberg（2010），_Training and plasticity of working memory_](https://doi.org/10.1016/j.tics.2009.06.004) ：工作记忆训练综述。
+- [MDN：Web App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) ：安装能力与独立窗口启动。
+- [MDN：Service Worker API](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) ：离线缓存与更新流程。
+- [FSRS 项目](https://github.com/open-spaced-repetition/fsrs4anki) ：Mind Gym 参考的间隔重复调度器。
+- [Anki 手册](https://docs.ankiweb.net/) ：多数读者都熟悉的相邻工具。
+- [Mnemosyne 项目](https://mnemosyne-proj.org/) ：另一条成熟的间隔重复参考线。
 
 ## 证据边界
 
