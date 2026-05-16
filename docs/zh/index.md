@@ -10,11 +10,11 @@ description: Mind Gym 白皮书、架构展示与贡献者学院的中文首页�
     <p class="mind-eyebrow">以浏览器原生记忆训练为对象的系统设计案例</p>
     <p class="mind-hero__lede">Mind Gym 是一个面向开放 Web 的零依赖记忆训练 PWA：没有后端、没有运行时框架、没有账号墙，也没有隐藏的基础设施。这个站点把项目同时当作可玩的产品与可被审视的技术论证来介绍。文档先建立论点，再由试玩版提供证据。</p>
     <div class="mind-link-list">
-      <a class="mind-link-card" href="./overview/project-thesis.md">
+      <a class="mind-link-card" href="./overview/project-thesis">
         <strong>先读项目论纲</strong>
         <span>从产品意图、运行约束与核心工程判断开始。</span>
       </a>
-      <a class="mind-link-card" href="./architecture/system-overview.md">
+      <a class="mind-link-card" href="./architecture/system-overview">
         <strong>再看系统地图</strong>
         <span>沿着总览进入状态架构、离线交付与模块边界。</span>
       </a>
@@ -56,23 +56,23 @@ description: Mind Gym 白皮书、架构展示与贡献者学院的中文首页�
 <div class="mind-route-list">
   <div class="mind-route">
     <p class="mind-route__for">如果你是严格评审者</p>
-    <p class="mind-route__start"><strong>建议起点</strong> <a href="./overview/project-thesis.md">项目论纲</a></p>
-    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./architecture/system-overview.md">系统总览</a>，再读 <a href="./reference/module-catalog.md">模块总览</a>。</p>
+    <p class="mind-route__start"><strong>建议起点</strong> <a href="./overview/project-thesis">项目论纲</a></p>
+    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./architecture/system-overview">系统总览</a>，再读 <a href="./reference/module-catalog">模块总览</a>。</p>
   </div>
   <div class="mind-route">
     <p class="mind-route__for">如果你是资深 GitHub 开发者</p>
-    <p class="mind-route__start"><strong>建议起点</strong> <a href="./architecture/state-architecture.md">状态架构</a></p>
-    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./architecture/pwa-offline-strategy.md">PWA 与离线策略</a>，再读 <a href="./guides/getting-started.md">开始使用</a>。</p>
+    <p class="mind-route__start"><strong>建议起点</strong> <a href="./architecture/state-architecture">状态架构</a></p>
+    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./architecture/pwa-offline-strategy">PWA 与离线策略</a>，再读 <a href="./guides/getting-started">开始使用</a>。</p>
   </div>
   <div class="mind-route">
     <p class="mind-route__for">如果你是新贡献者</p>
-    <p class="mind-route__start"><strong>建议起点</strong> <a href="./academy/learning-path.md">学习路径</a></p>
-    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./guides/getting-started.md">开始使用</a>，然后回到仓库中的 OpenSpec 文件。</p>
+    <p class="mind-route__start"><strong>建议起点</strong> <a href="./academy/learning-path">学习路径</a></p>
+    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./guides/getting-started">开始使用</a>，然后回到仓库中的 OpenSpec 文件。</p>
   </div>
   <div class="mind-route">
     <p class="mind-route__for">如果你更关注产品判断</p>
-    <p class="mind-route__start"><strong>建议起点</strong> <a href="./overview/project-thesis.md">项目论纲</a></p>
-    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./research/references-and-related-work.md">参考与相关工作</a>，把产品选择放回更大的背景里。</p>
+    <p class="mind-route__start"><strong>建议起点</strong> <a href="./overview/project-thesis">项目论纲</a></p>
+    <p class="mind-route__next"><strong>继续阅读</strong> <a href="./research/references-and-related-work">参考与相关工作</a>，把产品选择放回更大的背景里。</p>
   </div>
 </div>
 
