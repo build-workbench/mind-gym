@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { access, mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const playDir = resolve('public/play');
@@ -7,9 +7,14 @@ const indexHtml = resolve(playDir, 'index.html');
 
 await mkdir(playDir, { recursive: true });
 await writeFile(gitkeep, '', { flag: 'a' });
-await writeFile(
-  indexHtml,
-  `<!doctype html>
+
+try {
+  await access(indexHtml);
+  console.log('sync:play kept existing public/play/index.html');
+} catch {
+  await writeFile(
+    indexHtml,
+    `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -28,6 +33,7 @@ await writeFile(
   </body>
 </html>
 `,
-);
+  );
 
-console.log('sync:play placeholder created public/play/index.html');
+  console.log('sync:play placeholder created public/play/index.html');
+}

@@ -14,7 +14,6 @@ export default withMermaid(
     title: 'Mind Gym Whitepaper',
     description: 'Architecture-first documentation for the Mind Gym memory training system.',
     cleanUrls: true,
-    ignoreDeadLinks: true,
     locales: {
       en: {
         label: 'English',
