@@ -13,7 +13,7 @@ export default withMermaid(
     base,
     title: 'Mind Gym Whitepaper',
     description: 'Architecture-first documentation for the Mind Gym memory training system.',
-    cleanUrls: true,
+    cleanUrls: false,
     locales: {
       en: {
         label: 'English',
