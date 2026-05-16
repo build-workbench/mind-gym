@@ -21,25 +21,10 @@ Mind Gym 仓库里实际上承载了两个彼此相关的系统：
 
 ## 运行时地图
 
-```mermaid
-flowchart LR
-  User[玩家或读者] --> Browser[浏览器]
-  Browser --> HTML[index.html]
-  Browser --> Docs[VitePress 页面]
-  HTML --> App[app.js 编排器]
-  App --> UI[UI 绑定与渲染]
-  App --> GS[GameState]
-  App --> Settings[SettingsManager]
-  App --> Modes[模式注册表与模式模块]
-  GS --> GM[GameManager 深模块]
-  GS --> Timer[Timer]
-  Modes --> NBack[NBackState]
-  Modes --> Recall[RecallState]
-  App --> Storage[storage.js + localStorage]
-  Browser --> SW[sw.js Service Worker]
-  SW --> Cache[Cache Storage]
-  Storage --> Local[(localStorage)]
-```
+<figure class="mind-diagram" role="img" aria-label="系统总览图">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/system-overview-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/system-overview-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">从左到右理解这张图：浏览器先装载可玩的应用壳或文档壳，再把运行时交给 <code>app.js</code>，由它协调 UI、状态、模式、存储与离线能力。</p>
 
@@ -48,7 +33,7 @@ flowchart LR
 | 表面           | 技术                                           | 为什么适合                                 |
 | -------------- | ---------------------------------------------- | ------------------------------------------ |
 | **可玩的应用** | 静态 HTML + Vanilla JS + 编译后的 Tailwind CSS | 运行时复杂度低，源码与行为的映射直接       |
-| **文档站点**   | 带 Mermaid 支持的 VitePress                    | 适合承载架构密集型页面的轻量发布层         |
+| **文档站点**   | 搭配静态 SVG 架构图的 VitePress                | 适合承载架构密集型页面的轻量发布层         |
 | **持久化**     | localStorage                                   | 足以承载设置、成绩、统计、掌握度与离线进度 |
 | **离线交付**   | Service Worker + Web App Manifest              | 支持重复访问、安装体验与碎片化短会话       |
 

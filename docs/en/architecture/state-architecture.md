@@ -20,16 +20,10 @@ Mind Gym's central architectural move is to separate state by **time horizon** a
 
 ## The three-layer model
 
-```mermaid
-flowchart TD
-  Settings[Settings layer\nsrc/settings-manager.js\nPersistent preferences] --> GameState[GameState layer\nsrc/game-state.js\nLive session coordination]
-  GameState --> ModeState[ModeState layer\nsrc/nback-state.js / src/recall-state.js\nOn-demand specialized workflows]
-  GameState --> GameManager[src/game-manager.js\nDeep gameplay module]
-  GameState --> Timer[src/timer.js]
-  GameState --> WinPipeline[src/pipeline/win-pipeline.js]
-  Settings --> Storage[src/storage.js + localStorage]
-  ModeState --> Modes[src/modes.js + src/modes/*.js]
-```
+<figure class="mind-diagram" role="img" aria-label="State architecture diagram">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/state-architecture-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/state-architecture-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">The main separation is vertical: persistent policy flows into live session control, then into mode-specific state only when a selected mode needs specialized behavior.</p>
 

@@ -79,7 +79,7 @@ npm install
 <div class="mind-matrix">
   <div class="mind-panel">
     <h3>文档创作</h3>
-    <p>构建文档站，点击检查受影响页面，并确认 Mermaid 图与本地链接都能正确渲染。</p>
+    <p>构建文档站，点击检查受影响页面，并确认静态架构图与本地链接都能正确渲染。</p>
   </div>
   <div class="mind-panel">
     <h3>玩法修改</h3>

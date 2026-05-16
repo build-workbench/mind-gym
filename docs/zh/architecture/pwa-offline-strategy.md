@@ -26,29 +26,10 @@ Mind Gym 将三种浏览器能力组合在一起：
 
 ## 请求与缓存流程
 
-```mermaid
-sequenceDiagram
-  participant User as 用户
-  participant Browser as 浏览器
-  participant SW as Service Worker
-  participant Cache as Cache Storage
-  participant Network as 网络
-  participant Local as localStorage
-
-  User->>Browser: 打开 Mind Gym
-  Browser->>SW: 请求交给 Service Worker
-  SW->>Cache: 查询预缓存 / 静态缓存
-  alt 命中缓存
-    Cache-->>SW: 返回缓存响应
-    SW-->>Browser: 立即渲染
-  else 未命中
-    SW->>Network: 拉取资源
-    Network-->>SW: 返回响应
-    SW->>Cache: 按策略写入缓存
-    SW-->>Browser: 返回响应
-  end
-  Browser->>Local: 读取设置、统计、成就、掌握度
-```
+<figure class="mind-diagram" role="img" aria-label="请求与缓存流程图">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/pwa-request-flow-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/pwa-request-flow-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">这条路径说明，离线能力并不是单一功能。Cache Storage 负责代码与应用壳，localStorage 负责玩家历史与产品设置。</p>
 
@@ -99,18 +80,10 @@ Service Worker 会显式预缓存应用壳与主要运行时模块，包括：
 
 ## 更新行为
 
-```mermaid
-flowchart TD
-  Install[install 事件] --> Precache[预缓存应用壳资源]
-  Precache --> SkipWaiting[skipWaiting]
-  Activate[activate 事件] --> Cleanup[清理旧版 Mind Gym 缓存]
-  Cleanup --> Claim[clients.claim]
-  Fetch[fetch 事件] --> Route{请求类型}
-  Route -->|导航| NetFirst[网络优先，缓存回退]
-  Route -->|JS / CSS| SWR[stale while revalidate]
-  Route -->|图片| CacheFirst[cache first + 过期控制]
-  Route -->|其他| Runtime[运行时缓存]
-```
+<figure class="mind-diagram" role="img" aria-label="更新行为图">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/pwa-update-flow-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/pwa-update-flow-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">更新策略刻意保持保守：能拿到新壳层时就拿新壳层，但始终保留缓存回退，避免短会话因网络路径脆弱而失效。</p>
 

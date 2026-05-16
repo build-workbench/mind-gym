@@ -21,25 +21,10 @@ The important architectural point is that neither system depends on a custom bac
 
 ## Runtime map
 
-```mermaid
-flowchart LR
-  User[Player or reader] --> Browser[Browser]
-  Browser --> HTML[index.html]
-  Browser --> Docs[VitePress pages]
-  HTML --> App[app.js orchestrator]
-  App --> UI[UI bindings and renderer]
-  App --> GS[GameState]
-  App --> Settings[SettingsManager]
-  App --> Modes[Mode registry and mode modules]
-  GS --> GM[GameManager deep module]
-  GS --> Timer[Timer]
-  Modes --> NBack[NBackState]
-  Modes --> Recall[RecallState]
-  App --> Storage[storage.js + localStorage]
-  Browser --> SW[sw.js service worker]
-  SW --> Cache[Cache Storage]
-  Storage --> Local[(localStorage)]
-```
+<figure class="mind-diagram" role="img" aria-label="System overview diagram">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/system-overview-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/system-overview-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">Read left to right: the browser loads either the playable shell or the docs shell, then hands the runtime to <code>app.js</code>, which coordinates UI, state, modes, storage, and offline behavior.</p>
 
@@ -48,7 +33,7 @@ flowchart LR
 | Surface                | Technology                                       | Why it fits                                                            |
 | ---------------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
 | **Playable app**       | Static HTML + Vanilla JS + compiled Tailwind CSS | Minimal runtime complexity and direct source-to-runtime mapping        |
-| **Documentation site** | VitePress with Mermaid support                   | Lightweight publishing layer for architecture-heavy pages              |
+| **Documentation site** | VitePress with static SVG figures                | Lightweight publishing layer for architecture-heavy pages              |
 | **Persistence**        | localStorage                                     | Sufficient for settings, scores, stats, mastery, and offline ownership |
 | **Offline delivery**   | Service Worker + Web App Manifest                | Supports repeat visits, installability, and resilient short sessions   |
 

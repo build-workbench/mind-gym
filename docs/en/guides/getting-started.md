@@ -79,7 +79,7 @@ Core validation commands already used by the repository:
 <div class="mind-matrix">
   <div class="mind-panel">
     <h3>Authoring docs</h3>
-    <p>Build the docs site, click through affected pages, and confirm that Mermaid diagrams and local links render correctly.</p>
+    <p>Build the docs site, click through affected pages, and confirm that static architecture figures and local links render correctly.</p>
   </div>
   <div class="mind-panel">
     <h3>Editing gameplay</h3>

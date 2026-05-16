@@ -18,6 +18,13 @@ function requireRootCompatModule() {
   return require(modulePath);
 }
 
+function readThemeFile(...relativeSegments) {
+  return fs.readFileSync(
+    path.join(repoRoot, 'docs', '.vitepress', 'theme', ...relativeSegments),
+    'utf8'
+  );
+}
+
 describe('docs homepage CTA links', () => {
   test.each([
     ['en', 'docs/en/index.md'],
@@ -59,6 +66,15 @@ describe('docs homepage CTA links', () => {
       expect(content).not.toContain('href="./research/references-and-related-work"');
     }
   );
+});
+
+describe('docs mermaid rendering strategy', () => {
+  test('does not bootstrap a Mermaid runtime from the docs theme', () => {
+    const themeEntry = readThemeFile('index.ts');
+
+    expect(themeEntry).not.toContain("from './mermaid'");
+    expect(themeEntry).not.toContain('setupMermaidRenderer(');
+  });
 });
 
 describe('legacy service worker cleanup', () => {

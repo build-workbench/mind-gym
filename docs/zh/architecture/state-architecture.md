@@ -20,16 +20,10 @@ Mind Gym 最核心的架构动作，是按 **时间尺度** 和 **责任归属**
 
 ## 三层模型
 
-```mermaid
-flowchart TD
-  Settings[Settings 层\nsrc/settings-manager.js\n持久化偏好] --> GameState[GameState 层\nsrc/game-state.js\n运行时会话协调]
-  GameState --> ModeState[ModeState 层\nsrc/nback-state.js / src/recall-state.js\n按需启用的专项流程]
-  GameState --> GameManager[src/game-manager.js\n深度玩法模块]
-  GameState --> Timer[src/timer.js]
-  GameState --> WinPipeline[src/pipeline/win-pipeline.js]
-  Settings --> Storage[src/storage.js + localStorage]
-  ModeState --> Modes[src/modes.js + src/modes/*.js]
-```
+<figure class="mind-diagram" role="img" aria-label="状态架构图">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/state-architecture-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/state-architecture-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">这张图最关键的是纵向分层：持久化策略先进入实时会话控制，只有在某个模式需要专项行为时，才会继续落到 ModeState。</p>
 

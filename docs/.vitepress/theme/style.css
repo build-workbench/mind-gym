@@ -204,17 +204,29 @@ body {
   top: 14px;
 }
 
-.vp-doc div[class*='language-'].language-mermaid {
+.mind-diagram {
+  margin: 1rem 0 1.2rem;
+}
+
+.mind-diagram__image {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 24px;
   background: var(--mind-figure-bg);
+  box-shadow: var(--mind-shadow-soft);
 }
 
-.vp-doc div[class*='language-'].language-mermaid pre {
-  padding: 1rem;
+.mind-diagram__image--dark {
+  display: none;
 }
 
-.vp-doc div[class*='language-'].language-mermaid svg,
-.vp-doc div[class*='language-'].language-mermaid .mermaid {
-  max-width: 100%;
+.dark .mind-diagram__image--light {
+  display: none;
+}
+
+.dark .mind-diagram__image--dark {
+  display: block;
 }
 
 .vp-doc blockquote {

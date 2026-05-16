@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const repoRoot = path.resolve(__dirname, '..');
 const docsConfigPath = path.join(repoRoot, 'docs', '.vitepress', 'config.ts');
+const docsPackagePath = path.join(repoRoot, 'docs', 'package.json');
 const workflowPaths = [
   path.join(repoRoot, '.github', 'workflows', 'ci-docs.yml'),
   path.join(repoRoot, '.github', 'workflows', 'docs-pages.yml'),
@@ -35,6 +36,16 @@ describe('docs deployment configuration', () => {
     const configSource = read(docsConfigPath);
 
     expect(configSource).not.toMatch(/cleanUrls\s*:\s*true/);
+  });
+
+  test('avoids the global VitePress Mermaid plugin wrapper', () => {
+    const configSource = read(docsConfigPath);
+    const docsPackage = JSON.parse(read(docsPackagePath));
+
+    expect(configSource).not.toContain("import { withMermaid } from 'vitepress-plugin-mermaid';");
+    expect(configSource).not.toMatch(/export\s+default\s+withMermaid\s*\(/);
+    expect(docsPackage.dependencies?.['vitepress-plugin-mermaid']).toBeUndefined();
+    expect(docsPackage.dependencies?.mermaid).toBeUndefined();
   });
 
   test.each(workflowPaths)('%s tracks every staged root play artifact', workflowPath => {

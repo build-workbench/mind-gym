@@ -26,29 +26,10 @@ Together they create a product that behaves more like a resilient local tool tha
 
 ## Request and cache flow
 
-```mermaid
-sequenceDiagram
-  participant User as User
-  participant Browser as Browser
-  participant SW as Service Worker
-  participant Cache as Cache Storage
-  participant Network as Network
-  participant Local as localStorage
-
-  User->>Browser: Open Mind Gym
-  Browser->>SW: Route fetch requests
-  SW->>Cache: Check precached/static entries
-  alt Cache hit
-    Cache-->>SW: Return cached response
-    SW-->>Browser: Render immediately
-  else Cache miss
-    SW->>Network: Fetch resource
-    Network-->>SW: Response
-    SW->>Cache: Store according to strategy
-    SW-->>Browser: Render response
-  end
-  Browser->>Local: Load settings, stats, achievements, mastery
-```
+<figure class="mind-diagram" role="img" aria-label="Request and cache flow diagram">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/pwa-request-flow-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/pwa-request-flow-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">This path explains why offline behavior is not one feature. Cache Storage protects code and shell assets, while localStorage restores player history and product settings.</p>
 
@@ -99,18 +80,10 @@ This split matters: the Service Worker protects the **code and shell**, while lo
 
 ## Update behavior
 
-```mermaid
-flowchart TD
-  Install[Install event] --> Precache[Precache shell assets]
-  Precache --> SkipWaiting[skipWaiting]
-  Activate[Activate event] --> Cleanup[Delete old Mind Gym caches]
-  Cleanup --> Claim[clients.claim]
-  Fetch[Fetch event] --> Route{Request type}
-  Route -->|Navigate| NetFirst[Network first, cache fallback]
-  Route -->|JS / CSS| SWR[Stale while revalidate]
-  Route -->|Images| CacheFirst[Cache first with expiration]
-  Route -->|Other| Runtime[Runtime cache]
-```
+<figure class="mind-diagram" role="img" aria-label="Update behavior diagram">
+  <img class="mind-diagram__image mind-diagram__image--light" src="/diagrams/pwa-update-flow-light.svg" alt="" />
+  <img class="mind-diagram__image mind-diagram__image--dark" src="/diagrams/pwa-update-flow-dark.svg" alt="" />
+</figure>
 
 <p class="mind-caption">The update posture is conservative by design: fetch fresh shell content when possible, but keep cached fallbacks so short sessions do not fail just because the network path is weak.</p>
 
