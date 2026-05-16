@@ -136,14 +136,18 @@ body {
 }
 
 .vp-doc table {
-  width: 100%;
+  display: block;
+  width: max-content;
+  min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid var(--vp-c-border);
   border-radius: 20px;
   background: var(--mind-surface-strong);
   box-shadow: var(--mind-shadow-soft);
+  scrollbar-gutter: stable;
 }
 
 .vp-doc th,
