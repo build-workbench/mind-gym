@@ -26,15 +26,11 @@ async function stageDistBundle() {
 }
 
 async function ensurePlaceholder() {
+  await rm(playDir, { recursive: true, force: true });
   await mkdir(playDir, { recursive: true });
-
-  try {
-    await access(indexHtml);
-    console.log('sync:play kept existing docs/public/play/index.html');
-  } catch {
-    await writeFile(
-      indexHtml,
-      `<!doctype html>
+  await writeFile(
+    indexHtml,
+    `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -53,10 +49,9 @@ async function ensurePlaceholder() {
   </body>
 </html>
 `,
-    );
+  );
 
-    console.log('sync:play placeholder created docs/public/play/index.html');
-  }
+  console.log('sync:play placeholder created docs/public/play/index.html');
 }
 
 try {

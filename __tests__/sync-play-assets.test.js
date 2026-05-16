@@ -50,17 +50,21 @@ describe('sync-play-assets script', () => {
     expect(output).toContain('placeholder created');
   });
 
-  test('preserves an existing play index page', () => {
+  test('replaces stale play output with the placeholder when dist is missing', () => {
     const playDir = path.join(fixtureRoot, 'docs', 'public', 'play');
     const playIndex = path.join(playDir, 'index.html');
-    const realPage = '<!doctype html><title>Real demo</title><main>ready</main>';
+    const staleAsset = path.join(playDir, 'assets', 'stale.txt');
+    const stalePage = '<!doctype html><title>Real demo</title><main>ready</main>';
 
     mkdirSync(playDir, { recursive: true });
-    writeFileSync(playIndex, realPage);
+    mkdirSync(path.dirname(staleAsset), { recursive: true });
+    writeFileSync(playIndex, stalePage);
+    writeFileSync(staleAsset, 'stale');
 
     runSyncPlay();
 
-    expect(readFileSync(playIndex, 'utf8')).toBe(realPage);
+    expect(readFileSync(playIndex, 'utf8')).toContain('Mind Gym Live Demo');
+    expect(existsSync(staleAsset)).toBe(false);
   });
 
   test('copies the dist app into docs/public/play and rewrites public metadata URLs', () => {
