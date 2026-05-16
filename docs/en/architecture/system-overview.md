@@ -1,10 +1,120 @@
 ---
 title: System Overview
-description: High-level summary of the Mind Gym application and docs stack.
+description: Architecture map for the app runtime, docs shell, and operational boundaries of Mind Gym.
 ---
 
 # System Overview
 
-Mind Gym ships as a static, browser-first application: vanilla JavaScript drives gameplay, Tailwind CSS provides styling, and localStorage plus a service worker provide persistence and offline capability. The whitepaper site mirrors that simplicity by using VitePress as a lightweight publishing layer.
+Mind Gym is two related systems shipped from one repository:
 
-At a high level, the runtime splits concerns between persistent settings, runtime game state, and mode-specific state. That separation keeps the core loop understandable while still supporting multiple training modes from one app shell.
+1. **The game runtime** — a browser-native memory training application served as static files.
+2. **The docs shell** — a VitePress whitepaper layer that explains the runtime to humans.
+
+The important architectural point is that neither system depends on a custom backend. The game leans on browser primitives, while the docs site leans on static generation.
+
+## Runtime map
+
+```mermaid
+flowchart LR
+  User[Player or reader] --> Browser[Browser]
+  Browser --> HTML[index.html]
+  Browser --> Docs[VitePress pages]
+  HTML --> App[app.js orchestrator]
+  App --> UI[UI bindings and renderer]
+  App --> GS[GameState]
+  App --> Settings[SettingsManager]
+  App --> Modes[Mode registry and mode modules]
+  GS --> GM[GameManager deep module]
+  GS --> Timer[Timer]
+  Modes --> NBack[NBackState]
+  Modes --> Recall[RecallState]
+  App --> Storage[storage.js + localStorage]
+  Browser --> SW[sw.js service worker]
+  SW --> Cache[Cache Storage]
+  Storage --> Local[(localStorage)]
+```
+
+## Deployment model
+
+| Surface | Technology | Why it fits |
+| --- | --- | --- |
+| **Playable app** | Static HTML + Vanilla JS + compiled Tailwind CSS | Minimal runtime complexity, direct source-to-runtime mapping |
+| **Documentation site** | VitePress with Mermaid support | Lightweight publishing layer for architecture-heavy pages |
+| **Persistence** | localStorage | Sufficient for settings, scores, stats, mastery, and offline ownership |
+| **Offline delivery** | Service Worker + Web App Manifest | Supports repeat visits, installability, and resilient short sessions |
+
+## Major runtime boundaries
+
+### `index.html` as the composition root
+
+The application is assembled through script tags in dependency order. This matters because the repository favors UMD-style modules exposed on `window`, which keeps module resolution explicit and debuggable without a JavaScript bundler.
+
+### `app.js` as orchestrator
+
+`app.js` remains the broad coordinator for the game loop, UI reactions, and mode dispatch. The architectural intent is not to make `app.js` tiny; it is to keep `app.js` from being the only place where complex logic can live.
+
+### Deep modules for concentrated complexity
+
+Several areas with non-trivial behavior are delegated to focused modules:
+
+- `src/game-manager.js` for card flipping, matching, locking, and win detection.
+- `src/modal-manager.js` for modal stacking, focus trap, and focus restoration.
+- `src/ui/renderer.js` for DOM rendering concerns.
+- `src/pipeline/win-pipeline.js` for post-win sequencing.
+
+### State-bearing modules
+
+Mind Gym now distinguishes between:
+
+- **Persistent settings** via `src/settings-manager.js`
+- **Runtime session control** via `src/game-state.js`
+- **Mode-specific state** via `src/nback-state.js` and `src/recall-state.js`
+
+That separation is the main reason multiple training modes can coexist without collapsing into one monolithic state object.
+
+## Data flow in practice
+
+### Session bootstrap
+
+1. Browser loads `index.html` and compiled CSS.
+2. Script tags load source modules in declared order.
+3. `app.js` binds DOM references from `src/ui.js`.
+4. Settings and persisted data are loaded from `src/storage.js` / localStorage.
+5. The app applies theme, language, motion, and current gameplay defaults.
+6. The Service Worker registers to support caching and updates.
+
+### Session execution
+
+1. A mode is selected or resumed.
+2. `app.js` initializes GameState and any mode-specific state.
+3. Renderer and effects modules translate state transitions into visible changes.
+4. Storage is consulted at boundaries where persistence matters: best scores, leaderboards, stats, achievements, adaptive data, and mastery data.
+
+### Session completion
+
+Win handling does more than open a modal. The win pipeline can stop timers, update scores, record stats, adjust adaptive rating, update mastery, trigger achievements, and optionally open recall testing. This is a useful example of orchestration extracted into a dedicated deep module.
+
+## File-system shape
+
+| Zone | Representative files | Responsibility |
+| --- | --- | --- |
+| **Shell** | `index.html`, `assets/app.css`, `manifest.webmanifest` | Entry point, styling artifact, install metadata |
+| **Runtime orchestration** | `app.js`, `src/game-state.js`, `src/settings-manager.js` | Session coordination and high-level state policy |
+| **Domain logic** | `src/game-manager.js`, `src/modes.js`, `src/fsrs.js`, `src/adaptive.js`, `src/daily.js` | Gameplay rules and progression logic |
+| **Mode specialization** | `src/nback-state.js`, `src/recall-state.js`, `src/modes/*.js` | Mode-specific workflows |
+| **UI infrastructure** | `src/ui.js`, `src/ui-events.js`, `src/ui/renderer.js`, `src/modal-manager.js` | Bindings, events, rendering, accessibility |
+| **Persistence/offline** | `src/storage.js`, `src/keys.js`, `sw.js` | Durable local state and cached delivery |
+| **Docs shell** | `docs/.vitepress/*`, `docs/en/*`, `docs/zh/*` | Whitepaper navigation and publishing |
+
+## Why senior reviewers care
+
+Mind Gym is not architecturally interesting because it is huge. It is interesting because its claims can be verified quickly:
+
+- The source files are named after their responsibilities.
+- The runtime does not hide behind build-time indirection.
+- The offline story can be inspected directly in `sw.js`.
+- The state model can be traced from docs to concrete modules.
+
+## Practical conclusion
+
+The system overview should leave readers with one mental model: **Mind Gym is a static, browser-first product whose leverage comes from disciplined boundaries, not from infrastructure scale.**
