@@ -13,6 +13,11 @@ function requireCleanupModule() {
   return require(modulePath);
 }
 
+function requireRootCompatModule() {
+  const modulePath = path.join(repoRoot, 'docs', '.vitepress', 'theme', 'root-compat.cjs');
+  return require(modulePath);
+}
+
 describe('docs homepage CTA links', () => {
   test.each([
     ['en', 'docs/en/index.md'],
@@ -87,5 +92,54 @@ describe('legacy service worker cleanup', () => {
 
     expect(result).toBe(0);
     expect(unregister).not.toHaveBeenCalled();
+  });
+});
+
+describe('docs root compatibility redirect', () => {
+  test('keeps legacy mode launches on the playable app route', () => {
+    const { resolveRootVisitTarget } = requireRootCompatModule();
+
+    expect(
+      resolveRootVisitTarget({
+        href: 'https://lessup.github.io/mind-gym/?mode=nback#focus',
+        language: 'en-US',
+        baseUrl: '/mind-gym/',
+      })
+    ).toBe('https://lessup.github.io/mind-gym/play/?mode=nback#focus');
+  });
+
+  test('sends standalone launches to the playable app route', () => {
+    const { resolveRootVisitTarget } = requireRootCompatModule();
+
+    expect(
+      resolveRootVisitTarget({
+        href: 'https://lessup.github.io/mind-gym/',
+        language: 'zh-CN',
+        baseUrl: '/mind-gym/',
+        isStandalone: true,
+      })
+    ).toBe('https://lessup.github.io/mind-gym/play/');
+  });
+
+  test('keeps normal browser visits on locale-aware docs routes', () => {
+    const { resolveRootVisitTarget } = requireRootCompatModule();
+
+    expect(
+      resolveRootVisitTarget({
+        href: 'https://lessup.github.io/mind-gym/?utm_source=docs',
+        language: 'zh-CN',
+        baseUrl: '/mind-gym/',
+      })
+    ).toBe('https://lessup.github.io/mind-gym/zh/?utm_source=docs');
+  });
+});
+
+describe('artifact inspection scripts', () => {
+  test('preview and analyze inspect the deployed docs artifact', () => {
+    const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+    expect(packageJson.scripts.preview).toContain('docs/.vitepress/dist');
+    expect(packageJson.scripts.analyze).toContain('docs/.vitepress/dist');
+    expect(packageJson.scripts.preview).not.toContain('serve dist');
   });
 });

@@ -1,14 +1,26 @@
 ---
 title: Mind Gym Whitepaper
-description: Redirects to the preferred documentation language.
+description: Routes legacy app launches to the playable demo before locale-aware docs redirects.
 ---
 
 <script setup>
 import { onMounted } from 'vue';
+import compatModule from './.vitepress/theme/root-compat.cjs';
+
+const { resolveRootVisitTarget } = compatModule;
 
 onMounted(() => {
-  const target = navigator.language?.toLowerCase().startsWith('zh') ? 'zh/' : 'en/';
-  window.location.replace(new URL(target, window.location.href).toString());
+  const target = resolveRootVisitTarget({
+    href: window.location.href,
+    language: navigator.language,
+    baseUrl: import.meta.env.BASE_URL,
+    isStandalone:
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      window.navigator?.standalone === true,
+    referrer: document.referrer,
+  });
+
+  window.location.replace(target);
 });
 </script>
 
