@@ -1,0 +1,106 @@
+name: Docs (GitHub Pages)
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - '.github/workflows/ci-docs.yml'
+      - '.github/workflows/docs-pages.yml'
+      - 'app.js'
+      - 'index.html'
+      - '404.html'
+      - 'offline.html'
+      - 'manifest.webmanifest'
+      - 'sw.js'
+      - 'src/**'
+      - 'assets/**'
+      - 'styles/**'
+      - 'scripts/**'
+      - 'tailwind.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'docs/**'
+  workflow_dispatch:
+
+concurrency:
+  group: docs-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  NODE_VERSION: '24'
+
+jobs:
+  deploy:
+    if: github.repository == 'LessUp/mind-gym'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            docs/package-lock.json
+
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Set VitePress base
+        shell: bash
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${BASE_PATH}" ]]; then
+            base="/"
+          else
+            base="${BASE_PATH%/}/"
+          fi
+          echo "VITEPRESS_BASE=${base}" >> "$GITHUB_ENV"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin imagemagick
+
+      - name: Install root dependencies
+        run: npm ci --prefer-offline
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: npm ci --prefer-offline
+
+      - name: Build playable bundle
+        run: npm run build:play
+
+      - name: Build docs
+        working-directory: docs
+        env:
+          VITEPRESS_BASE: ${{ env.VITEPRESS_BASE }}
+        run: npm run build
+
+      - name: Add .nojekyll
+        run: touch docs/.vitepress/dist/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

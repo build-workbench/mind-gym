@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml"><img src="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/LessUp/mind-gym/actions/workflows/pages.yml"><img src="https://github.com/LessUp/mind-gym/actions/workflows/pages.yml/badge.svg" alt="Deploy"></a>
+  <a href="https://github.com/LessUp/mind-gym/actions/workflows/docs-pages.yml"><img src="https://github.com/LessUp/mind-gym/actions/workflows/docs-pages.yml/badge.svg" alt="Docs Pages"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <a href="#"><img src="https://img.shields.io/badge/PWA-Ready-5A0FC8?logo=pwa&logoColor=white" alt="PWA"></a>
 </p>
@@ -22,7 +22,8 @@
 ---
 
 <p align="center">
-  <a href="https://lessup.github.io/mind-gym/">🎮 Play Now</a>
+  <a href="https://lessup.github.io/mind-gym/">📘 Whitepaper Site</a> •
+  <a href="https://lessup.github.io/mind-gym/play/index.html">🎮 Playable Demo</a>
 </p>
 
 ## 🎬 Preview
@@ -101,7 +102,8 @@ npm run build:css  # Compile Tailwind
 
 ## 📖 Documentation
 
-- [Documentation](docs/) — User guides and tutorials
+- [Whitepaper Site](https://lessup.github.io/mind-gym/) — Hosted architecture, guides, and reference docs
+- [Playable Demo](https://lessup.github.io/mind-gym/play/index.html) — Live browser build of Mind Gym
 
 ---
 

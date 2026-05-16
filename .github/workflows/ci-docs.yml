@@ -1,0 +1,96 @@
+name: CI (docs)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ci-docs.yml'
+      - '.github/workflows/docs-pages.yml'
+      - 'app.js'
+      - 'index.html'
+      - '404.html'
+      - 'offline.html'
+      - 'manifest.webmanifest'
+      - 'sw.js'
+      - 'src/**'
+      - 'assets/**'
+      - 'styles/**'
+      - 'scripts/**'
+      - 'tailwind.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'docs/**'
+      - 'README.md'
+      - 'README.zh-CN.md'
+  push:
+    branches: [master, main]
+    paths:
+      - '.github/workflows/ci-docs.yml'
+      - '.github/workflows/docs-pages.yml'
+      - 'app.js'
+      - 'index.html'
+      - '404.html'
+      - 'offline.html'
+      - 'manifest.webmanifest'
+      - 'sw.js'
+      - 'src/**'
+      - 'assets/**'
+      - 'styles/**'
+      - 'scripts/**'
+      - 'tailwind.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'docs/**'
+      - 'README.md'
+      - 'README.zh-CN.md'
+
+concurrency:
+  group: ci-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            docs/package-lock.json
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin imagemagick
+
+      - name: Install root dependencies
+        run: npm ci --prefer-offline
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: npm ci --prefer-offline
+
+      - name: Build playable bundle
+        run: npm run build:play
+
+      - name: Build docs
+        working-directory: docs
+        run: npm run build
+
+      - name: Verify docs output
+        run: |
+          test -f docs/.vitepress/dist/index.html
+          test -f docs/.vitepress/dist/play/index.html
+          echo '✅ docs and playable demo artifacts verified'

@@ -14,8 +14,8 @@
   <a href="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml">
     <img src="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
-  <a href="https://github.com/LessUp/mind-gym/actions/workflows/pages.yml">
-    <img src="https://github.com/LessUp/mind-gym/actions/workflows/pages.yml/badge.svg" alt="Deploy">
+  <a href="https://github.com/LessUp/mind-gym/actions/workflows/docs-pages.yml">
+    <img src="https://github.com/LessUp/mind-gym/actions/workflows/docs-pages.yml/badge.svg" alt="Docs Pages">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
@@ -36,9 +36,9 @@
 </p>
 
 <p align="center">
-  <a href="https://lessup.github.io/mind-gym/">🎮 在线游玩</a> •
+  <a href="https://lessup.github.io/mind-gym/">📘 白皮书站点</a> •
+  <a href="https://lessup.github.io/mind-gym/play/index.html">🎮 在线试玩</a> •
   <a href="#安装">📱 安装</a> •
-  <a href="#文档">📖 文档</a> •
   <a href="#贡献">🤝 贡献</a>
 </p>
 
@@ -92,7 +92,7 @@
 
 ### 在线游玩
 
-访问 **[https://lessup.github.io/mind-gym/](https://lessup.github.io/mind-gym/)** 立即在浏览器中开始游戏。
+访问 **[白皮书站点](https://lessup.github.io/mind-gym/)** 阅读完整文档，或打开 **[在线试玩](https://lessup.github.io/mind-gym/play/index.html)** 立即开始训练。
 
 ### 安装为 PWA
 
@@ -225,7 +225,8 @@ mind-gym/
 
 ## 📖 文档
 
-- [用户指南](docs/) — 使用教程与功能说明
+- [白皮书站点](https://lessup.github.io/mind-gym/) — 在线架构说明、教程与参考文档
+- [在线试玩](https://lessup.github.io/mind-gym/play/index.html) — 浏览器中直接体验最新版本
 - [规范文档](openspec/specs/) — 能力规范与技术定义
 
 ---
