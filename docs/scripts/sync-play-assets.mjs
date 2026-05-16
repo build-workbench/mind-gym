@@ -1,23 +1,40 @@
-import { access, mkdir, writeFile } from 'node:fs/promises';
+import { access, cp, mkdir, rm, writeFile, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const docsDir = dirname(scriptDir);
+const repoRoot = dirname(docsDir);
+const distDir = resolve(repoRoot, 'dist');
 const playDir = resolve(docsDir, 'public/play');
-const gitkeep = resolve(playDir, '.gitkeep');
 const indexHtml = resolve(playDir, 'index.html');
+const publicBaseUrl = 'https://lessup.github.io/mind-gym/';
+const stagedBaseUrl = 'https://lessup.github.io/mind-gym/play/';
 
-await mkdir(playDir, { recursive: true });
-await writeFile(gitkeep, '', { flag: 'a' });
+function rewritePublicUrls(html) {
+  return html.replaceAll(publicBaseUrl, stagedBaseUrl);
+}
 
-try {
-  await access(indexHtml);
-  console.log('sync:play kept existing docs/public/play/index.html');
-} catch {
-  await writeFile(
-    indexHtml,
-    `<!doctype html>
+async function stageDistBundle() {
+  await rm(playDir, { recursive: true, force: true });
+  await cp(distDir, playDir, { recursive: true });
+
+  const html = await readFile(indexHtml, 'utf8');
+  await writeFile(indexHtml, rewritePublicUrls(html));
+
+  console.log('sync:play copied dist/ to docs/public/play/');
+}
+
+async function ensurePlaceholder() {
+  await mkdir(playDir, { recursive: true });
+
+  try {
+    await access(indexHtml);
+    console.log('sync:play kept existing docs/public/play/index.html');
+  } catch {
+    await writeFile(
+      indexHtml,
+      `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -25,18 +42,26 @@ try {
     <title>Mind Gym Live Demo</title>
     <meta
       name="description"
-      content="Placeholder live demo route while the content shell is being built."
+      content="The playable demo bundle is unavailable until the app build runs."
     />
   </head>
   <body>
     <main>
       <h1>Mind Gym Live Demo</h1>
-      <p>The playable demo route is being prepared.</p>
+      <p>Run <code>npm run build:play</code> to stage the latest playable app.</p>
     </main>
   </body>
 </html>
 `,
-  );
+    );
 
-  console.log('sync:play placeholder created docs/public/play/index.html');
+    console.log('sync:play placeholder created docs/public/play/index.html');
+  }
+}
+
+try {
+  await access(distDir);
+  await stageDistBundle();
+} catch {
+  await ensurePlaceholder();
 }
