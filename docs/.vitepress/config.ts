@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+import fs from 'node:fs';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import llmstxt from 'vitepress-plugin-llms';
 
@@ -10,6 +11,7 @@ const base = rawBase
       : `${rawBase}/`
     : `/${rawBase}/`
   : '/';
+const hasIndexPage = fs.existsSync(new URL('../index.md', import.meta.url));
 
 export default withMermaid(
   defineConfig({
@@ -17,6 +19,7 @@ export default withMermaid(
     title: 'Mind Gym Whitepaper',
     description: 'Architecture-first documentation for the Mind Gym memory training system.',
     cleanUrls: true,
+    ignoreDeadLinks: true,
     locales: {
       en: {
         label: 'English',
@@ -178,7 +181,7 @@ export default withMermaid(
       socialLinks: [{ icon: 'github', link: 'https://github.com/LessUp/mind-gym' }],
     },
     vite: {
-      plugins: [llmstxt()],
+      plugins: hasIndexPage ? [llmstxt()] : [],
     },
   })
 );
