@@ -88,6 +88,17 @@ describe('sync-play-assets script', () => {
 </html>
 `
     );
+    writeFile('dist/robots.txt', 'Sitemap: https://lessup.github.io/mind-gym/sitemap.xml\n');
+    writeFile(
+      'dist/sitemap.xml',
+      `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://lessup.github.io/mind-gym/</loc>
+  </url>
+</urlset>
+`
+    );
     writeFile('dist/assets/app.css', 'body { color: rebeccapurple; }');
     writeFile('docs/public/play/index.html', '<!doctype html><title>Placeholder</title>');
 
@@ -95,11 +106,15 @@ describe('sync-play-assets script', () => {
     const playDir = path.join(fixtureRoot, 'docs', 'public', 'play');
     const playIndex = path.join(playDir, 'index.html');
     const stagedIndex = readFileSync(playIndex, 'utf8');
+    const stagedRobots = readFileSync(path.join(playDir, 'robots.txt'), 'utf8');
+    const stagedSitemap = readFileSync(path.join(playDir, 'sitemap.xml'), 'utf8');
 
     expect(output).toContain('copied dist/ to docs/public/play/');
     expect(stagedIndex).toContain('Playable app');
     expect(stagedIndex).toContain('https://lessup.github.io/mind-gym/play/');
     expect(stagedIndex).toContain('https://lessup.github.io/mind-gym/play/assets/og-image.png');
+    expect(stagedRobots).toContain('Sitemap: https://lessup.github.io/mind-gym/play/sitemap.xml');
+    expect(stagedSitemap).toContain('<loc>https://lessup.github.io/mind-gym/play/</loc>');
     expect(stagedIndex).not.toContain('<title>Placeholder</title>');
     expect(readFileSync(path.join(playDir, 'assets', 'app.css'), 'utf8')).toContain(
       'rebeccapurple'
