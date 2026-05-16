@@ -36,14 +36,14 @@ describe('sync-play-assets script', () => {
   test('creates the placeholder page when play index is missing', () => {
     runSyncPlay();
 
-    const playIndex = path.join(fixtureRoot, 'public', 'play', 'index.html');
+    const playIndex = path.join(fixtureRoot, 'docs', 'public', 'play', 'index.html');
 
     expect(existsSync(playIndex)).toBe(true);
     expect(readFileSync(playIndex, 'utf8')).toContain('Mind Gym Live Demo');
   });
 
   test('preserves an existing play index page', () => {
-    const playDir = path.join(fixtureRoot, 'public', 'play');
+    const playDir = path.join(fixtureRoot, 'docs', 'public', 'play');
     const playIndex = path.join(playDir, 'index.html');
     const realPage = '<!doctype html><title>Real demo</title><main>ready</main>';
 

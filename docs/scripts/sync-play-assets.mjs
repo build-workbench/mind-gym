@@ -4,8 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const docsDir = dirname(scriptDir);
-const repoRoot = dirname(docsDir);
-const playDir = resolve(repoRoot, 'public/play');
+const playDir = resolve(docsDir, 'public/play');
 const gitkeep = resolve(playDir, '.gitkeep');
 const indexHtml = resolve(playDir, 'index.html');
 
@@ -14,7 +13,7 @@ await writeFile(gitkeep, '', { flag: 'a' });
 
 try {
   await access(indexHtml);
-  console.log('sync:play kept existing public/play/index.html');
+  console.log('sync:play kept existing docs/public/play/index.html');
 } catch {
   await writeFile(
     indexHtml,
@@ -39,5 +38,5 @@ try {
 `,
   );
 
-  console.log('sync:play placeholder created public/play/index.html');
+  console.log('sync:play placeholder created docs/public/play/index.html');
 }
