@@ -4,13 +4,8 @@ import { withMermaid } from 'vitepress-plugin-mermaid';
 import llmstxt from 'vitepress-plugin-llms';
 
 const rawBase = process.env.VITEPRESS_BASE;
-const base = rawBase
-  ? rawBase.startsWith('/')
-    ? rawBase.endsWith('/')
-      ? rawBase
-      : `${rawBase}/`
-    : `/${rawBase}/`
-  : '/';
+const normalizedBase = rawBase?.trim().replace(/^\/+|\/+$/g, '');
+const base = normalizedBase ? `/${normalizedBase}/` : '/';
 const hasIndexPage = fs.existsSync(new URL('../index.md', import.meta.url));
 
 export default withMermaid(
