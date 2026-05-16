@@ -1,10 +1,18 @@
 const { execFileSync } = require('node:child_process');
-const { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } = require('node:fs');
+const {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} = require('node:fs');
 const path = require('node:path');
 
 const repoRoot = path.resolve(__dirname, '..');
 const fixtureRoot = path.join(repoRoot, '.tmp', 'sync-play-assets-test');
-const scriptPath = path.join(repoRoot, 'docs', 'scripts', 'sync-play-assets.mjs');
+const sourceScriptPath = path.join(repoRoot, 'docs', 'scripts', 'sync-play-assets.mjs');
+const scriptPath = path.join(fixtureRoot, 'docs', 'scripts', 'sync-play-assets.mjs');
 
 function runSyncPlay() {
   execFileSync(process.execPath, [scriptPath], {
@@ -16,6 +24,8 @@ function runSyncPlay() {
 describe('sync-play-assets script', () => {
   beforeEach(() => {
     rmSync(fixtureRoot, { recursive: true, force: true });
+    mkdirSync(path.dirname(scriptPath), { recursive: true });
+    copyFileSync(sourceScriptPath, scriptPath);
     mkdirSync(fixtureRoot, { recursive: true });
   });
 

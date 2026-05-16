@@ -272,7 +272,7 @@ Today's date: 2026/05/08.
 ### For Successor Models
 
 - All specs are in `openspec/specs/`
-- User docs are in `docs/README.md`
+- User docs are in `docs/`
 - Architecture decisions in `openspec/rfc/`
 - Follow OpenSpec workflow for any changes
 - This project is in maintenance-only mode

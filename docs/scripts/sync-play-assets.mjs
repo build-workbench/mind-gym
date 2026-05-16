@@ -1,7 +1,11 @@
 import { access, mkdir, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const playDir = resolve('public/play');
+const scriptDir = dirname(fileURLToPath(import.meta.url));
+const docsDir = dirname(scriptDir);
+const repoRoot = dirname(docsDir);
+const playDir = resolve(repoRoot, 'public/play');
 const gitkeep = resolve(playDir, '.gitkeep');
 const indexHtml = resolve(playDir, 'index.html');
 

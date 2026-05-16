@@ -101,7 +101,7 @@ npm run build:css  # Compile Tailwind
 
 ## 📖 Documentation
 
-- [Documentation](docs/README.md) — User guides and tutorials
+- [Documentation](docs/) — User guides and tutorials
 
 ---
 
