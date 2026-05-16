@@ -18,7 +18,7 @@ description: Editorial homepage for the Mind Gym whitepaper, architecture showca
         <strong>Inspect the system</strong>
         <span>Move from the high-level map into state, offline delivery, and module boundaries.</span>
       </a>
-      <a class="mind-link-card" href="/play/index.html">
+      <a class="mind-link-card" href="../play/index.html">
         <strong>Open the playable build</strong>
         <span>Use the game as evidence after the docs have established what matters.</span>
       </a>

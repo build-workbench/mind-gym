@@ -18,7 +18,7 @@ description: Mind Gym 白皮书、架构展示与贡献者学院的中文首页�
         <strong>再看系统地图</strong>
         <span>沿着总览进入状态架构、离线交付与模块边界。</span>
       </a>
-      <a class="mind-link-card" href="/play/index.html">
+      <a class="mind-link-card" href="../play/index.html">
         <strong>最后打开试玩版</strong>
         <span>在理解论点之后，再把游戏本体当作证据来审视。</span>
       </a>
