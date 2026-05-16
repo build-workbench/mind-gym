@@ -41,7 +41,7 @@ export default withMermaid(
               link: '/en/reference/module-catalog',
               activeMatch: '/en/reference/',
             },
-            { text: 'Live Demo', link: '/play/' },
+            { text: 'Live Demo', link: '/play/index.html' },
           ],
           sidebar: {
             '/en/overview/': [
@@ -117,7 +117,7 @@ export default withMermaid(
               activeMatch: '/zh/research/',
             },
             { text: '参考', link: '/zh/reference/module-catalog', activeMatch: '/zh/reference/' },
-            { text: '在线试玩', link: '/play/' },
+            { text: '在线试玩', link: '/play/index.html' },
           ],
           sidebar: {
             '/zh/overview/': [
