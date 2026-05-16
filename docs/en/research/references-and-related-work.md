@@ -38,7 +38,7 @@ Two kinds of references matter here:
 
 ### FSRS ecosystem
 
-Mind Gym’s mastery work references **FSRS-4.5**, a modern spaced-repetition scheduling approach widely discussed in open learning-tool communities. In Mind Gym, FSRS is not the entire product; it is a focused subsystem used to give repeated exposure more structure.
+Mind Gym’s mastery work references **FSRS-4.5**, a modern spaced-repetition scheduling approach documented in the open-source FSRS project. In Mind Gym, FSRS is not the entire product; it is a focused subsystem used to give repeated exposure more structure.
 
 ### PWA standards
 
@@ -56,6 +56,18 @@ Mind Gym inherits from the long tradition of concentration / matching games, but
 | **Classic browser memory games** | Provide the baseline mechanic, but usually lack richer progression and architecture discussion. |
 | **Offline-capable PWAs** | Offer the operational precedent for installability and resilient caching. |
 | **Architecture-focused docs sites** | Inspire the decision to present the project as a whitepaper rather than a minimal README alone. |
+
+## Selected references
+
+These are the concrete source links that anchor the claims above:
+
+- [Jaeggi et al. (2008), *Improving fluid intelligence with training on working memory*](https://doi.org/10.1073/pnas.0801268105) — classic dual n-back reference.
+- [Klingberg (2010), *Training and plasticity of working memory*](https://doi.org/10.1016/j.tics.2009.06.004) — working-memory training overview.
+- [MDN: Web App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) — installability and standalone launch.
+- [MDN: Service Worker API](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) — offline caching and update flow.
+- [FSRS project](https://github.com/open-spaced-repetition/fsrs4anki) — the spaced-repetition scheduler Mind Gym references.
+- [Anki manual](https://docs.ankiweb.net/) — the adjacent tool most readers will already know.
+- [Mnemosyne project](https://mnemosyne-proj.org/) — another established spaced-repetition reference point.
 
 ## Evidence boundaries
 

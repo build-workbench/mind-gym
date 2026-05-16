@@ -34,7 +34,8 @@ Core validation commands already used by the repository:
 | `npm test` | Run the Jest suite for runtime modules and gameplay behavior |
 | `npm run lint` | Check formatting / repository style expectations |
 | `npm run build:css` | Compile `styles/app.css` into the shipped CSS artifact |
-| `npm --prefix docs run build` | Build the VitePress whitepaper site |
+| `npm run docs:install` | Install the docs workspace dependencies on a fresh clone |
+| `npm run docs:build` | Build the VitePress whitepaper site (and install docs deps first) |
 
 ## Minimum mental model before editing
 
@@ -60,7 +61,7 @@ Core validation commands already used by the repository:
 1. Confirm claims against the repository, not memory.
 2. Prefer concrete file names over abstract descriptions.
 3. Keep English pages editorial and precise; keep Chinese pages aligned on core meaning.
-4. Run `npm --prefix docs run build` before considering the change done.
+4. Run `npm run docs:build` before considering the change done.
 
 ## Suggested file-reading order for new contributors
 

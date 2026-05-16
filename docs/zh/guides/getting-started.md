@@ -34,7 +34,8 @@ npm install
 | `npm test` | 运行 Jest 测试，覆盖运行时模块与玩法行为 |
 | `npm run lint` | 检查格式与仓库风格要求 |
 | `npm run build:css` | 将 `styles/app.css` 编译成实际交付的 CSS |
-| `npm --prefix docs run build` | 构建 VitePress 白皮书站点 |
+| `npm run docs:install` | 在全新克隆后安装文档工作区依赖 |
+| `npm run docs:build` | 构建 VitePress 白皮书站点（并先安装文档依赖） |
 
 ## 修改前至少要建立的心智模型
 
@@ -60,7 +61,7 @@ npm install
 1. 所有结论都以仓库事实为准，而不是凭记忆。
 2. 尽量使用真实文件名，而不是空泛描述。
 3. 英文页面保持编辑部式、高信号表达；中文页面保持核心语义对齐。
-4. 在认为任务完成之前，务必运行 `npm --prefix docs run build`。
+4. 在认为任务完成之前，务必运行 `npm run docs:build`。
 
 ## 新贡献者建议的源码阅读顺序
 

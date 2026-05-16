@@ -38,7 +38,7 @@ Mind Gym 并不把自己包装成原创研究成果。它是一个小型产品�
 
 ### FSRS 生态
 
-Mind Gym 的掌握度子系统参考了 **FSRS-4.5**，这是一种在开放学习工具社区中广泛讨论的现代间隔重复调度方法。在 Mind Gym 中，FSRS 不是整个产品，而是一个为“重复暴露更有结构”服务的子系统。
+Mind Gym 的掌握度子系统参考了 **FSRS-4.5**，这是一种在开源 FSRS 项目中有明确文档的现代间隔重复调度方法。在 Mind Gym 中，FSRS 不是整个产品，而是一个为“重复暴露更有结构”服务的子系统。
 
 ### PWA 标准
 
@@ -56,6 +56,18 @@ Mind Gym 继承了经典专注力 / 配对游戏的基本机制，但又加入�
 | **传统浏览器记忆游戏** | 提供了基础机制，但通常缺少更丰富的进展层与架构说明。 |
 | **离线可用的 PWA** | 提供了安装体验与缓存韧性的工程先例。 |
 | **架构导向型文档站** | 启发了将项目呈现为白皮书，而不是只保留最小 README。 |
+
+## 具体参考
+
+下面这些链接是上文主张的具体出处：
+
+- [Jaeggi 等（2008），*Improving fluid intelligence with training on working memory*](https://doi.org/10.1073/pnas.0801268105) —— 经典 dual n-back 参考。
+- [Klingberg（2010），*Training and plasticity of working memory*](https://doi.org/10.1016/j.tics.2009.06.004) —— 工作记忆训练综述。
+- [MDN：Web App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) —— 安装能力与独立窗口启动。
+- [MDN：Service Worker API](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) —— 离线缓存与更新流程。
+- [FSRS 项目](https://github.com/open-spaced-repetition/fsrs4anki) —— Mind Gym 参考的间隔重复调度器。
+- [Anki 手册](https://docs.ankiweb.net/) —— 多数读者都熟悉的相邻工具。
+- [Mnemosyne 项目](https://mnemosyne-proj.org/) —— 另一条成熟的间隔重复参考线。
 
 ## 证据边界
 
