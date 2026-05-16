@@ -8,25 +8,9 @@ function getPathname(url) {
   return new URL(url, 'https://example.invalid').pathname;
 }
 
-async function deleteLegacyMindGymCaches(cacheStorage = globalThis.caches) {
-  if (!cacheStorage?.keys || !cacheStorage?.delete) {
-    return;
-  }
-
-  try {
-    const cacheNames = await cacheStorage.keys();
-    const legacyCacheNames = cacheNames.filter(name => name.startsWith('mind-gym-'));
-
-    await Promise.all(legacyCacheNames.map(name => cacheStorage.delete(name)));
-  } catch {
-    // Ignore cache cleanup failures so docs hydration remains unaffected.
-  }
-}
-
 async function cleanupLegacyRootServiceWorkers(
   baseUrl,
-  serviceWorker = globalThis.navigator?.serviceWorker,
-  cacheStorage = globalThis.caches
+  serviceWorker = globalThis.navigator?.serviceWorker
 ) {
   if (!serviceWorker?.getRegistrations) {
     return 0;
@@ -37,16 +21,6 @@ async function cleanupLegacyRootServiceWorkers(
 
   try {
     const registrations = await serviceWorker.getRegistrations();
-    const hasPlayRegistration = registrations.some(registration => {
-      const scopePath = getPathname(registration?.scope);
-      const scriptPath = getPathname(
-        registration?.active?.scriptURL ||
-          registration?.waiting?.scriptURL ||
-          registration?.installing?.scriptURL
-      );
-
-      return scopePath === playPath && scriptPath.startsWith(playPath);
-    });
     let cleaned = 0;
 
     for (const registration of registrations) {
@@ -69,10 +43,6 @@ async function cleanupLegacyRootServiceWorkers(
       } catch {
         // Ignore unregister failures so docs hydration remains unaffected.
       }
-    }
-
-    if (cleaned > 0 && !hasPlayRegistration) {
-      await deleteLegacyMindGymCaches(cacheStorage);
     }
 
     return cleaned;

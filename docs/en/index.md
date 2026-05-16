@@ -10,11 +10,11 @@ description: Editorial homepage for the Mind Gym whitepaper, architecture showca
     <p class="mind-eyebrow">Browser-native memory training, presented as a systems-design case study</p>
     <p class="mind-hero__lede">Mind Gym is a zero-dependency memory training PWA for the open web: no backend, no runtime framework, no account wall, and no hidden infrastructure. This site treats the project as both a playable product and a technical argument. The documentation leads, then the demo backs the claims.</p>
     <div class="mind-link-list">
-      <a class="mind-link-card" href="./overview/project-thesis">
+      <a class="mind-link-card" href="./overview/project-thesis.html">
         <strong>Read the thesis</strong>
         <span>Start with product intent, operating constraints, and the architectural claim.</span>
       </a>
-      <a class="mind-link-card" href="./architecture/system-overview">
+      <a class="mind-link-card" href="./architecture/system-overview.html">
         <strong>Inspect the system</strong>
         <span>Move from the high-level map into state, offline delivery, and module boundaries.</span>
       </a>
@@ -56,23 +56,23 @@ description: Editorial homepage for the Mind Gym whitepaper, architecture showca
 <div class="mind-route-list">
   <div class="mind-route">
     <p class="mind-route__for">For strict reviewers</p>
-    <p class="mind-route__start"><strong>Start with</strong> <a href="./overview/project-thesis">Project Thesis</a></p>
-    <p class="mind-route__next"><strong>Continue with</strong> <a href="./architecture/system-overview">System Overview</a>, then <a href="./reference/module-catalog">Module Catalog</a>.</p>
+    <p class="mind-route__start"><strong>Start with</strong> <a href="./overview/project-thesis.html">Project Thesis</a></p>
+    <p class="mind-route__next"><strong>Continue with</strong> <a href="./architecture/system-overview.html">System Overview</a>, then <a href="./reference/module-catalog.html">Module Catalog</a>.</p>
   </div>
   <div class="mind-route">
     <p class="mind-route__for">For senior GitHub developers</p>
-    <p class="mind-route__start"><strong>Start with</strong> <a href="./architecture/state-architecture">State Architecture</a></p>
-    <p class="mind-route__next"><strong>Continue with</strong> <a href="./architecture/pwa-offline-strategy">PWA and Offline Strategy</a>, then <a href="./guides/getting-started">Getting Started</a>.</p>
+    <p class="mind-route__start"><strong>Start with</strong> <a href="./architecture/state-architecture.html">State Architecture</a></p>
+    <p class="mind-route__next"><strong>Continue with</strong> <a href="./architecture/pwa-offline-strategy.html">PWA and Offline Strategy</a>, then <a href="./guides/getting-started.html">Getting Started</a>.</p>
   </div>
   <div class="mind-route">
     <p class="mind-route__for">For new contributors</p>
-    <p class="mind-route__start"><strong>Start with</strong> <a href="./academy/learning-path">Learning Path</a></p>
-    <p class="mind-route__next"><strong>Continue with</strong> <a href="./guides/getting-started">Getting Started</a>, then the OpenSpec files in the repository.</p>
+    <p class="mind-route__start"><strong>Start with</strong> <a href="./academy/learning-path.html">Learning Path</a></p>
+    <p class="mind-route__next"><strong>Continue with</strong> <a href="./guides/getting-started.html">Getting Started</a>, then the OpenSpec files in the repository.</p>
   </div>
   <div class="mind-route">
     <p class="mind-route__for">For product-minded readers</p>
-    <p class="mind-route__start"><strong>Start with</strong> <a href="./overview/project-thesis">Project Thesis</a></p>
-    <p class="mind-route__next"><strong>Continue with</strong> <a href="./research/references-and-related-work">References and Related Work</a> to place the product choices in context.</p>
+    <p class="mind-route__start"><strong>Start with</strong> <a href="./overview/project-thesis.html">Project Thesis</a></p>
+    <p class="mind-route__next"><strong>Continue with</strong> <a href="./research/references-and-related-work.html">References and Related Work</a> to place the product choices in context.</p>
   </div>
 </div>
 

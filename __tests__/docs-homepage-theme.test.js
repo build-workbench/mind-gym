@@ -31,6 +31,34 @@ describe('docs homepage CTA links', () => {
       expect(content).not.toContain('href="/play/index.html"');
     }
   );
+
+  test.each([
+    ['en', 'docs/en/index.md'],
+    ['zh', 'docs/zh/index.md'],
+  ])(
+    '%s raw homepage doc links use .html targets when cleanUrls is disabled',
+    (_, relativePath) => {
+      const content = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+
+      expect(content).toContain('href="./overview/project-thesis.html"');
+      expect(content).toContain('href="./architecture/system-overview.html"');
+      expect(content).toContain('href="./architecture/state-architecture.html"');
+      expect(content).toContain('href="./architecture/pwa-offline-strategy.html"');
+      expect(content).toContain('href="./guides/getting-started.html"');
+      expect(content).toContain('href="./academy/learning-path.html"');
+      expect(content).toContain('href="./reference/module-catalog.html"');
+      expect(content).toContain('href="./research/references-and-related-work.html"');
+
+      expect(content).not.toContain('href="./overview/project-thesis"');
+      expect(content).not.toContain('href="./architecture/system-overview"');
+      expect(content).not.toContain('href="./architecture/state-architecture"');
+      expect(content).not.toContain('href="./architecture/pwa-offline-strategy"');
+      expect(content).not.toContain('href="./guides/getting-started"');
+      expect(content).not.toContain('href="./academy/learning-path"');
+      expect(content).not.toContain('href="./reference/module-catalog"');
+      expect(content).not.toContain('href="./research/references-and-related-work"');
+    }
+  );
 });
 
 describe('legacy service worker cleanup', () => {
@@ -41,11 +69,6 @@ describe('legacy service worker cleanup', () => {
   test('unregisters only legacy root-scope workers outside the play scope', async () => {
     const unregisterLegacy = jest.fn().mockResolvedValue(true);
     const unregisterNested = jest.fn().mockResolvedValue(false);
-    const cacheStorage = {
-      keys: jest.fn().mockResolvedValue(['mind-gym-v1.10.0-static', 'other-cache']),
-      delete: jest.fn().mockResolvedValue(true),
-    };
-
     const registrations = [
       {
         scope: 'https://lessup.github.io/mind-gym/',
@@ -64,23 +87,15 @@ describe('legacy service worker cleanup', () => {
     };
 
     const { cleanupLegacyRootServiceWorkers } = requireCleanupModule();
-    const result = await cleanupLegacyRootServiceWorkers('/mind-gym/', serviceWorker, cacheStorage);
+    const result = await cleanupLegacyRootServiceWorkers('/mind-gym/', serviceWorker);
 
     expect(result).toBe(1);
     expect(unregisterLegacy).toHaveBeenCalledTimes(1);
     expect(unregisterNested).not.toHaveBeenCalled();
-    expect(cacheStorage.keys).toHaveBeenCalledTimes(1);
-    expect(cacheStorage.delete).toHaveBeenCalledWith('mind-gym-v1.10.0-static');
-    expect(cacheStorage.delete).not.toHaveBeenCalledWith('other-cache');
   });
 
   test('skips root registrations whose worker script already lives under /play/', async () => {
     const unregister = jest.fn().mockResolvedValue(true);
-    const cacheStorage = {
-      keys: jest.fn(),
-      delete: jest.fn(),
-    };
-
     const serviceWorker = {
       getRegistrations: jest.fn().mockResolvedValue([
         {
@@ -92,14 +107,13 @@ describe('legacy service worker cleanup', () => {
     };
 
     const { cleanupLegacyRootServiceWorkers } = requireCleanupModule();
-    const result = await cleanupLegacyRootServiceWorkers('/mind-gym/', serviceWorker, cacheStorage);
+    const result = await cleanupLegacyRootServiceWorkers('/mind-gym/', serviceWorker);
 
     expect(result).toBe(0);
     expect(unregister).not.toHaveBeenCalled();
-    expect(cacheStorage.keys).not.toHaveBeenCalled();
   });
 
-  test('preserves shared caches when a /play/ worker is already registered', async () => {
+  test('never touches legacy caches during conservative migration cleanup', async () => {
     const unregisterLegacy = jest.fn().mockResolvedValue(true);
     const cacheStorage = {
       keys: jest.fn(),
@@ -122,11 +136,12 @@ describe('legacy service worker cleanup', () => {
     };
 
     const { cleanupLegacyRootServiceWorkers } = requireCleanupModule();
-    const result = await cleanupLegacyRootServiceWorkers('/mind-gym/', serviceWorker, cacheStorage);
+    const result = await cleanupLegacyRootServiceWorkers('/mind-gym/', serviceWorker);
 
     expect(result).toBe(1);
     expect(unregisterLegacy).toHaveBeenCalledTimes(1);
     expect(cacheStorage.keys).not.toHaveBeenCalled();
+    expect(cacheStorage.delete).not.toHaveBeenCalled();
   });
 });
 
