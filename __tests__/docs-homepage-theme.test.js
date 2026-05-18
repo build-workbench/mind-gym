@@ -187,7 +187,7 @@ describe('docs root compatibility redirect', () => {
     ).toBe('https://lessup.github.io/mind-gym/play/');
   });
 
-  test('keeps normal browser visits on locale-aware docs routes', () => {
+  test('sends normal browser visits to the playable app by default', () => {
     const { resolveRootVisitTarget } = requireRootCompatModule();
 
     expect(
@@ -196,7 +196,27 @@ describe('docs root compatibility redirect', () => {
         language: 'zh-CN',
         baseUrl: '/mind-gym/',
       })
-    ).toBe('https://lessup.github.io/mind-gym/zh/?utm_source=docs');
+    ).toBe('https://lessup.github.io/mind-gym/play/?utm_source=docs');
+  });
+
+  test('sends visits with ?docs param to locale-aware docs routes', () => {
+    const { resolveRootVisitTarget } = requireRootCompatModule();
+
+    expect(
+      resolveRootVisitTarget({
+        href: 'https://lessup.github.io/mind-gym/?docs',
+        language: 'zh-CN',
+        baseUrl: '/mind-gym/',
+      })
+    ).toBe('https://lessup.github.io/mind-gym/zh/?docs');
+
+    expect(
+      resolveRootVisitTarget({
+        href: 'https://lessup.github.io/mind-gym/?docs',
+        language: 'en-US',
+        baseUrl: '/mind-gym/',
+      })
+    ).toBe('https://lessup.github.io/mind-gym/en/?docs');
   });
 });
 

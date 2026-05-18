@@ -20,6 +20,14 @@ function hasLegacyAppIntent(url, { isStandalone = false, referrer = '' } = {}) {
   return typeof referrer === 'string' && referrer.startsWith('android-app://');
 }
 
+function hasDocsIntent(url) {
+  if (!url) {
+    return false;
+  }
+
+  return url.searchParams.has('docs');
+}
+
 function resolveRootVisitTarget({
   href,
   language,
@@ -29,9 +37,9 @@ function resolveRootVisitTarget({
 }) {
   const currentUrl = new URL(href, 'https://example.invalid');
   const basePath = normalizeBasePath(baseUrl);
-  const targetPath = hasLegacyAppIntent(currentUrl, { isStandalone, referrer })
-    ? `${basePath}play/`
-    : `${basePath}${language?.toLowerCase().startsWith('zh') ? 'zh/' : 'en/'}`;
+  const targetPath = hasDocsIntent(currentUrl)
+    ? `${basePath}${language?.toLowerCase().startsWith('zh') ? 'zh/' : 'en/'}`
+    : `${basePath}play/`;
   const targetUrl = new URL(targetPath, currentUrl.origin);
 
   targetUrl.search = currentUrl.search;
