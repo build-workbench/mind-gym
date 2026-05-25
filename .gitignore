@@ -25,6 +25,7 @@ coverage/
 .tmp/
 .cache/
 .claude/
+.devin/
 .omc/
 
 # OpenSpec
