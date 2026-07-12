@@ -1341,14 +1341,14 @@ if (typeof document !== 'undefined') {
       guideOpenHintEl,
     } = ui);
 
-    renderer = (typeof __GLOBAL__ !== 'undefined' ? __GLOBAL__ : __RememberUIRenderer__).create({
+    renderer = __RememberUIRenderer__.create({
       elements: ui,
       getSettings: () => Settings.getAll(),
       i18n: () => RememberI18n.i18n(currentLang()),
       currentLang,
     });
 
-    pipeline = (typeof __GLOBAL__ !== 'undefined' ? __GLOBAL__ : __RememberWinPipeline__).create();
+    pipeline = __RememberWinPipeline__.create();
     pipeline.removeStep('showWinModal');
     pipeline.removeStep('checkAchievements');
 
