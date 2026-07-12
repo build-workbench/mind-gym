@@ -2,11 +2,11 @@
  * Mind Gym Service Worker v7 - GitHub Pages Optimized
  * Advanced caching with update awareness
  *
- * @version 1.11.0
+ * @version 1.11.1
  * @license MIT
  */
 
-const CACHE_VERSION = 'v1.11.0';
+const CACHE_VERSION = 'v1.11.1';
 const CACHE_NAME = `mind-gym-${CACHE_VERSION}`;
 const STATIC_CACHE = `${CACHE_NAME}-static`;
 const IMAGE_CACHE = `${CACHE_NAME}-images`;
