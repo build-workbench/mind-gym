@@ -71,7 +71,7 @@ npm run validate      # lint + test + build 一键验证
 ### 模块加载顺序 (index.html script tags)
 
 ```
-src/keys.js → src/utils.js → src/shared.js → src/stats.js → src/achievements.js → src/modes.js
+src/app-init.js → src/keys.js → src/utils.js → src/shared.js → src/stats.js → src/achievements.js → src/modes.js
 → src/import-export.js → src/storage.js → src/fsrs.js → src/game-manager.js → src/modal-manager.js
 → src/i18n.js → src/effects.js → src/pools.js → src/timer.js → src/confetti.js
 → src/ui-events.js → src/ui.js → app.js

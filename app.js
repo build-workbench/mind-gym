@@ -489,44 +489,6 @@ function pickWithFSRS(theme, pool, pairs) {
   return picks;
 }
 
-// Count cards due for review
-function countDueForReview(theme) {
-  const mastery = loadMastery(theme);
-  return __RememberFSRS__.countDueCards(mastery);
-}
-
-// Get theme mastery summary
-function getThemeMasterySummary(theme) {
-  const mastery = loadMastery(theme);
-  return __RememberFSRS__.calculateThemeMastery(mastery);
-}
-
-// Migration: convert old spaced weights to mastery format
-function migrateSpacedToMastery(theme) {
-  const oldWeights = loadSpaced(theme);
-  if (Object.keys(oldWeights).length === 0) return false;
-
-  const mastery = loadMastery(theme);
-  const now = Date.now();
-
-  for (const [value, weight] of Object.entries(oldWeights)) {
-    if (weight > 0 && !mastery[value]) {
-      // High weight = high difficulty = low stability
-      mastery[value] = {
-        difficulty: Math.min(10, 5 + weight * 0.5),
-        stability: Math.max(0.5, 7 - weight),
-        retrievability: Math.max(0.3, 1 - weight * 0.1),
-        lastReview: now,
-        nextReview: now, // Immediately due for review
-        reps: 1,
-        lapses: Math.floor(weight / 2),
-      };
-    }
-  }
-
-  saveMastery(theme, mastery);
-  return true;
-}
 const difficulties = {
   easy: { rows: 4, cols: 4, pairs: 8 },
   medium: { rows: 4, cols: 5, pairs: 10 },
@@ -1736,15 +1698,9 @@ if (typeof module !== 'undefined' && module.exports) {
     applyImportedSnapshot,
     updateMasteryAfterGame,
     pickWithFSRS,
-    countDueForReview,
-    getThemeMasterySummary,
-    migrateSpacedToMastery,
     __setSettings(partial) {
       if (!partial || typeof partial !== 'object') return;
       Object.assign(settings, partial);
-    },
-    __getSettings() {
-      return { ...settings };
     },
   };
 }

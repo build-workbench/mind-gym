@@ -28,6 +28,7 @@ const PRECACHE_ASSETS = [
   './404.html',
   './offline.html',
   // Modules in load order (matches index.html script tag order)
+  './src/app-init.js',
   './src/keys.js',
   './src/utils.js',
   './src/shared.js',
