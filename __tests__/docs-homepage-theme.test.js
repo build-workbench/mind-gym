@@ -26,46 +26,34 @@ function readThemeFile(...relativeSegments) {
 }
 
 describe('docs homepage CTA links', () => {
-  test.each([
-    ['en', 'docs/en/index.md'],
-    ['zh', 'docs/zh/index.md'],
-  ])(
-    '%s homepage links to the playable build with a base-aware relative path',
-    (_, relativePath) => {
-      const content = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  test('homepage links to the playable build with a base-aware relative path', () => {
+    const content = fs.readFileSync(path.join(repoRoot, 'docs/zh/index.md'), 'utf8');
 
-      expect(content).toContain('href="../play/index.html"');
-      expect(content).not.toContain('href="/play/index.html"');
-    }
-  );
+    expect(content).toContain('href="../play/index.html"');
+    expect(content).not.toContain('href="/play/index.html"');
+  });
 
-  test.each([
-    ['en', 'docs/en/index.md'],
-    ['zh', 'docs/zh/index.md'],
-  ])(
-    '%s raw homepage doc links use .html targets when cleanUrls is disabled',
-    (_, relativePath) => {
-      const content = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  test('raw homepage doc links use .html targets when cleanUrls is disabled', () => {
+    const content = fs.readFileSync(path.join(repoRoot, 'docs/zh/index.md'), 'utf8');
 
-      expect(content).toContain('href="./overview/project-thesis.html"');
-      expect(content).toContain('href="./architecture/system-overview.html"');
-      expect(content).toContain('href="./architecture/state-architecture.html"');
-      expect(content).toContain('href="./architecture/pwa-offline-strategy.html"');
-      expect(content).toContain('href="./guides/getting-started.html"');
-      expect(content).toContain('href="./academy/learning-path.html"');
-      expect(content).toContain('href="./reference/module-catalog.html"');
-      expect(content).toContain('href="./research/references-and-related-work.html"');
+    expect(content).toContain('href="./overview/project-thesis.html"');
+    expect(content).toContain('href="./architecture/system-overview.html"');
+    expect(content).toContain('href="./architecture/state-architecture.html"');
+    expect(content).toContain('href="./architecture/pwa-offline-strategy.html"');
+    expect(content).toContain('href="./guides/getting-started.html"');
+    expect(content).toContain('href="./academy/learning-path.html"');
+    expect(content).toContain('href="./reference/module-catalog.html"');
+    expect(content).toContain('href="./research/references-and-related-work.html"');
 
-      expect(content).not.toContain('href="./overview/project-thesis"');
-      expect(content).not.toContain('href="./architecture/system-overview"');
-      expect(content).not.toContain('href="./architecture/state-architecture"');
-      expect(content).not.toContain('href="./architecture/pwa-offline-strategy"');
-      expect(content).not.toContain('href="./guides/getting-started"');
-      expect(content).not.toContain('href="./academy/learning-path"');
-      expect(content).not.toContain('href="./reference/module-catalog"');
-      expect(content).not.toContain('href="./research/references-and-related-work"');
-    }
-  );
+    expect(content).not.toContain('href="./overview/project-thesis"');
+    expect(content).not.toContain('href="./architecture/system-overview"');
+    expect(content).not.toContain('href="./architecture/state-architecture"');
+    expect(content).not.toContain('href="./architecture/pwa-offline-strategy"');
+    expect(content).not.toContain('href="./guides/getting-started"');
+    expect(content).not.toContain('href="./academy/learning-path"');
+    expect(content).not.toContain('href="./reference/module-catalog"');
+    expect(content).not.toContain('href="./research/references-and-related-work"');
+  });
 });
 
 describe('docs mermaid rendering strategy', () => {
@@ -168,7 +156,6 @@ describe('docs root compatibility redirect', () => {
     expect(
       resolveRootVisitTarget({
         href: 'https://lessup.github.io/mind-gym/?mode=nback#focus',
-        language: 'en-US',
         baseUrl: '/mind-gym/',
       })
     ).toBe('https://lessup.github.io/mind-gym/play/?mode=nback#focus');
@@ -180,7 +167,6 @@ describe('docs root compatibility redirect', () => {
     expect(
       resolveRootVisitTarget({
         href: 'https://lessup.github.io/mind-gym/',
-        language: 'zh-CN',
         baseUrl: '/mind-gym/',
         isStandalone: true,
       })
@@ -193,30 +179,20 @@ describe('docs root compatibility redirect', () => {
     expect(
       resolveRootVisitTarget({
         href: 'https://lessup.github.io/mind-gym/?utm_source=docs',
-        language: 'zh-CN',
         baseUrl: '/mind-gym/',
       })
     ).toBe('https://lessup.github.io/mind-gym/play/?utm_source=docs');
   });
 
-  test('sends visits with ?docs param to locale-aware docs routes', () => {
+  test('sends visits with ?docs param to the Chinese docs route', () => {
     const { resolveRootVisitTarget } = requireRootCompatModule();
 
     expect(
       resolveRootVisitTarget({
         href: 'https://lessup.github.io/mind-gym/?docs',
-        language: 'zh-CN',
         baseUrl: '/mind-gym/',
       })
     ).toBe('https://lessup.github.io/mind-gym/zh/?docs');
-
-    expect(
-      resolveRootVisitTarget({
-        href: 'https://lessup.github.io/mind-gym/?docs',
-        language: 'en-US',
-        baseUrl: '/mind-gym/',
-      })
-    ).toBe('https://lessup.github.io/mind-gym/en/?docs');
   });
 });
 
@@ -243,7 +219,6 @@ describe('docs crawl metadata', () => {
     const sitemap = fs.readFileSync(path.join(repoRoot, 'docs', 'public', 'sitemap.xml'), 'utf8');
 
     expect(sitemap).toContain('<loc>https://lessup.github.io/mind-gym/</loc>');
-    expect(sitemap).toContain('<loc>https://lessup.github.io/mind-gym/en/</loc>');
     expect(sitemap).toContain('<loc>https://lessup.github.io/mind-gym/zh/</loc>');
     expect(sitemap).toContain('<loc>https://lessup.github.io/mind-gym/play/index.html</loc>');
   });

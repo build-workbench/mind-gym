@@ -30,16 +30,13 @@ function hasDocsIntent(url) {
 
 function resolveRootVisitTarget({
   href,
-  language,
   baseUrl = '/',
   isStandalone = false,
   referrer = '',
 }) {
   const currentUrl = new URL(href, 'https://example.invalid');
   const basePath = normalizeBasePath(baseUrl);
-  const targetPath = hasDocsIntent(currentUrl)
-    ? `${basePath}${language?.toLowerCase().startsWith('zh') ? 'zh/' : 'en/'}`
-    : `${basePath}play/`;
+  const targetPath = hasDocsIntent(currentUrl) ? `${basePath}zh/` : `${basePath}play/`;
   const targetUrl = new URL(targetPath, currentUrl.origin);
 
   targetUrl.search = currentUrl.search;

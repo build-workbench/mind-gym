@@ -1,6 +1,6 @@
 ---
-title: Mind Gym Whitepaper
-description: Routes legacy app launches to the playable demo before locale-aware docs redirects.
+title: Mind Gym 技术白皮书
+description: 根路径统一重定向到中文白皮书站点。
 ---
 
 <script setup>
@@ -12,7 +12,6 @@ const { resolveRootVisitTarget } = compatModule;
 onMounted(() => {
   const target = resolveRootVisitTarget({
     href: window.location.href,
-    language: navigator.language,
     baseUrl: import.meta.env.BASE_URL,
     isStandalone:
       (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
@@ -24,4 +23,4 @@ onMounted(() => {
 });
 </script>
 
-Choose a language: [English](./en/) | [简体中文](./zh/)
+前往 [中文白皮书](./zh/) 或 [在线试玩](./play/index.html)。

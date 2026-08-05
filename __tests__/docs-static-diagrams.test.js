@@ -10,19 +10,9 @@ function read(relativePath) {
 describe('docs architecture diagrams', () => {
   test.each([
     [
-      'docs/en/architecture/system-overview.md',
-      '/diagrams/system-overview',
-      'System overview diagram',
-    ],
-    [
       'docs/zh/architecture/system-overview.md',
       '/diagrams/system-overview',
       'System overview diagram',
-    ],
-    [
-      'docs/en/architecture/state-architecture.md',
-      '/diagrams/state-architecture',
-      'State architecture diagram',
     ],
     [
       'docs/zh/architecture/state-architecture.md',
@@ -30,19 +20,9 @@ describe('docs architecture diagrams', () => {
       'State architecture diagram',
     ],
     [
-      'docs/en/architecture/pwa-offline-strategy.md',
-      '/diagrams/pwa-request-flow',
-      'Request and cache flow diagram',
-    ],
-    [
       'docs/zh/architecture/pwa-offline-strategy.md',
       '/diagrams/pwa-request-flow',
       'Request and cache flow diagram',
-    ],
-    [
-      'docs/en/architecture/pwa-offline-strategy.md',
-      '/diagrams/pwa-update-flow',
-      'Update behavior diagram',
     ],
     [
       'docs/zh/architecture/pwa-offline-strategy.md',
