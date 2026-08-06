@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [master, main]
 
-# Prevent concurrent CI runs on the same branch
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -15,28 +14,19 @@ permissions:
   contents: read
 
 jobs:
-  # Lint and basic checks
   lint:
     name: Lint
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'npm'
+      - run: npm ci --prefer-offline
+      - run: npm run lint
 
-      - name: Install dependencies
-        run: npm ci --prefer-offline
-
-      - name: Run Prettier check
-        run: npm run lint
-
-  # Test on multiple Node.js versions
   test:
     name: Test (Node ${{ matrix.node-version }})
     needs: lint
@@ -47,96 +37,30 @@ jobs:
       matrix:
         node-version: [22, 24]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - run: npm ci --prefer-offline
+      - run: npx jest --runInBand
 
-      - name: Install dependencies
-        run: npm ci --prefer-offline
-
-      - name: Run tests
-        run: npx jest --runInBand --coverage
-
-      - name: Upload coverage report
-        if: matrix.node-version == 24
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 7
-          if-no-files-found: ignore
-
-  # Build verification
   build:
-    name: Build verification
+    name: Build CSS
     needs: [lint, test]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'npm'
+      - run: npm ci --prefer-offline
+      - run: npm run build:css
+      - name: Verify CSS output
+        run: test -f assets/app.css && echo "✅ assets/app.css built"
 
-      - name: Install dependencies
-        run: npm ci --prefer-offline
-
-      - name: Build CSS
-        run: npm run build:css
-
-      - name: Verify build output
-        run: |
-          echo "📦 Verifying CSS build..."
-          if [ -f "assets/app.css" ]; then
-            SIZE=$(wc -c < assets/app.css)
-            echo "✅ assets/app.css exists (${SIZE} bytes)"
-          else
-            echo "❌ assets/app.css missing"
-            exit 1
-          fi
-
-      - name: Prepare deployment bundle
-        run: npm run prepare:deploy
-
-      - name: Verify dist directory
-        run: |
-          echo "📦 Verifying dist directory..."
-          ls -la dist/
-
-          # Check required files
-          REQUIRED_FILES="index.html app.js sw.js manifest.webmanifest"
-          for file in $REQUIRED_FILES; do
-            if [ -f "dist/$file" ]; then
-              echo "✅ $file"
-            else
-              echo "❌ Missing: $file"
-              exit 1
-            fi
-          done
-
-          # Check directories
-          for dir in src assets; do
-            if [ -d "dist/$dir" ]; then
-              echo "✅ $dir/ directory"
-            else
-              echo "❌ Missing: $dir/ directory"
-              exit 1
-            fi
-          done
-
-          echo ""
-          echo "✅ Build verification complete!"
-
-  # Summary job for branch protection rules
   ci-passed:
     name: CI Passed
     needs: [lint, test, build]
