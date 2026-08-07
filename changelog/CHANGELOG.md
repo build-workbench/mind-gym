@@ -14,6 +14,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v1.11.1] - 2026-08-07
+
+### Removed / 移除
+
+- 移除 `openspec/` 规范文档（OpenSpec 流程）
+- 移除 `docs/` VitePress 白皮书站点与相关测试
+- 移除根文档与贡献模板（`AGENTS.md`、`CLAUDE.md`、`CONTRIBUTING.md` 等）
+- 移除工具与编辑器残留文件
+- 移除 lighthouse 审计设施与相关 npm 脚本
+- 移除英文 README 与 `docs/en`
+
+### Changed / 变更
+
+- 精简 CI 为轻量 lint + test + build:css 验证
+- 瘦身 `app.js` 与 `index.html`，清理冗余工程文件
+- 重写 README 为精简版并更新 ignore 配置
+- 修复 PWA 缓存版本号以驱逐过期 v1.11.0 资源
+- 修复 GitHub Pages 游戏初始化
+- 迁移仓库至 vibe-knight 组织，更新全部仓库链接与部署地址
+
+### Technical / 技术细节
+
+- 总测试数: 359 (24 测试套件)
+- 零运行时依赖，PWA 离线可用
+
+---
+
 ## [v1.11.0] - 2026-05-08
 
 ### Added / 新增
@@ -311,19 +338,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/LessUp/mind-gym/compare/v1.11.0...HEAD
-[v1.11.0]: https://github.com/LessUp/mind-gym/compare/v1.10.0...v1.11.0
-[v1.10.0]: https://github.com/LessUp/mind-gym/compare/v1.9.0...v1.10.0
-[v1.9.0]: https://github.com/LessUp/mind-gym/compare/v1.8.0...v1.9.0
-[v1.8.0]: https://github.com/LessUp/mind-gym/compare/v1.6.1...v1.8.0
-[v1.6.1]: https://github.com/LessUp/mind-gym/compare/v1.6.0...v1.6.1
-[v1.6.0]: https://github.com/LessUp/mind-gym/compare/v1.5.0...v1.6.0
-[v1.5.0]: https://github.com/LessUp/mind-gym/compare/v1.4.0...v1.5.0
-[v1.4.0]: https://github.com/LessUp/mind-gym/compare/v1.3.0...v1.4.0
-[v1.3.0]: https://github.com/LessUp/mind-gym/compare/v1.2.1...v1.3.0
-[v1.2.1]: https://github.com/LessUp/mind-gym/compare/v1.2.0...v1.2.1
-[v1.2.0]: https://github.com/LessUp/mind-gym/compare/v1.1.0...v1.2.0
-[v1.1.0]: https://github.com/LessUp/mind-gym/compare/v1.0.0...v1.1.0
-[v1.0.0]: https://github.com/LessUp/mind-gym/compare/v0.2.0...v1.0.0
-[v0.2.0]: https://github.com/LessUp/mind-gym/compare/v0.1.0...v0.2.0
-[v0.1.0]: https://github.com/LessUp/mind-gym/releases/tag/v0.1.0
+[Unreleased]: https://github.com/vibe-knight/mind-gym/compare/v1.11.1...HEAD
+[v1.11.1]: https://github.com/vibe-knight/mind-gym/compare/v1.11.0...v1.11.1
+[v1.11.0]: https://github.com/vibe-knight/mind-gym/compare/v1.10.0...v1.11.0
+[v1.10.0]: https://github.com/vibe-knight/mind-gym/compare/v1.9.0...v1.10.0
+[v1.9.0]: https://github.com/vibe-knight/mind-gym/compare/v1.8.0...v1.9.0
+[v1.8.0]: https://github.com/vibe-knight/mind-gym/compare/v1.6.1...v1.8.0
+[v1.6.1]: https://github.com/vibe-knight/mind-gym/compare/v1.6.0...v1.6.1
+[v1.6.0]: https://github.com/vibe-knight/mind-gym/compare/v1.5.0...v1.6.0
+[v1.5.0]: https://github.com/vibe-knight/mind-gym/compare/v1.4.0...v1.5.0
+[v1.4.0]: https://github.com/vibe-knight/mind-gym/compare/v1.3.0...v1.4.0
+[v1.3.0]: https://github.com/vibe-knight/mind-gym/compare/v1.2.1...v1.3.0
+[v1.2.1]: https://github.com/vibe-knight/mind-gym/compare/v1.2.0...v1.2.1
+[v1.2.0]: https://github.com/vibe-knight/mind-gym/compare/v1.1.0...v1.2.0
+[v1.1.0]: https://github.com/vibe-knight/mind-gym/compare/v1.0.0...v1.1.0
+[v1.0.0]: https://github.com/vibe-knight/mind-gym/compare/v0.2.0...v1.0.0
+[v0.2.0]: https://github.com/vibe-knight/mind-gym/compare/v0.1.0...v0.2.0
+[v0.1.0]: https://github.com/vibe-knight/mind-gym/releases/tag/v0.1.0
