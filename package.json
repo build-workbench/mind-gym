@@ -42,7 +42,6 @@
     "build:css": "tailwindcss -c tailwind.config.js -i ./styles/app.css -o ./assets/app.css --minify",
     "build:css:dev": "tailwindcss -c tailwind.config.js -i ./styles/app.css -o ./assets/app.css",
     "lint": "prettier --check '**/*.{js,json,md,html,css,yml}'",
-    "lint:es": "eslint app.js src/*.js --max-warnings=0",
     "format": "prettier --write '**/*.{js,json,md,html,css,yml}'",
     "prepare:deploy": "bash scripts/prepare-deploy.sh",
     "dev": "npx serve . -p 3000",
