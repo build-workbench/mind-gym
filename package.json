@@ -18,13 +18,13 @@
   ],
   "author": "LessUp",
   "license": "MIT",
-  "homepage": "https://lessup.github.io/mind-gym/",
+  "homepage": "https://vibe-knight.github.io/mind-gym/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LessUp/mind-gym.git"
+    "url": "https://github.com/vibe-knight/mind-gym.git"
   },
   "bugs": {
-    "url": "https://github.com/LessUp/mind-gym/issues"
+    "url": "https://github.com/vibe-knight/mind-gym/issues"
   },
   "engines": {
     "node": ">=18.0.0",

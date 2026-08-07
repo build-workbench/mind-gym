@@ -3,8 +3,8 @@
 > 浏览器端认知训练 PWA：自适应难度、N-back 训练、间隔重复。零运行时依赖，开箱即玩。
 
 <p align="center">
-  <a href="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml">
-    <img src="https://github.com/LessUp/mind-gym/actions/workflows/ci.yml/badge.svg" alt="CI">
+  <a href="https://github.com/vibe-knight/mind-gym/actions/workflows/ci.yml">
+    <img src="https://github.com/vibe-knight/mind-gym/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
@@ -51,7 +51,7 @@
 ### 本地运行
 
 ```bash
-git clone https://github.com/LessUp/mind-gym.git
+git clone https://github.com/vibe-knight/mind-gym.git
 cd mind-gym
 npm install
 npm run dev      # http://localhost:3000
