@@ -41,7 +41,6 @@ const PRECACHE_ASSETS = [
   './src/fsrs.js',
   './src/nback-state.js',
   './src/recall-state.js',
-  './src/adaptive.js',
   './src/daily.js',
   './src/game-manager.js',
   './src/modal-manager.js',
