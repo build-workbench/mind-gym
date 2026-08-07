@@ -129,7 +129,11 @@ Settings (持久)   → GameState (运行时) → ModeState (按需)
 
 ## 部署
 
-手动部署：`npm run prepare:deploy` 生成 `dist/`（压缩 JS + 拷贝静态资源），可上传至任意静态托管。
+推送到 `master` 后由 GitHub Actions 自动部署到 GitHub Pages：
+
+https://vibe-knight.github.io/mind-gym/
+
+本地构建产物（可选）：`npm run prepare:deploy` 生成 `dist/`（压缩 JS + 拷贝静态资源），可上传至任意静态托管。
 
 ---
 
