@@ -45,8 +45,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added / 新增
 
-- `changelog/archive/v1.9.0.md` - FSRS-4.5 发布说明
-- `changelog/archive/v1.10.0.md` - 共享工具模块发布说明
 - `openspec/changes/.gitkeep` - OpenSpec 变更目录
 - `openspec/explorations/.gitkeep` - OpenSpec 探索目录
 
