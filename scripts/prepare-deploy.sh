@@ -20,10 +20,11 @@ require_file() {
   fi
 }
 
-# Generate icons
+# Generate icons (失败不阻断：已提交的 PNG 图标直接可用)
 echo "[build] Generating PWA icons..."
 if [[ -f "$ROOT_DIR/scripts/generate-icons.sh" ]]; then
-  bash "$ROOT_DIR/scripts/generate-icons.sh"
+  bash "$ROOT_DIR/scripts/generate-icons.sh" \
+    || echo "[build] Warning: 图标生成失败，使用已提交的 PNG"
 else
   echo "[build] Warning: Icon generation script not found"
 fi
