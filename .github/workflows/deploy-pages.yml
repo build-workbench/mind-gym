@@ -1,0 +1,45 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build static site
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare deployment files
+        run: |
+          mkdir -p deploy
+          cp index.html app.js sw.js 404.html offline.html \
+             manifest.webmanifest robots.txt sitemap.xml browserconfig.xml deploy/
+          cp -r src assets deploy/
+          touch deploy/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: deploy
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
