@@ -5,5 +5,8 @@ node_modules/
 dist/
 coverage/
 
+# Local agent tooling (not committed)
+.commandcode/
+
 # Generated CSS (built by Tailwind)
 assets/app.css
