@@ -178,37 +178,10 @@ describe('storage normalization', () => {
       localStorage.clear();
     });
 
-    test('getGameSnapshot returns all game data', () => {
-      // 设置一些数据
-      Storage.saveSettings(DEFAULT_SETTINGS);
-      Storage.saveStats({ games: 5, wins: 3 });
-
-      const snapshot = Storage.getGameSnapshot();
-
-      expect(snapshot).toHaveProperty('settings');
-      expect(snapshot).toHaveProperty('stats');
-      expect(snapshot).toHaveProperty('achievements');
-      expect(snapshot).toHaveProperty('bestScores');
-      expect(snapshot).toHaveProperty('adaptive');
-      expect(snapshot).toHaveProperty('leaderboards');
-
-      expect(snapshot.stats.games).toBe(5);
-      expect(snapshot.stats.wins).toBe(3);
-    });
-
-    test('resetAllData clears all game data', () => {
-      // 设置一些数据
-      Storage.saveSettings(DEFAULT_SETTINGS);
-      Storage.saveStats({ games: 5, wins: 3 });
-
-      // 验证数据存在
-      expect(Storage.loadStats().games).toBe(5);
-
-      // 重置
-      Storage.resetAllData();
-
-      // 验证数据被清除
-      expect(Storage.loadStats().games).toBe(0);
+    test('markDailyDone persists completion', () => {
+      localStorage.clear();
+      Storage.markDailyDone('2026-04-06', 'easy');
+      expect(Storage.isDailyDone('2026-04-06', 'easy')).toBe(true);
     });
   });
 });

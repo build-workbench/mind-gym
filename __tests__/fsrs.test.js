@@ -65,27 +65,6 @@ describe('FSRS-4.5 Algorithm', () => {
     });
   });
 
-  describe('calculateThemeMastery', () => {
-    test('returns empty summary for no cards', () => {
-      const summary = fsrs.calculateThemeMastery({});
-      expect(summary.total).toBe(0);
-      expect(summary.mastered).toBe(0);
-      expect(summary.learning).toBe(0);
-      expect(summary.new).toBe(0);
-      expect(summary.averageMastery).toBe(0);
-    });
-
-    test('categorizes cards correctly', () => {
-      const mastery = {
-        card1: { ...fsrs.createDefaultCard(), reps: 10, stability: 30 }, // high mastery
-        card2: { ...fsrs.createDefaultCard(), reps: 3, stability: 5 }, // medium mastery
-        card3: fsrs.createDefaultCard(), // low mastery
-      };
-      const summary = fsrs.calculateThemeMastery(mastery);
-      expect(summary.total).toBe(3);
-    });
-  });
-
   describe('review', () => {
     test('updates card after successful review', () => {
       const card = fsrs.createDefaultCard();
@@ -135,39 +114,6 @@ describe('FSRS-4.5 Algorithm', () => {
     test('returns Hard for struggling game', () => {
       const rating = fsrs.inferRatingFromGamePerformance(90, 20, 'easy', 3, 0, true);
       expect(rating).toBe(fsrs.Rating.Hard);
-    });
-  });
-
-  describe('countDueCards', () => {
-    test('returns 0 for empty mastery', () => {
-      expect(fsrs.countDueCards({})).toBe(0);
-    });
-
-    test('counts cards with nextReview in the past', () => {
-      const now = Date.now();
-      const mastery = {
-        card1: { ...fsrs.createDefaultCard(), nextReview: now - 1000 },
-        card2: { ...fsrs.createDefaultCard(), nextReview: now + 100000 },
-      };
-      expect(fsrs.countDueCards(mastery)).toBe(1);
-    });
-  });
-
-  describe('getDueCards', () => {
-    test('returns empty array for no due cards', () => {
-      expect(fsrs.getDueCards({})).toEqual([]);
-    });
-
-    test('returns only due cards sorted by mastery', () => {
-      const now = Date.now();
-      const mastery = {
-        card1: { ...fsrs.createDefaultCard(), reps: 5, stability: 20, nextReview: now - 1000 },
-        card2: { ...fsrs.createDefaultCard(), reps: 2, stability: 5, nextReview: now - 1000 },
-        card3: { ...fsrs.createDefaultCard(), nextReview: now + 100000 },
-      };
-      const due = fsrs.getDueCards(mastery);
-      expect(due.length).toBe(2);
-      expect(due[0][0]).toBe('card2'); // lower mastery first
     });
   });
 });

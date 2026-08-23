@@ -29,6 +29,7 @@ const PRECACHE_ASSETS = [
   './offline.html',
   // Modules in load order (matches index.html script tag order)
   './src/app-init.js',
+  './src/settings-defaults.js',
   './src/keys.js',
   './src/utils.js',
   './src/shared.js',
@@ -44,12 +45,6 @@ const PRECACHE_ASSETS = [
   './src/daily.js',
   './src/game-manager.js',
   './src/modal-manager.js',
-  './src/modes/registry.js',
-  './src/modes/classic.js',
-  './src/modes/countdown.js',
-  './src/modes/daily.js',
-  './src/modes/nback.js',
-  './src/modes/recall.js',
   './src/i18n.js',
   './src/effects.js',
   './src/pools.js',
@@ -319,17 +314,3 @@ self.addEventListener('message', event => {
     });
   }
 });
-
-// Periodic background sync (if supported)
-if ('periodicSync' in self.registration) {
-  self.addEventListener('periodicsync', event => {
-    if (event.tag === 'content-sync') {
-      event.waitUntil(syncContent());
-    }
-  });
-}
-
-async function syncContent() {
-  log('Periodic sync executed');
-  // Could fetch stats or achievements here
-}

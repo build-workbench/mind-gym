@@ -33,7 +33,6 @@ describe('WinPipeline', () => {
 
     it('adds step at specific position', () => {
       const fn = jest.fn();
-      const originalOrder = pipeline.getOrder();
 
       pipeline.addStep('earlyStep', fn, 0);
 

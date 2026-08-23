@@ -267,11 +267,4 @@ describe('UIRenderer', () => {
       expect(statsListEl.innerHTML).toContain('3');
     });
   });
-
-  describe('getElements', () => {
-    it('returns elements reference', () => {
-      const elements = renderer.getElements();
-      expect(elements).toBe(mockElements);
-    });
-  });
 });

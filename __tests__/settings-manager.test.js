@@ -3,8 +3,6 @@
  */
 
 const RememberSettings = require('../src/settings-manager.js');
-const RememberKeys = require('../src/keys.js');
-const RememberStorage = require('../src/storage.js');
 
 // Mock localStorage
 const localStorageMock = (() => {

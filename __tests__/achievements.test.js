@@ -252,7 +252,7 @@ describe('checkAchievementsOnWin', () => {
   });
 
   test('unlocks multiple achievements at once', () => {
-    const { store, newly } = Achievements.checkAchievementsOnWin(
+    const { newly } = Achievements.checkAchievementsOnWin(
       {},
       {
         currentDifficulty: 'easy',

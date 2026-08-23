@@ -3,7 +3,6 @@
  */
 
 const RememberRecall = require('../src/recall-state.js');
-const RememberModes = require('../src/modes.js');
 
 describe('RecallState', () => {
   describe('recordGame', () => {

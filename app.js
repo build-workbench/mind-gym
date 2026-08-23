@@ -66,10 +66,6 @@ const __RememberFSRS__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/fsrs.js')
     : __GLOBAL__.RememberFSRS;
-const __RememberGameManager__ =
-  typeof module !== 'undefined' && module.exports
-    ? require('./src/game-manager.js')
-    : __GLOBAL__.RememberGameManager;
 const __RememberModalManager__ =
   typeof module !== 'undefined' && module.exports
     ? require('./src/modal-manager.js')
@@ -113,31 +109,23 @@ const CARD_LABELS_ZH = {
   shapes: '形状卡片',
   colors: '颜色卡片',
 };
-const FOCUSABLE_SELECTOR =
-  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 // 从 SettingsManager 获取默认设置（避免重复定义）
 const achievementsDef = __RememberAchievements__.achievementsDef;
-const NORMALIZE_SETTINGS = __RememberImportExport__.normalizeSettings;
 const NORMALIZE_IMPORT = __RememberImportExport__.normalizeImportData;
 const NORMALIZE_LEADERBOARD = __RememberImportExport__.normalizeLeaderboard;
 const NORMALIZE_BEST = __RememberImportExport__.normalizeBestEntry;
 const NORMALIZE_ADAPTIVE = __RememberImportExport__.normalizeAdaptive;
 const COLLECT_EXPORT = __RememberImportExport__.collectExportData;
-const BUILD_RECALL_ITEMS = __RememberModes__.buildRecallItems;
-const SCORE_RECALL = __RememberModes__.scoreRecall;
-const CREATE_NBACK_CONFIG = __RememberModes__.createNBackConfig;
-const SUMMARIZE_NBACK = __RememberModes__.summarizeNBackResult;
-const NORMALIZE_STATS = __RememberStats__.normalizeStats;
 const RECORD_GAME_STARTED = __RememberStats__.recordGameStarted;
 const RECORD_GAME_WON = __RememberStats__.recordGameWon;
 const RECORD_RECALL = __RememberStats__.recordRecallAttempt;
 const RECORD_NBACK = __RememberStats__.recordNBackAttempt;
 const BUILD_STATS_SUMMARY = __RememberStats__.buildStatsSummary;
+const NORMALIZE_STATS = __RememberStats__.normalizeStats;
 const GET_RATING = __RememberStats__.getRating;
 const NORMALIZE_ACHIEVEMENTS = __RememberAchievements__.normalizeAchievements;
 const CHECK_ACHIEVEMENTS = __RememberAchievements__.checkAchievementsOnWin;
-const TIMER_POLL_MS = 250;
 
 // Adaptive rating constants
 const ELO_K_FACTOR = 12;
@@ -145,38 +133,14 @@ const RATING_BRONZE = 920;
 const RATING_SILVER = 1080;
 
 // Timing constants
-const COMBO_WINDOW_MS = 5000;
 const MISMATCH_FLIP_BACK_MS = 700;
 const HINT_DURATION_MS = 800;
 const TOAST_DURATION_MS = 2000;
-
-function getActiveElement() {
-  return typeof document !== 'undefined' ? document.activeElement : null;
-}
-
-function getFocusable(el) {
-  return el
-    ? Array.from(el.querySelectorAll(FOCUSABLE_SELECTOR)).find(node => !node.disabled)
-    : null;
-}
-
-function focusElement(el) {
-  if (el && typeof el.focus === 'function') el.focus();
-}
-
-function queueFocus(fn) {
-  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fn);
-  else setTimeout(fn, 0);
-}
 
 function cardLabelForTheme(theme) {
   return currentLang() === 'zh'
     ? CARD_LABELS_ZH[theme] || CARD_LABELS_ZH.emoji
     : CARD_LABELS[theme] || CARD_LABELS.emoji;
-}
-
-function getNow() {
-  return Date.now();
 }
 
 function buildExportPayload() {
@@ -240,36 +204,12 @@ function recordGameStarted(stats) {
   return RECORD_GAME_STARTED(stats);
 }
 
-function recordGameWon(stats, payload) {
-  return RECORD_GAME_WON(stats, payload);
-}
-
 function recordRecallAttempt(stats, payload) {
   return RECORD_RECALL(stats, payload);
 }
 
 function recordNBackAttempt(stats, payload) {
   return RECORD_NBACK(stats, payload);
-}
-
-function checkAchievements(store, payload) {
-  return CHECK_ACHIEVEMENTS(store, payload);
-}
-
-function buildRecallItems(params) {
-  return BUILD_RECALL_ITEMS(params);
-}
-
-function scoreRecall(correctSet, selectedValues) {
-  return SCORE_RECALL(correctSet, selectedValues);
-}
-
-function createNBackConfig(raw) {
-  return CREATE_NBACK_CONFIG(raw);
-}
-
-function summarizeNBackResult(payload) {
-  return SUMMARIZE_NBACK(payload);
 }
 
 function buildStatsSummary(stats) {
@@ -327,7 +267,7 @@ function afterImportApplied() {
 function updateTimerState(value) {
   // GameStateManager 已经更新了 elapsed 和 countdownLeft
   // 这里只更新 UI 显示
-  if (timeEl) timeEl.textContent = value.displayText;
+  if (renderer) renderer.renderTime(value.displayText);
 }
 
 function formatAchievementTime(at) {
@@ -344,25 +284,8 @@ function persistImportedData(normalized) {
   afterImportApplied();
 }
 
-function handleModalBackdrop(e, modal, onClose) {
-  if (e.target !== modal) return;
-  if (typeof onClose === 'function') onClose();
-}
-
 function getSelectedRecallValues(container) {
   return parseSelectedRecallValues(container);
-}
-
-function openModalForElement(el) {
-  openModalWithFocus(el);
-}
-
-function closeModalForElement(el) {
-  closeModalWithFocusRestore(el);
-}
-
-function applyImportedData(normalized) {
-  persistImportedData(normalized);
 }
 
 function loadAdaptive() {
@@ -497,21 +420,8 @@ const difficulties = {
 const emojiPool =
   __RememberPools__ && __RememberPools__.emojiPool ? __RememberPools__.emojiPool : [];
 
-let gridEl,
-  movesEl,
-  timeEl,
-  bestEl,
-  difficultyEl,
-  newGameBtn,
-  winModal,
-  winStatsEl,
-  playAgainBtn,
-  closeModalBtn;
-let ratingStarsEl;
-let comboToastEl;
-let pauseBtn, hintBtn, hintLeftEl, settingsBtn, pauseOverlay, resumeBtn;
-let settingsModal, settingSound, settingVibrate, settingPreview, settingsCancel, settingsSave;
-let shareBtn, leaderboardList, pairsLeftEl, progressBarEl, settingAccent, confettiCanvas;
+let gridEl, difficultyEl, newGameBtn, winModal, winStatsEl, playAgainBtn, closeModalBtn;
+let settingsModal, settingSound, settingVibrate, settingPreview, settingAccent, confettiCanvas;
 let settingTheme, settingMotion, settingVolume, settingVolumeValue, settingSoundPack;
 let settingLanguage;
 let settingAdaptive, settingSpaced;
@@ -520,34 +430,22 @@ let settingGameMode,
   settingCountdownMedium,
   settingCountdownHard,
   countdownConfigEl;
-let settingCardFace,
-  achievementsModal,
-  achievementsBtn,
-  achievementsClose,
-  achievementsList,
-  achievementsNew;
-let exportBtn, importBtn, importFile, toastEl;
-let nbackBtn,
-  nbackModal,
+let settingCardFace, achievementsModal, achievementsBtn, achievementsClose, achievementsNew;
+let importFile;
+let resumeBtn, settingsBtn, shareBtn, hintBtn;
+let nbackModal,
   nbackStimEl,
   nbackNSelect,
   nbackSpeedSelect,
   nbackLenSelect,
   nbackStartBtn,
   nbackCloseBtn;
-let recallModal, recallChoicesEl, recallSkipBtn, recallSubmitBtn;
+const CREATE_NBACK_CONFIG = __RememberModes__.createNBackConfig;
+let recallModal, recallChoicesEl;
 let dailyModal, dailyBtn, dailyCloseBtn, dailyStartBtn, dailyInfoEl;
 let loseModal, failRetryBtn, failCloseBtn;
-let statsModal, statsBtn, statsClose, statsListEl, resetDataBtn;
-let guideBtn,
-  guideModal,
-  guideCloseBtn,
-  guideNoShow,
-  guideBasicsList,
-  guideAdvancedList,
-  guideShortcutsList,
-  guideNoShowLabel,
-  guideOpenHintEl;
+let statsModal, statsBtn, statsClose;
+let guideModal, guideCloseBtn, guideNoShow, guideBasicsList, guideAdvancedList, guideShortcutsList;
 
 // ============================================================
 // 状态管理：使用 GameStateManager 替代内联状态变量
@@ -560,51 +458,11 @@ function getGameState() {
   return GameState.getState();
 }
 
-// 以下变量保留用于 UI 引用（从 GameState.getState() 获取值）
-// 这些是本地缓存，用于避免频繁调用 getState()
-let moves = 0;
-let matchedPairs = 0;
-let elapsed = 0;
-let countdownLeft = 0;
-let timeUp = false;
-let started = false;
+// 当前难度（UI 选择器与 GameState 之间的本地引用）
 let currentDifficulty = 'easy';
-let paused = false;
-let lockBoard = false;
-let hintsLeft = 0;
-let isPreviewing = false;
-let hintsUsed = 0;
-let dailyActive = false;
-let dailySeed = 0;
-let comboCount = 0;
-let maxComboThisGame = 0;
-let seenCountMap = new Map();
-let lastGameValues = [];
 
 // RecallState 实例 — 封装回忆测试的完整生命周期
 const recallState = new __RememberRecall__();
-
-// 订阅 GameState 变更，同步到本地变量
-GameState.onChange((state, changedKeys) => {
-  moves = state.moves;
-  matchedPairs = state.matchedPairs;
-  elapsed = state.elapsed;
-  countdownLeft = state.countdownLeft;
-  timeUp = state.timeUp;
-  started = state.started;
-  currentDifficulty = state.difficulty;
-  paused = state.paused;
-  lockBoard = state.lockBoard;
-  hintsLeft = state.hintsLeft;
-  isPreviewing = state.isPreviewing;
-  hintsUsed = state.hintsUsed;
-  dailyActive = state.dailyActive;
-  dailySeed = state.dailySeed;
-  comboCount = state.comboCount;
-  maxComboThisGame = state.maxComboThisGame;
-  seenCountMap = state.seenCountMap;
-  lastGameValues = state.lastGameValues;
-});
 
 const HINT_LIMITS = GameState.HINT_LIMITS;
 const GUIDE_KEY = 'memory_match_onboarding_v1';
@@ -674,17 +532,13 @@ function escapeHtml(str) {
 function logLifecycle(event, detail = {}) {
   try {
     console.info(`[Remember] ${event}`, detail);
-  } catch (_) {
-    // eslint-disable-line no-empty
-  }
+  } catch (_) {}
 }
 
 function logError(event, detail = {}) {
   try {
     console.error(`[Remember] ${event}`, detail);
-  } catch (_) {
-    // eslint-disable-line no-empty
-  }
+  } catch (_) {}
 }
 
 function showModal(el) {
@@ -767,10 +621,6 @@ function todayStr() {
   return __RememberKeys__.todayStr();
 }
 
-function seedFromDate(dateStr, diff, theme) {
-  // Simple hash: sum char codes with multipliers
-  return __RememberUtils__.seedFromDate(dateStr, diff, theme);
-}
 function mulberry32(a) {
   return __RememberUtils__.mulberry32(a);
 }
@@ -780,14 +630,6 @@ function seededShuffle(arr, rng) {
 
 function isCountdownMode() {
   return (settings.gameMode || 'classic') === 'countdown';
-}
-function getCountdownFor(diff) {
-  const c = settings.countdown || DEFAULT_SETTINGS.countdown;
-  const n = Math.max(
-    10,
-    Math.min(999, parseInt((c && c[diff]) || DEFAULT_SETTINGS.countdown[diff]))
-  );
-  return n;
 }
 
 function loadStats() {
@@ -815,10 +657,6 @@ function closeStats() {
 function renderRating(stars) {
   if (!renderer) return;
   renderer.renderRating(stars);
-}
-
-function loadSettings() {
-  return __RememberStorage__.loadSettings(DEFAULT_SETTINGS);
 }
 
 function saveSettings(s) {
@@ -917,20 +755,6 @@ function updateBestUI() {
   renderer.renderBest(loadBest(currentDifficulty));
 }
 
-function stopTimer() {
-  GameState.stopTimer();
-}
-
-function resetTimer() {
-  GameState.resetTimer();
-  const state = getGameState();
-  if (timeEl) timeEl.textContent = __RememberTimer__.formatTime(state.elapsed);
-}
-
-function startTimer() {
-  GameState.startTimer();
-}
-
 function setGridColumns(cols) {
   gridEl.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
 }
@@ -940,11 +764,6 @@ function makeCard(item, index) {
   const btn = renderer.renderCard(item, index);
   btn.addEventListener('click', () => onFlip(btn));
   return btn;
-}
-
-function resetBoardState() {
-  // 委托给 GameStateManager
-  GameState.afterMismatchFlipBack();
 }
 
 // 当前翻开的卡片 DOM 元素（用于不匹配时翻回）
@@ -1054,7 +873,7 @@ function clearGrid() {
   gridEl.innerHTML = '';
 }
 
-function initGame(diffKey) {
+function initGame(diffKey, options) {
   if (settings.adaptive) {
     const d = decideDifficulty();
     if (difficultyEl && difficultyEl.value !== d) {
@@ -1081,8 +900,10 @@ function initGame(diffKey) {
     },
     hintsLeft:
       getAdaptiveAssist(currentDifficulty).hintLimit || HINT_LIMITS[currentDifficulty] || 0,
-    dailyActive: false,
-    dailySeed: 0,
+    dailyActive: !!(options && options.dailyActive),
+    dailySeed: (options && options.dailySeed) || 0,
+    onTimerUpdate: updateTimerState,
+    onTimeUp,
   });
 
   clearGrid();
@@ -1215,25 +1036,17 @@ if (typeof document !== 'undefined') {
     const ui = __RememberUI__.bind(document);
     ({
       gridEl,
-      movesEl,
-      timeEl,
-      bestEl,
       difficultyEl,
       newGameBtn,
       winModal,
       winStatsEl,
       playAgainBtn,
       closeModalBtn,
-      ratingStarsEl,
-      comboToastEl,
       loseModal,
       failRetryBtn,
       failCloseBtn,
-      pauseBtn,
       hintBtn,
-      hintLeftEl,
       settingsBtn,
-      pauseOverlay,
       resumeBtn,
       settingsModal,
       settingSound,
@@ -1254,12 +1067,14 @@ if (typeof document !== 'undefined') {
       settingCountdownMedium,
       settingCountdownHard,
       countdownConfigEl,
-      settingsCancel,
-      settingsSave,
       shareBtn,
-      leaderboardList,
-      pairsLeftEl,
-      progressBarEl,
+      nbackModal,
+      nbackStimEl,
+      nbackNSelect,
+      nbackSpeedSelect,
+      nbackLenSelect,
+      nbackStartBtn,
+      nbackCloseBtn,
       confettiCanvas,
       dailyModal,
       dailyBtn,
@@ -1269,22 +1084,13 @@ if (typeof document !== 'undefined') {
       achievementsModal,
       achievementsBtn,
       achievementsClose,
-      achievementsList,
       achievementsNew,
-      exportBtn,
-      importBtn,
       importFile,
-      toastEl,
       statsModal,
       statsBtn,
       statsClose,
-      statsListEl,
-      resetDataBtn,
       recallModal,
       recallChoicesEl,
-      recallSkipBtn,
-      recallSubmitBtn,
-      nbackBtn,
       nbackModal,
       nbackStimEl,
       nbackNSelect,
@@ -1292,15 +1098,12 @@ if (typeof document !== 'undefined') {
       nbackLenSelect,
       nbackStartBtn,
       nbackCloseBtn,
-      guideBtn,
       guideModal,
       guideCloseBtn,
       guideNoShow,
       guideBasicsList,
       guideAdvancedList,
       guideShortcutsList,
-      guideNoShowLabel,
-      guideOpenHintEl,
     } = ui);
 
     renderer = __RememberUIRenderer__.create({
@@ -1495,7 +1298,6 @@ if (typeof document !== 'undefined') {
         closeModalWithFocusRestore(settingsModal);
       },
       onSettingsSave: () => {
-        const prevCardFace = settings.cardFace;
         settings.sound = !!settingSound.checked;
         settings.vibrate = !!settingVibrate.checked;
         settings.previewSeconds = Math.max(0, Math.min(5, parseInt(settingPreview.value || '0')));
@@ -1565,7 +1367,8 @@ if (typeof document !== 'undefined') {
       },
       onShare: async () => {
         const t = i18n();
-        const text = `${t.shareText} | ${t.difficulty} ${difficultyEl.options[difficultyEl.selectedIndex].text} | ${t.timeFmt} ${formatTime(elapsed)} | ${t.movesLabel} ${moves}`;
+        const state = getGameState();
+        const text = `${t.shareText} | ${t.difficulty} ${difficultyEl.options[difficultyEl.selectedIndex].text} | ${t.timeFmt} ${formatTime(state.elapsed)} | ${t.movesLabel} ${state.moves}`;
         try {
           if (navigator.share) await navigator.share({ title: t.shareTitle, text });
           else if (navigator.clipboard) {
@@ -1604,11 +1407,12 @@ if (typeof document !== 'undefined') {
           difficultyEl.value,
           settings.cardFace || 'emoji'
         );
-        dailyActive = true;
-        dailySeed = challenge.seed;
         closeModalWithFocusRestore(dailyModal);
         showToast(i18n().toastDailyStarted);
-        initGame(difficultyEl.value);
+        initGame(difficultyEl.value, {
+          dailyActive: true,
+          dailySeed: challenge.seed,
+        });
       },
       onStatsOpen: openStats,
       onStatsClose: closeStats,
@@ -1707,7 +1511,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 function startNBack() {
   if (!nbackModal || !nbackStimEl) return;
-  const config = createNBackConfig({
+  const config = CREATE_NBACK_CONFIG({
     N: nbackNSelect.value || '2',
     length: nbackLenSelect.value || '20',
     speed: nbackSpeedSelect.value || '900',
@@ -1891,6 +1695,7 @@ const I18N_TEXT_MAP = [
   'cardFaceColors',
   'backupLabel',
   // [elementId, i18nKey] pairs for labels where the id has a "Label" suffix
+  ['hintLabel', 'hint'],
   ['settingSoundLabel', 'settingSound'],
   ['settingVibrateLabel', 'settingVibrate'],
   ['settingPreviewLabel', 'settingPreview'],
@@ -2013,11 +1818,8 @@ function applyLanguage() {
           `<li class="flex items-center gap-2"><span class="inline-flex items-center rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-700 dark:bg-slate-700 dark:text-slate-200">${escapeHtml(sc.key)}</span><span>${escapeHtml(sc.desc)}</span></li>`
       )
       .join('');
-  // Hint button with remaining span
-  if (hintBtn) {
-    hintBtn.innerHTML = `${escapeHtml(t.hint)} <span id="hintLeft" class="ml-1">${hintsLeft}</span>`;
-    hintLeftEl = document.getElementById('hintLeft');
-  }
+  // Hint button: label span is updated via I18N_TEXT_MAP; the count span
+  // (#hintLeft) keeps its DOM node so renderer references stay valid.
   updateControlsUI();
 }
 
@@ -2141,8 +1943,9 @@ function createDeck(pairs) {
     pairs = 8;
   }
   pairs = Math.min(pairs, pool.length);
-  if (dailyActive) {
-    const rng = mulberry32(dailySeed);
+  const gameState = getGameState();
+  if (gameState.dailyActive) {
+    const rng = mulberry32(gameState.dailySeed);
     const poolCopy = pool.slice();
     seededShuffle(poolCopy, rng);
     return seededShuffle(buildDeckItems(poolCopy.slice(0, pairs)), rng);
@@ -2212,7 +2015,7 @@ function exportData() {
 function importDataFromObj(obj) {
   try {
     const normalized = normalizeImportedData(obj);
-    applyImportedData(normalized);
+    persistImportedData(normalized);
     logLifecycle('import_data_applied', {
       version: normalized.version,
       bestCount: Object.keys(normalized.bests || {}).length,

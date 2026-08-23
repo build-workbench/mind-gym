@@ -32,11 +32,8 @@
 
     class GameStateManager {
       constructor() {
-        this._gameManager = null;
         this._timerId = null;
         this._listeners = [];
-        this._winListeners = [];
-        this._timeUpListeners = [];
 
         // 核心游戏状态
         this._difficulty = 'easy';
@@ -200,21 +197,6 @@
         }
       }
 
-      // 游戏模式管理
-      setMode(mode) {
-        if (!VALID_MODES.includes(mode)) {
-          console.warn(`GameStateManager: Invalid mode "${mode}", falling back to "classic"`);
-          this._mode = 'classic';
-        } else {
-          this._mode = mode;
-        }
-        this._notifyChange(['mode']);
-      }
-
-      getMode() {
-        return this._mode;
-      }
-
       // 棋盘锁定
       setLockBoard(locked) {
         this._lockBoard = !!locked;
@@ -238,55 +220,6 @@
 
       getLastGameValues() {
         return [...this._lastGameValues];
-      }
-
-      // 胜利/超时事件订阅
-      onWin(callback) {
-        if (typeof callback !== 'function') {
-          throw new Error('GameStateManager: onWin callback must be a function');
-        }
-        this._winListeners.push(callback);
-        return () => {
-          const index = this._winListeners.indexOf(callback);
-          if (index >= 0) {
-            this._winListeners.splice(index, 1);
-          }
-        };
-      }
-
-      onTimeUp(callback) {
-        if (typeof callback !== 'function') {
-          throw new Error('GameStateManager: onTimeUp callback must be a function');
-        }
-        this._timeUpListeners.push(callback);
-        return () => {
-          const index = this._timeUpListeners.indexOf(callback);
-          if (index >= 0) {
-            this._timeUpListeners.splice(index, 1);
-          }
-        };
-      }
-
-      _notifyWin() {
-        const state = this.getState();
-        this._winListeners.forEach(callback => {
-          try {
-            callback(state);
-          } catch (err) {
-            console.error('GameStateManager: onWin callback error', err);
-          }
-        });
-      }
-
-      _notifyTimeUp() {
-        const state = this.getState();
-        this._timeUpListeners.forEach(callback => {
-          try {
-            callback(state);
-          } catch (err) {
-            console.error('GameStateManager: onTimeUp callback error', err);
-          }
-        });
       }
 
       update(partial) {
@@ -393,7 +326,6 @@
           onTimeUp: () => {
             this._timeUp = true;
             this._notifyChange(['timeUp']);
-            this._notifyTimeUp();
             if (this._onTimeUp) {
               this._onTimeUp();
             }
@@ -471,11 +403,6 @@
       setPreviewing(value) {
         this._isPreviewing = value;
         this._notifyChange(['isPreviewing']);
-      }
-
-      // 触发胜利（供外部调用）
-      triggerWin() {
-        this._notifyWin();
       }
 
       reset() {
@@ -557,20 +484,12 @@
       setPreviewing: value => instance.setPreviewing(value),
       reset: () => instance.reset(),
       onChange: callback => instance.onChange(callback),
-      // 新增方法
-      setMode: mode => instance.setMode(mode),
-      getMode: () => instance.getMode(),
       setLockBoard: locked => instance.setLockBoard(locked),
       recordSeenCard: value => instance.recordSeenCard(value),
       getSeenCountMap: () => instance.getSeenCountMap(),
       setLastGameValues: values => instance.setLastGameValues(values),
       getLastGameValues: () => instance.getLastGameValues(),
-      onWin: callback => instance.onWin(callback),
-      onTimeUp: callback => instance.onTimeUp(callback),
-      triggerWin: () => instance.triggerWin(),
-      COMBO_WINDOW_MS,
       HINT_LIMITS,
-      VALID_MODES,
     };
   }
 );

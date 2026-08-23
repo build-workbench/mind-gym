@@ -373,9 +373,6 @@
       applyTheme,
       applyMotionPreference,
       applyAccent,
-
-      // 元素访问（用于特殊场景）
-      getElements: () => elements,
     };
   }
 

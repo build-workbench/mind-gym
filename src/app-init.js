@@ -54,14 +54,6 @@
         .catch(function (error) {
           console.log('[SW] Registration failed:', error);
         });
-
-      // Listen for messages from SW
-      navigator.serviceWorker.addEventListener('message', function (event) {
-        console.log('[SW] Message:', event.data);
-        if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-          showUpdateNotification();
-        }
-      });
     });
 
     // Show update notification
@@ -72,12 +64,12 @@
       if (notification && updateBtn) {
         notification.classList.add('show');
 
-        updateBtn.addEventListener('click', function () {
+        updateBtn.onclick = function () {
           if (worker) {
             worker.postMessage({ type: 'SKIP_WAITING' });
           }
           window.location.reload();
-        });
+        };
       }
     }
   }

@@ -14,6 +14,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Fixed / 修复
+
+- **每日挑战完成状态永不写入**：`onDailyStart` 只写局部变量，GameState 的 `dailyActive` 恒为 false，导致 win pipeline 的 `markDailyDone` 步骤与完成 toast 永不执行；现通过 `initGame(diffKey, { dailyActive, dailySeed })` 参数透传真实值
+- **倒计时模式计时器显示不刷新、超时不弹失败框**：v1.11.0 "deep module" 重构时 `onTimerUpdate`/`onTimeUp` 回调接线丢失，现已接回
+- **防 FOUC 脚本读错 localStorage key**：`memory_match__settings`（双下划线）→ `memory_match_settings`
+- **设置校验三方分歧**：`previewSeconds` 上限统一为 5、`soundPack` 枚举统一为 clear/electro/soft（settings-manager 与 import-export/UI 一致）
+- **hintBtn i18n 重建导致 renderer 持有陈旧 DOM 引用**：改用 `#hintLabel` 包裹层 + I18N_TEXT_MAP 更新，不再重建按钮 innerHTML
+
+### Removed / 移除
+
+- 删除从未接入运行时的 `src/modes/` 模式注册表系统（6 文件约 530 行死代码）及对应 script 标签、SW 预缓存项、测试
+- 清理各模块未使用导出：fsrs 的 `calculateThemeMastery`/`getDueCards`/`countDueCards`、storage 的 `getGameSnapshot`/`resetAllData`、game-state 的 `setMode`/`getMode`/`onWin`/`onTimeUp` 订阅 API 与 `triggerWin`、renderer 的 `getElements`、sw.js 的空 `periodicsync` stub、app-init 死掉的 `UPDATE_AVAILABLE` 监听
+- 清理 app.js 孤儿 helper 与只写不读的状态镜像变量（18 个），删除整个 `GameState.onChange` 手工同步订阅——渲染统一走 `getGameState()`
+
+### Changed / 变更
+
+- **DEFAULT_SETTINGS 单一来源**：新增 `src/settings-defaults.js`，storage / settings-manager / import-export 统一引用
+- 重新接入 ESLint 9（flat config）：修复 85 处静态问题；`npm run lint` 现为 prettier + eslint 双检查
+- 覆盖率阈值恢复生效且本地与 CI 一致（statements 50 / lines 50 / functions 55 / branches 40）
+- CI test job 改为 `jest --coverage --runInBand` 强制执行覆盖率门槛
+- Deploy workflow 门控 CI 通过后执行，并改用 `scripts/prepare-deploy.sh` 生产构建（terser 压缩）替代直接复制源码
+- 删除与 package.json 内联配置冲突的 `.prettierrc`
+- 清理 changelog 中 10 条指向已删除 archive 文件的死链
+
+### Technical / 技术细节
+
+- 总测试数: 337 (23 测试套件)
+- 零运行时依赖，PWA 离线可用
+
+---
+
 ## [v1.11.1] - 2026-08-07
 
 ### Removed / 移除
@@ -173,8 +206,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved manifest.webmanifest with shortcuts and metadata
 - Updated pull_request_template.md with emojis and expanded scopes
 
-[View details](./archive/v1.6.0.md)
-
 ---
 
 ## [v1.5.0] - 2026-04-16
@@ -195,8 +226,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Deprecated old changelog files with inconsistent naming
 
-[View details](./archive/v1.5.0.md)
-
 ---
 
 ## [v1.4.0] - 2026-04-16
@@ -216,8 +245,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved CONTRIBUTING.md with detailed guidelines
 - Enhanced CLAUDE.md with complete module loading order
 
-[View details](./archive/v1.4.0.md)
-
 ---
 
 ## [v1.3.0] - 2026-04-16
@@ -232,8 +259,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed / 修复
 
 - 7 npm security vulnerabilities resolved
-
-[View details](./archive/v1.3.0.md)
 
 ---
 
@@ -256,8 +281,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.gitignore` contradiction
 - Empty catch block in `importDataFromObj`
 
-[View details](./archive/v1.2.1.md)
-
 ---
 
 ## [v1.2.0] - 2026-04-06
@@ -276,8 +299,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Timer now uses timestamp-based calculation
 - Improved accessibility with ARIA attributes
 
-[View details](./archive/v1.2.0.md)
-
 ---
 
 ## [v1.1.0] - 2026-03-10
@@ -287,8 +308,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `deploy.yml` to `pages.yml`
 - Unified CI permissions and concurrency
 - Added path filtering to reduce unnecessary builds
-
-[View details](./archive/v1.1.0.md)
 
 ---
 
@@ -303,8 +322,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Extracted DOM bindings to `src/ui.js`
 - Extracted event handlers to `src/ui-events.js`
-
-[View details](./archive/v1.0.0.md)
 
 ---
 
@@ -321,8 +338,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Service Worker CDN cache deletion issue
 - Tailwind CDN initialization order
 
-[View details](./archive/v0.2.0.md)
-
 ---
 
 ## [v0.1.0] - 2025-02-13
@@ -331,8 +346,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `.editorconfig` for code style consistency
 - Standard badges in README
-
-[View details](./archive/v0.1.0.md)
 
 ---
 

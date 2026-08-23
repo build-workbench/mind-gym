@@ -10,13 +10,12 @@
 
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory(require('./modes.js'), require('./shared.js'));
+    module.exports = factory(require('./modes.js'));
   } else {
-    root.RememberNBack = factory(root.RememberModes, root.RememberShared);
+    root.RememberNBack = factory(root.RememberModes);
   }
-})(typeof self !== 'undefined' ? self : this, function (RememberModes, RememberShared) {
+})(typeof self !== 'undefined' ? self : this, function (RememberModes) {
   const { createNBackConfig, summarizeNBackResult } = RememberModes;
-  const { clampInt } = RememberShared;
 
   class NBackState {
     constructor(config = {}) {
@@ -132,7 +131,6 @@
     }
 
     getState() {
-      const N = this._config.N;
       const progress = {
         current: Math.max(0, this._idx),
         total: this._config.length,

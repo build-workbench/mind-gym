@@ -3,19 +3,22 @@
     module.exports = factory(
       require('./shared.js'),
       require('./stats.js'),
-      require('./achievements.js')
+      require('./achievements.js'),
+      require('./settings-defaults.js')
     );
   } else {
     root.RememberImportExport = factory(
       root.RememberShared,
       root.RememberStats,
-      root.RememberAchievements
+      root.RememberAchievements,
+      root.RememberSettingsDefaults
     );
   }
 })(
   typeof self !== 'undefined' ? self : this,
-  function (RememberShared, RememberStats, RememberAchievements) {
+  function (RememberShared, RememberStats, RememberAchievements, SettingsDefaults) {
     const { isPlainObject, clampInt, clampNumber } = RememberShared;
+    const DEFAULT_SETTINGS = SettingsDefaults.DEFAULT_SETTINGS;
     const VALID_DIFFS = ['easy', 'medium', 'hard'];
     const VALID_THEMES = ['emoji', 'numbers', 'letters', 'shapes', 'colors'];
     const VALID_ACCENTS = ['indigo', 'emerald', 'rose'];
@@ -25,31 +28,49 @@
     const VALID_LANGUAGES = ['auto', 'zh', 'en'];
     const VALID_GAME_MODES = ['classic', 'countdown'];
 
-    function isFiniteNumber(value) {
-      return Number.isFinite(Number(value));
-    }
-
     function pickEnum(value, allowed, fallback) {
       return allowed.includes(value) ? value : fallback;
     }
 
     function normalizeSettings(raw, defaults) {
       const source = isPlainObject(raw) ? raw : {};
-      const fallback = isPlainObject(defaults) ? defaults : {};
-      const countdownDefaults = isPlainObject(fallback.countdown)
-        ? fallback.countdown
-        : { easy: 90, medium: 150, hard: 240 };
+      const fallback = isPlainObject(defaults) ? defaults : DEFAULT_SETTINGS;
+      const countdownDefaults =
+        isPlainObject(fallback.countdown) && fallback.countdown
+          ? fallback.countdown
+          : DEFAULT_SETTINGS.countdown;
       return {
         sound: source.sound === undefined ? !!fallback.sound : !!source.sound,
         vibrate: source.vibrate === undefined ? !!fallback.vibrate : !!source.vibrate,
         previewSeconds: clampInt(source.previewSeconds, 0, 5, Number(fallback.previewSeconds ?? 0)),
-        accent: pickEnum(source.accent, VALID_ACCENTS, fallback.accent || 'indigo'),
-        theme: pickEnum(source.theme, VALID_THEME_MODES, fallback.theme || 'auto'),
-        motion: pickEnum(source.motion, VALID_MOTION_MODES, fallback.motion || 'auto'),
-        volume: clampNumber(source.volume, 0, 1, Number(fallback.volume ?? 0.5)),
-        soundPack: pickEnum(source.soundPack, VALID_SOUND_PACKS, fallback.soundPack || 'clear'),
-        cardFace: pickEnum(source.cardFace, VALID_THEMES, fallback.cardFace || 'emoji'),
-        gameMode: pickEnum(source.gameMode, VALID_GAME_MODES, fallback.gameMode || 'classic'),
+        accent: pickEnum(source.accent, VALID_ACCENTS, fallback.accent || DEFAULT_SETTINGS.accent),
+        theme: pickEnum(source.theme, VALID_THEME_MODES, fallback.theme || DEFAULT_SETTINGS.theme),
+        motion: pickEnum(
+          source.motion,
+          VALID_MOTION_MODES,
+          fallback.motion || DEFAULT_SETTINGS.motion
+        ),
+        volume: clampNumber(
+          source.volume,
+          0,
+          1,
+          Number(fallback.volume ?? DEFAULT_SETTINGS.volume)
+        ),
+        soundPack: pickEnum(
+          source.soundPack,
+          VALID_SOUND_PACKS,
+          fallback.soundPack || DEFAULT_SETTINGS.soundPack
+        ),
+        cardFace: pickEnum(
+          source.cardFace,
+          VALID_THEMES,
+          fallback.cardFace || DEFAULT_SETTINGS.cardFace
+        ),
+        gameMode: pickEnum(
+          source.gameMode,
+          VALID_GAME_MODES,
+          fallback.gameMode || DEFAULT_SETTINGS.gameMode
+        ),
         countdown: {
           easy: clampInt(
             source.countdown && source.countdown.easy,
@@ -70,7 +91,11 @@
             countdownDefaults.hard
           ),
         },
-        language: pickEnum(source.language, VALID_LANGUAGES, fallback.language || 'auto'),
+        language: pickEnum(
+          source.language,
+          VALID_LANGUAGES,
+          fallback.language || DEFAULT_SETTINGS.language
+        ),
         adaptive: source.adaptive === undefined ? !!fallback.adaptive : !!source.adaptive,
         spaced: source.spaced === undefined ? !!fallback.spaced : !!source.spaced,
       };

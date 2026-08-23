@@ -41,7 +41,8 @@
     "test:coverage": "jest --coverage --runInBand",
     "build:css": "tailwindcss -c tailwind.config.js -i ./styles/app.css -o ./assets/app.css --minify",
     "build:css:dev": "tailwindcss -c tailwind.config.js -i ./styles/app.css -o ./assets/app.css",
-    "lint": "prettier --check '**/*.{js,json,md,html,css,yml}'",
+    "lint": "prettier --check '**/*.{js,json,md,html,css,yml}' && eslint app.js sw.js src scripts __tests__ jest.config.cjs eslint.config.cjs",
+    "lint:fix": "eslint app.js sw.js src scripts __tests__ jest.config.cjs eslint.config.cjs --fix",
     "format": "prettier --write '**/*.{js,json,md,html,css,yml}'",
     "prepare:deploy": "bash scripts/prepare-deploy.sh",
     "dev": "npx serve . -p 3000",
@@ -49,6 +50,8 @@
     "validate": "npm run lint && npm run test && npm run build:css"
   },
   "devDependencies": {
+    "eslint": "9.39.5",
+    "globals": "17.11.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "3.8.1",

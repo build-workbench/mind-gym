@@ -3,9 +3,6 @@
  */
 
 const RememberDaily = require('../src/daily.js');
-const RememberKeys = require('../src/keys.js');
-const RememberUtils = require('../src/utils.js');
-const RememberStorage = require('../src/storage.js');
 
 describe('DailyChallengeManager', () => {
   describe('todayStr', () => {

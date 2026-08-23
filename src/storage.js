@@ -4,35 +4,28 @@
       require('./keys.js'),
       require('./stats.js'),
       require('./achievements.js'),
-      require('./import-export.js')
+      require('./import-export.js'),
+      require('./settings-defaults.js')
     );
   } else {
     root.RememberStorage = factory(
       root.RememberKeys,
       root.RememberStats,
       root.RememberAchievements,
-      root.RememberImportExport
+      root.RememberImportExport,
+      root.RememberSettingsDefaults
     );
   }
 })(
   typeof self !== 'undefined' ? self : this,
-  function (RememberKeys, RememberStats, RememberAchievements, RememberImportExport) {
-    const DEFAULT_SETTINGS = {
-      sound: true,
-      vibrate: true,
-      previewSeconds: 1,
-      accent: 'indigo',
-      theme: 'auto',
-      motion: 'auto',
-      volume: 0.5,
-      soundPack: 'clear',
-      cardFace: 'emoji',
-      gameMode: 'classic',
-      countdown: { easy: 90, medium: 150, hard: 240 },
-      language: 'auto',
-      adaptive: false,
-      spaced: false,
-    };
+  function (
+    RememberKeys,
+    RememberStats,
+    RememberAchievements,
+    RememberImportExport,
+    SettingsDefaults
+  ) {
+    const { DEFAULT_SETTINGS } = SettingsDefaults;
     const DEFAULT_ADAPTIVE = { rating: 1000, lastDiff: 'easy' };
 
     function cloneSettings(defaults) {
@@ -206,65 +199,6 @@
       } catch {}
     }
 
-    function listAllKeys() {
-      try {
-        const keys = [];
-        for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
-        return keys;
-      } catch {
-        return [];
-      }
-    }
-
-    function removeKeysByPrefix(keys, prefix) {
-      try {
-        for (const key of keys) {
-          if (key && key.startsWith(prefix)) localStorage.removeItem(key);
-        }
-      } catch {}
-    }
-
-    /**
-     * 获取游戏快照（高层抽象）
-     * 一次性获取所有游戏相关数据，避免多次调用
-     * @returns {{
-     *   settings: object,
-     *   stats: object,
-     *   achievements: object,
-     *   bestScores: Record<string, object>,
-     *   adaptive: object,
-     *   leaderboards: Record<string, array>
-     * }}
-     */
-    function getGameSnapshot() {
-      return {
-        settings: loadSettings(),
-        stats: loadStats(),
-        achievements: loadAchievements(),
-        bestScores: {
-          easy: loadBest('easy'),
-          medium: loadBest('medium'),
-          hard: loadBest('hard'),
-        },
-        adaptive: loadAdaptive(),
-        leaderboards: {
-          easy: loadLeaderboard('easy'),
-          medium: loadLeaderboard('medium'),
-          hard: loadLeaderboard('hard'),
-        },
-      };
-    }
-
-    /**
-     * 重置所有数据（高层抽象）
-     * 清除所有游戏相关的 localStorage 数据
-     * @param {string} prefix - localStorage 键前缀
-     */
-    function resetAllData(prefix = 'memory_match_') {
-      const keys = listAllKeys();
-      removeKeysByPrefix(keys, prefix);
-    }
-
     return {
       // 底层方法（保留向后兼容）
       loadAdaptive,
@@ -288,12 +222,6 @@
       shouldAutoShowGuide,
       markGuideSeen,
       hideGuide,
-      listAllKeys,
-      removeKeysByPrefix,
-
-      // 高层抽象方法（新增）
-      getGameSnapshot,
-      resetAllData,
     };
   }
 );

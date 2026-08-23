@@ -34,9 +34,6 @@
     Easy: 4,
   };
 
-  // Decay factor for retrievability calculation
-  const DECAY = -0.5;
-
   /**
    * Create a default FSRS card
    * @returns {Object} Default card state
@@ -260,34 +257,6 @@
   }
 
   /**
-   * Calculate theme-level mastery summary
-   * @param {Object} masteryData - Object mapping card values to card states
-   * @returns {Object} Theme mastery summary
-   */
-  function calculateThemeMastery(masteryData) {
-    const cards = Object.values(masteryData);
-    if (cards.length === 0) {
-      return {
-        total: 0,
-        mastered: 0,
-        learning: 0,
-        new: 0,
-        averageMastery: 0,
-      };
-    }
-
-    const masteries = cards.map(c => calculateCardMastery(c));
-
-    return {
-      total: cards.length,
-      mastered: masteries.filter(m => m >= 80).length,
-      learning: masteries.filter(m => m >= 20 && m < 80).length,
-      new: masteries.filter(m => m < 20).length,
-      averageMastery: Math.round(masteries.reduce((a, b) => a + b, 0) / masteries.length),
-    };
-  }
-
-  /**
    * Infer rating from game performance
    * @param {number} elapsed - Elapsed time in seconds
    * @param {number} moves - Number of moves
@@ -323,31 +292,6 @@
     return Rating.Hard;
   }
 
-  /**
-   * Get cards that are due for review
-   * @param {Object} masteryData - Object mapping card values to card states
-   * @returns {Array} Array of [cardValue, cardState] pairs sorted by mastery
-   */
-  function getDueCards(masteryData) {
-    const now = Date.now();
-    const due = Object.entries(masteryData).filter(([_, card]) => card.nextReview <= now);
-
-    // Sort by mastery (lowest first = most needing review)
-    due.sort((a, b) => calculateCardMastery(a[1]) - calculateCardMastery(b[1]));
-
-    return due;
-  }
-
-  /**
-   * Count cards due for review
-   * @param {Object} masteryData - Object mapping card values to card states
-   * @returns {number} Number of due cards
-   */
-  function countDueCards(masteryData) {
-    const now = Date.now();
-    return Object.values(masteryData).filter(card => card.nextReview <= now).length;
-  }
-
   // Public API
   return {
     DEFAULT_PARAMS,
@@ -356,10 +300,7 @@
     calculateRetrievability,
     calculateInterval,
     calculateCardMastery,
-    calculateThemeMastery,
     review,
     inferRatingFromGamePerformance,
-    getDueCards,
-    countDueCards,
   };
 });

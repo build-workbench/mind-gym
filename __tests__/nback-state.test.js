@@ -3,8 +3,6 @@
  */
 
 const RememberNBack = require('../src/nback-state.js');
-const RememberModes = require('../src/modes.js');
-const RememberShared = require('../src/shared.js');
 
 describe('NBackState', () => {
   describe('constructor', () => {

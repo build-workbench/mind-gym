@@ -3,9 +3,6 @@
  */
 
 const RememberGameState = require('../src/game-state.js');
-const RememberGameManager = require('../src/game-manager.js');
-const RememberTimer = require('../src/timer.js');
-const RememberShared = require('../src/shared.js');
 
 describe('GameStateManager', () => {
   beforeEach(() => {
