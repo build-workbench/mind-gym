@@ -1,6 +1,6 @@
 # 🧠 Mind Gym
 
-> 浏览器端认知训练 PWA：自适应难度、N-back 训练、间隔重复。零运行时依赖，开箱即玩。
+> 零依赖的浏览器端认知训练 PWA：N-back、记忆配对，开箱即玩。
 
 <p align="center">
   <a href="https://github.com/vibe-knight/mind-gym/actions/workflows/ci.yml">
