@@ -18,13 +18,13 @@
   ],
   "author": "holtwood",
   "license": "MIT",
-  "homepage": "https://vibe-knight.github.io/mind-gym/",
+  "homepage": "https://build-workbench.github.io/mind-gym/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vibe-knight/mind-gym.git"
+    "url": "https://github.com/build-workbench/mind-gym.git"
   },
   "bugs": {
-    "url": "https://github.com/vibe-knight/mind-gym/issues"
+    "url": "https://github.com/build-workbench/mind-gym/issues"
   },
   "engines": {
     "node": ">=18.0.0",

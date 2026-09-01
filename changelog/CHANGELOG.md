@@ -65,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 重写 README 为精简版并更新 ignore 配置
 - 修复 PWA 缓存版本号以驱逐过期 v1.11.0 资源
 - 修复 GitHub Pages 游戏初始化
-- 迁移仓库至 vibe-knight 组织，更新全部仓库链接与部署地址
+- 迁移仓库至 build-workbench 组织，更新全部仓库链接与部署地址
 
 ### Technical / 技术细节
 
@@ -349,20 +349,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/vibe-knight/mind-gym/compare/v1.11.1...HEAD
-[v1.11.1]: https://github.com/vibe-knight/mind-gym/compare/v1.11.0...v1.11.1
-[v1.11.0]: https://github.com/vibe-knight/mind-gym/compare/v1.10.0...v1.11.0
-[v1.10.0]: https://github.com/vibe-knight/mind-gym/compare/v1.9.0...v1.10.0
-[v1.9.0]: https://github.com/vibe-knight/mind-gym/compare/v1.8.0...v1.9.0
-[v1.8.0]: https://github.com/vibe-knight/mind-gym/compare/v1.6.1...v1.8.0
-[v1.6.1]: https://github.com/vibe-knight/mind-gym/compare/v1.6.0...v1.6.1
-[v1.6.0]: https://github.com/vibe-knight/mind-gym/compare/v1.5.0...v1.6.0
-[v1.5.0]: https://github.com/vibe-knight/mind-gym/compare/v1.4.0...v1.5.0
-[v1.4.0]: https://github.com/vibe-knight/mind-gym/compare/v1.3.0...v1.4.0
-[v1.3.0]: https://github.com/vibe-knight/mind-gym/compare/v1.2.1...v1.3.0
-[v1.2.1]: https://github.com/vibe-knight/mind-gym/compare/v1.2.0...v1.2.1
-[v1.2.0]: https://github.com/vibe-knight/mind-gym/compare/v1.1.0...v1.2.0
-[v1.1.0]: https://github.com/vibe-knight/mind-gym/compare/v1.0.0...v1.1.0
-[v1.0.0]: https://github.com/vibe-knight/mind-gym/compare/v0.2.0...v1.0.0
-[v0.2.0]: https://github.com/vibe-knight/mind-gym/compare/v0.1.0...v0.2.0
-[v0.1.0]: https://github.com/vibe-knight/mind-gym/releases/tag/v0.1.0
+[Unreleased]: https://github.com/build-workbench/mind-gym/compare/v1.11.1...HEAD
+[v1.11.1]: https://github.com/build-workbench/mind-gym/compare/v1.11.0...v1.11.1
+[v1.11.0]: https://github.com/build-workbench/mind-gym/compare/v1.10.0...v1.11.0
+[v1.10.0]: https://github.com/build-workbench/mind-gym/compare/v1.9.0...v1.10.0
+[v1.9.0]: https://github.com/build-workbench/mind-gym/compare/v1.8.0...v1.9.0
+[v1.8.0]: https://github.com/build-workbench/mind-gym/compare/v1.6.1...v1.8.0
+[v1.6.1]: https://github.com/build-workbench/mind-gym/compare/v1.6.0...v1.6.1
+[v1.6.0]: https://github.com/build-workbench/mind-gym/compare/v1.5.0...v1.6.0
+[v1.5.0]: https://github.com/build-workbench/mind-gym/compare/v1.4.0...v1.5.0
+[v1.4.0]: https://github.com/build-workbench/mind-gym/compare/v1.3.0...v1.4.0
+[v1.3.0]: https://github.com/build-workbench/mind-gym/compare/v1.2.1...v1.3.0
+[v1.2.1]: https://github.com/build-workbench/mind-gym/compare/v1.2.0...v1.2.1
+[v1.2.0]: https://github.com/build-workbench/mind-gym/compare/v1.1.0...v1.2.0
+[v1.1.0]: https://github.com/build-workbench/mind-gym/compare/v1.0.0...v1.1.0
+[v1.0.0]: https://github.com/build-workbench/mind-gym/compare/v0.2.0...v1.0.0
+[v0.2.0]: https://github.com/build-workbench/mind-gym/compare/v0.1.0...v0.2.0
+[v0.1.0]: https://github.com/build-workbench/mind-gym/releases/tag/v0.1.0
