@@ -375,9 +375,11 @@
             aria-modal="true"
             aria-labelledby="nbackTitle"
             tabindex="-1"
-            class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+            class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
           >
-            <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+            <div
+              class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+            >
               <h2 id="nbackTitle" class="text-lg font-semibold mb-2">
                 <span data-i18n-zh>N-back 训练</span>
                 <span data-i18n-en>N-back Training</span>
@@ -435,14 +437,14 @@
               <div class="flex justify-end gap-3">
                 <button
                   id="nbackClose"
-                  class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
+                  class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
                 >
                   <span data-i18n-zh>关闭</span>
                   <span data-i18n-en>Close</span>
                 </button>
                 <button
                   id="nbackStart"
-                  class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+                  class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
                 >
                   <span data-i18n-zh>开始</span>
                   <span data-i18n-en>Start</span>
@@ -457,9 +459,11 @@
             aria-modal="true"
             aria-labelledby="dailyTitle"
             tabindex="-1"
-            class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+            class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
           >
-            <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+            <div
+              class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+            >
               <h2 id="dailyTitle" class="text-lg font-semibold mb-2">
                 <span data-i18n-zh>每日挑战</span>
                 <span data-i18n-en>Daily Challenge</span>
@@ -468,14 +472,14 @@
               <div class="mt-2 flex justify-end gap-3">
                 <button
                   id="dailyClose"
-                  class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
+                  class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   <span data-i18n-zh>关闭</span>
                   <span data-i18n-en>Close</span>
                 </button>
                 <button
                   id="dailyStart"
-                  class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+                  class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
                 >
                   <span data-i18n-zh>开始挑战</span>
                   <span data-i18n-en>Start</span>
@@ -486,21 +490,21 @@
           <div class="flex items-center gap-3">
             <button
               id="newGameBtn"
-              class="px-3 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 active:bg-indigo-800"
+              class="px-3.5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700 active:bg-indigo-800 whitespace-nowrap shrink-0"
             >
               <span data-i18n-zh>开始/重开</span>
               <span data-i18n-en>New/Restart</span>
             </button>
             <button
               id="pauseBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               <span data-i18n-zh>暂停</span>
               <span data-i18n-en>Pause</span>
             </button>
             <button
               id="hintBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               <span id="hintLabel"
                 ><span data-i18n-zh>提示</span><span data-i18n-en>Hint</span></span
@@ -509,42 +513,42 @@
             </button>
             <button
               id="settingsBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               <span data-i18n-zh>设置</span>
               <span data-i18n-en>Settings</span>
             </button>
             <button
               id="guideBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               <span data-i18n-zh>指南</span>
               <span data-i18n-en>Guide</span>
             </button>
             <button
               id="achievementsBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               <span data-i18n-zh>成就</span>
               <span data-i18n-en>Achievements</span>
             </button>
             <button
               id="statsBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               <span data-i18n-zh>统计</span>
               <span data-i18n-en>Stats</span>
             </button>
             <button
               id="dailyBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               <span data-i18n-zh>每日</span>
               <span data-i18n-en>Daily</span>
             </button>
             <button
               id="nbackBtn"
-              class="px-3 py-2 rounded-md border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50"
+              class="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm hover:bg-slate-50 whitespace-nowrap shrink-0"
             >
               N-back
             </button>
@@ -621,9 +625,11 @@
         aria-modal="true"
         aria-labelledby="winTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
-        <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+        <div
+          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+        >
           <div class="text-center">
             <div
               class="mx-auto mb-3 h-12 w-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl"
@@ -639,7 +645,7 @@
             <div class="flex items-center justify-center gap-3">
               <button
                 id="playAgain"
-                class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+                class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
               >
                 <span data-i18n-zh>再来一局</span>
                 <span data-i18n-en>Play Again</span>
@@ -670,9 +676,11 @@
         aria-modal="true"
         aria-labelledby="loseTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
-        <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+        <div
+          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+        >
           <div class="text-center">
             <div
               class="mx-auto mb-3 h-12 w-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center text-2xl"
@@ -690,7 +698,7 @@
             <div class="flex items-center justify-center gap-3">
               <button
                 id="failRetry"
-                class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+                class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
               >
                 <span data-i18n-zh>重试</span>
                 <span data-i18n-en>Retry</span>
@@ -714,10 +722,10 @@
         aria-modal="true"
         aria-labelledby="pauseTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
         <div
-          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6 text-center"
+          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 text-center"
         >
           <div
             class="mx-auto mb-3 h-12 w-12 rounded-full bg-yellow-100 text-yellow-700 flex items-center justify-center text-2xl"
@@ -734,7 +742,7 @@
           </p>
           <button
             id="resumeBtn"
-            class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+            class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
           >
             <span data-i18n-zh>继续</span>
             <span data-i18n-en>Resume</span>
@@ -749,9 +757,11 @@
         aria-modal="true"
         aria-labelledby="settingsTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
-        <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+        <div
+          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+        >
           <h2 id="settingsTitle" class="text-lg font-semibold mb-4">
             <span data-i18n-zh>设置</span>
             <span data-i18n-en>Settings</span>
@@ -961,14 +971,14 @@
           <div class="mt-5 flex justify-end gap-3">
             <button
               id="settingsCancel"
-              class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
+              class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
             >
               <span data-i18n-zh>取消</span>
               <span data-i18n-en>Cancel</span>
             </button>
             <button
               id="settingsSave"
-              class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+              class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
             >
               <span data-i18n-zh>保存</span>
               <span data-i18n-en>Save</span>
@@ -991,9 +1001,11 @@
         aria-modal="true"
         aria-labelledby="guideTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
-        <div class="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+        <div
+          class="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+        >
           <div class="flex items-start justify-between mb-4">
             <div>
               <h2 id="guideTitle" class="text-lg font-semibold">
@@ -1057,7 +1069,7 @@
               </span>
               <button
                 id="guideClose"
-                class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+                class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
               >
                 <span data-i18n-zh>开始训练</span>
                 <span data-i18n-en>Start training</span>
@@ -1083,9 +1095,11 @@
         aria-modal="true"
         aria-labelledby="statsTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
-        <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+        <div
+          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+        >
           <h2 id="statsTitle" class="text-lg font-semibold mb-2">
             <span data-i18n-zh>统计</span>
             <span data-i18n-en>Statistics</span>
@@ -1094,7 +1108,7 @@
           <div class="mt-5 flex justify-end">
             <button
               id="statsClose"
-              class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
+              class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               <span data-i18n-zh>关闭</span>
               <span data-i18n-en>Close</span>
@@ -1110,9 +1124,11 @@
         aria-modal="true"
         aria-labelledby="achievementsTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
-        <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+        <div
+          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+        >
           <h2 id="achievementsTitle" class="text-lg font-semibold mb-2">
             <span data-i18n-zh>成就</span>
             <span data-i18n-en>Achievements</span>
@@ -1122,7 +1138,7 @@
           <div class="mt-5 flex justify-end">
             <button
               id="achievementsClose"
-              class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
+              class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               <span data-i18n-zh>关闭</span>
               <span data-i18n-en>Close</span>
@@ -1138,9 +1154,11 @@
         aria-modal="true"
         aria-labelledby="recallTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-black/50 p-4"
+        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
       >
-        <div class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-lg p-6">
+        <div
+          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+        >
           <h2 id="recallTitle" class="text-lg font-semibold mb-2">
             <span data-i18n-zh>回忆测验</span>
             <span data-i18n-en>Recall Test</span>
@@ -1153,14 +1171,14 @@
           <div class="mt-2 flex justify-end gap-3">
             <button
               id="recallSkip"
-              class="px-4 py-2 rounded-md border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
+              class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               <span data-i18n-zh>跳过</span>
               <span data-i18n-en>Skip</span>
             </button>
             <button
               id="recallSubmit"
-              class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+              class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
             >
               <span data-i18n-zh>提交</span>
               <span data-i18n-en>Submit</span>
