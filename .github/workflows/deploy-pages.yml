@@ -47,12 +47,12 @@ jobs:
   ci-passed:
     name: Wait for CI
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Await CI workflow result on the same ref
         run: |
-          for i in $(seq 1 60); do
+          for i in $(seq 1 120); do
             conclusion=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/check-runs" \
               --jq '[.check_runs[] | select(.name == "CI Passed") | .conclusion] | first // empty')
             if [ "$conclusion" = "success" ]; then echo "CI passed"; exit 0; fi
