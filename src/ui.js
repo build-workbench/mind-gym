@@ -91,6 +91,7 @@
       guideBtn: d.getElementById('guideBtn'),
       guideModal: d.getElementById('guideModal'),
       guideCloseBtn: d.getElementById('guideClose'),
+      guideHeaderCloseBtn: d.getElementById('guideHeaderClose'),
       guideNoShow: d.getElementById('guideNoShow'),
       guideBasicsList: d.getElementById('guideBasicsList'),
       guideAdvancedList: d.getElementById('guideAdvancedList'),

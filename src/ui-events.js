@@ -20,6 +20,7 @@
       settingsBtn,
       guideBtn,
       guideCloseBtn,
+      guideHeaderCloseBtn,
       guideModal,
       settingsCancel,
       settingsSave,
@@ -66,6 +67,8 @@
     if (guideBtn && events.onGuideOpen) guideBtn.addEventListener('click', events.onGuideOpen);
     if (guideCloseBtn && events.onGuideClose)
       guideCloseBtn.addEventListener('click', events.onGuideClose);
+    if (guideHeaderCloseBtn && events.onGuideClose)
+      guideHeaderCloseBtn.addEventListener('click', events.onGuideClose);
     if (guideModal && events.onGuideModalBackdrop)
       guideModal.addEventListener('click', events.onGuideModalBackdrop);
     if (settingsCancel && events.onSettingsCancel)

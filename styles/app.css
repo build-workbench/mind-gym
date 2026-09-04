@@ -20,11 +20,12 @@
     transition-duration: 0.01ms !important;
   }
 
-  .card {
+  .card,
+  .card-inner {
     transition: none !important;
   }
 
   .card.flipped .card-inner {
-    transform: rotateY(0deg);
+    transform: rotateY(180deg);
   }
 }

@@ -208,9 +208,11 @@
       /* Card flip animation */
       .card {
         perspective: 1000px;
+        -webkit-perspective: 1000px;
       }
       .card-inner {
         transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
         transition: transform 0.4s ease;
       }
       .flipped .card-inner {
@@ -220,12 +222,18 @@
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
       }
+      .card-front {
+        transform: rotateY(0deg);
+        -webkit-transform: rotateY(0deg);
+      }
       .card-back {
         transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
       }
       .card {
         transition: transform 0.15s ease;
@@ -375,10 +383,10 @@
             aria-modal="true"
             aria-labelledby="nbackTitle"
             tabindex="-1"
-            class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+            class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
           >
             <div
-              class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+              class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
             >
               <h2 id="nbackTitle" class="text-lg font-semibold mb-2">
                 <span data-i18n-zh>N-back 训练</span>
@@ -459,10 +467,10 @@
             aria-modal="true"
             aria-labelledby="dailyTitle"
             tabindex="-1"
-            class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+            class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
           >
             <div
-              class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+              class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
             >
               <h2 id="dailyTitle" class="text-lg font-semibold mb-2">
                 <span data-i18n-zh>每日挑战</span>
@@ -625,10 +633,10 @@
         aria-modal="true"
         aria-labelledby="winTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
         >
           <div class="text-center">
             <div
@@ -676,10 +684,10 @@
         aria-modal="true"
         aria-labelledby="loseTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
         >
           <div class="text-center">
             <div
@@ -722,10 +730,10 @@
         aria-modal="true"
         aria-labelledby="pauseTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 text-center"
+          class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 text-center my-auto"
         >
           <div
             class="mx-auto mb-3 h-12 w-12 rounded-full bg-yellow-100 text-yellow-700 flex items-center justify-center text-2xl"
@@ -757,16 +765,16 @@
         aria-modal="true"
         aria-labelledby="settingsTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+          class="w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
         >
-          <h2 id="settingsTitle" class="text-lg font-semibold mb-4">
+          <h2 id="settingsTitle" class="text-lg font-semibold mb-4 shrink-0">
             <span data-i18n-zh>设置</span>
             <span data-i18n-en>Settings</span>
           </h2>
-          <div class="space-y-4">
+          <div class="space-y-4 overflow-y-auto pr-1 flex-1">
             <label class="flex items-center justify-between">
               <span id="settingSoundLabel" class="text-sm text-slate-700">
                 <span data-i18n-zh>声音</span>
@@ -968,7 +976,7 @@
               </div>
             </div>
           </div>
-          <div class="mt-5 flex justify-end gap-3">
+          <div class="mt-5 flex justify-end gap-3 shrink-0">
             <button
               id="settingsCancel"
               class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white hover:bg-slate-50"
@@ -1001,12 +1009,12 @@
         aria-modal="true"
         aria-labelledby="guideTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+          class="w-full max-w-xl max-h-[90vh] flex flex-col rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
         >
-          <div class="flex items-start justify-between mb-4">
+          <div class="flex items-start justify-between mb-4 shrink-0">
             <div>
               <h2 id="guideTitle" class="text-lg font-semibold">
                 <span data-i18n-zh>快速上手指南</span>
@@ -1017,9 +1025,25 @@
                 <span data-i18n-en>New here? Follow these steps to begin your training.</span>
               </p>
             </div>
-            <span class="text-2xl" aria-hidden="true">🧭</span>
+            <button
+              id="guideHeaderClose"
+              type="button"
+              class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+              aria-label="Close guide"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
           </div>
-          <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+          <div
+            class="space-y-4 text-sm text-slate-600 dark:text-slate-300 overflow-y-auto pr-1 flex-1"
+          >
             <span class="hidden dark:bg-slate-700"></span>
             <section>
               <h3
@@ -1052,7 +1076,9 @@
               <ul id="guideShortcutsList" class="mt-2 space-y-1"></ul>
             </section>
           </div>
-          <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div
+            class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shrink-0"
+          >
             <label
               class="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400"
             >
@@ -1095,17 +1121,17 @@
         aria-modal="true"
         aria-labelledby="statsTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+          class="w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
         >
-          <h2 id="statsTitle" class="text-lg font-semibold mb-2">
+          <h2 id="statsTitle" class="text-lg font-semibold mb-2 shrink-0">
             <span data-i18n-zh>统计</span>
             <span data-i18n-en>Statistics</span>
           </h2>
-          <ul id="statsList" class="space-y-2 text-sm"></ul>
-          <div class="mt-5 flex justify-end">
+          <ul id="statsList" class="space-y-2 text-sm overflow-y-auto pr-1 flex-1"></ul>
+          <div class="mt-5 flex justify-end shrink-0">
             <button
               id="statsClose"
               class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -1124,18 +1150,18 @@
         aria-modal="true"
         aria-labelledby="achievementsTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+          class="w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
         >
-          <h2 id="achievementsTitle" class="text-lg font-semibold mb-2">
+          <h2 id="achievementsTitle" class="text-lg font-semibold mb-2 shrink-0">
             <span data-i18n-zh>成就</span>
             <span data-i18n-en>Achievements</span>
           </h2>
-          <p id="achievementsNew" class="text-sm text-emerald-600 mb-2 hidden"></p>
-          <ul id="achievementsList" class="space-y-2 text-sm"></ul>
-          <div class="mt-5 flex justify-end">
+          <p id="achievementsNew" class="text-sm text-emerald-600 mb-2 hidden shrink-0"></p>
+          <ul id="achievementsList" class="space-y-2 text-sm overflow-y-auto pr-1 flex-1"></ul>
+          <div class="mt-5 flex justify-end shrink-0">
             <button
               id="achievementsClose"
               class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -1154,21 +1180,24 @@
         aria-modal="true"
         aria-labelledby="recallTitle"
         tabindex="-1"
-        class="fixed inset-0 hidden items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+        class="fixed inset-0 hidden z-50 items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4 overflow-y-auto"
       >
         <div
-          class="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6"
+          class="w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-900/10 dark:ring-white/10 p-6 my-auto"
         >
-          <h2 id="recallTitle" class="text-lg font-semibold mb-2">
+          <h2 id="recallTitle" class="text-lg font-semibold mb-2 shrink-0">
             <span data-i18n-zh>回忆测验</span>
             <span data-i18n-en>Recall Test</span>
           </h2>
-          <p id="recallDesc" class="text-sm text-slate-600 dark:text-slate-300 mb-3">
+          <p id="recallDesc" class="text-sm text-slate-600 dark:text-slate-300 mb-3 shrink-0">
             <span data-i18n-zh>请从下列选项中勾选本局中出现过的卡面。</span>
             <span data-i18n-en>Please select all items that appeared this round.</span>
           </p>
-          <div id="recallChoices" class="grid grid-cols-3 gap-2 mb-4"></div>
-          <div class="mt-2 flex justify-end gap-3">
+          <div
+            id="recallChoices"
+            class="grid grid-cols-3 gap-2 mb-4 overflow-y-auto pr-1 flex-1"
+          ></div>
+          <div class="mt-2 flex justify-end gap-3 shrink-0">
             <button
               id="recallSkip"
               class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
