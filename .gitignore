@@ -37,3 +37,9 @@ Thumbs.db
 # SSL certificates (for dev HTTPS)
 *.pem
 !node_modules/**/*.pem
+
+# AI tools (local only)
+.commandcode/
+.codex/
+.agents/
+.superpowers/
