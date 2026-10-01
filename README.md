@@ -18,12 +18,12 @@ A pure front-end, zero-dependency browser-based cognitive training PWA. Supports
 
 ## Training Modes
 
-| Mode                | How to Play                                                                                                                                          | Training Dimension             |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
-| **Classic Pairs**   | Flip cards to find matching items (`4×4` / `4×5` / `6×6`), with a timed mode and ELO-like adaptive difficulty adjustment                             | Visual memory, attention       |
-| **N-back Training** | Watch symbols appear in sequence and press `J` when the current item matches the one N steps back; multiple difficulty levels available              | Working memory, focus          |
-| **Daily Challenge** | A fixed random question set generated daily, identical for every player; check in daily to record your practice streak                               | Consistency, competitiveness   |
-| **Recall Quiz**     | After completing a pairs round, take a quick recognition test on that round's cards, consolidating weak items based on the FSRS-4.5 algorithm        | Long-term memory consolidation |
+| Mode                | How to Play                                                                                                                                   | Training Dimension             |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
+| **Classic Pairs**   | Flip cards to find matching items (`4×4` / `4×5` / `6×6`), with a timed mode and ELO-like adaptive difficulty adjustment                      | Visual memory, attention       |
+| **N-back Training** | Watch symbols appear in sequence and press `J` when the current item matches the one N steps back; multiple difficulty levels available       | Working memory, focus          |
+| **Daily Challenge** | A fixed random question set generated daily, identical for every player; check in daily to record your practice streak                        | Consistency, competitiveness   |
+| **Recall Quiz**     | After completing a pairs round, take a quick recognition test on that round's cards, consolidating weak items based on the FSRS-4.5 algorithm | Long-term memory consolidation |
 
 > Card themes can be switched freely in settings: `Emoji`, `numbers`, `letters`, `geometric shapes`, and `solid color blocks`.
 
