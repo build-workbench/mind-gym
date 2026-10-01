@@ -1,3 +1,7 @@
+**English** | [中文](#chinese)
+
+<a id="top"></a>
+
 # Mind Gym
 
 A pure front-end, zero-dependency browser-based cognitive training PWA. Supports classic pairs, N-back, daily challenges, and memory quizzes — ready to play out of the box, works offline, and all data is stored locally.
@@ -85,6 +89,8 @@ Open-sourced under the [MIT License](LICENSE).
 ---
 
 <a id="chinese"></a>
+[English](#top) | **中文**
+
 # Mind Gym
 
 纯前端、零依赖的浏览器端认知训练 PWA。支持经典配对、N-back、每日挑战与记忆测验，开箱即玩、离线可用、数据全本地存储。
