@@ -17,11 +17,8 @@ if command -v rsvg-convert &>/dev/null; then
     rsvg-convert -w "$size" -h "$size" "$ASSETS_DIR/icon.svg" -o "$ASSETS_DIR/icon-${size}.png"
   done
   rsvg-convert -w 180 -h 180 "$ASSETS_DIR/icon.svg" -o "$ASSETS_DIR/apple-touch-icon.png"
-  rsvg-convert -w 1200 -h 630 "$ASSETS_DIR/og-image.svg" -o "$ASSETS_DIR/og-image.png"
-  rsvg-convert -w 1280 -h 720 "$ASSETS_DIR/screenshot-1.svg" -o "$ASSETS_DIR/screenshot-1.png"
-  rsvg-convert -w 1280 -h 720 "$ASSETS_DIR/screenshot-2.svg" -o "$ASSETS_DIR/screenshot-2.png"
-  rsvg-convert -w 390 -h 844 "$ASSETS_DIR/screenshot-mobile.svg" -o "$ASSETS_DIR/screenshot-mobile.png"
-  echo "  ✓ icon-*/apple-touch-icon/og-image/screenshot-* 已生成"
+  echo "  ✓ icon-*/apple-touch-icon 已生成"
+  echo "[icons] og-image / screenshot 请对真实运行页面用浏览器截图更新，本脚本不生成。"
 elif node -e "require('sharp')" 2>/dev/null; then
   echo "[icons] Using Node.js + sharp..."
   node "$SCRIPT_DIR/generate-icons.cjs"

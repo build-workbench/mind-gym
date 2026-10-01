@@ -101,15 +101,7 @@ Open-sourced under the [MIT License](LICENSE).
 
 ## 界面预览
 
-![经典配对模式：翻牌配对进行中](./assets/screenshot-1.png)
-
-|                N-back 训练                |              移动端（开局预览）               |
-| :---------------------------------------: | :-------------------------------------------: |
-| ![N-back 训练](./assets/screenshot-2.png) | ![移动端界面](./assets/screenshot-mobile.png) |
-
-**运行效果**（开局预览 → 翻牌配对 → 通关后的回忆测验）：
-
-![运行效果演示：从开局预览到翻牌配对再到通关回忆测验](./assets/demo.gif)
+![Mind Gym：浏览器中的 N-back 工作记忆训练](./assets/screenshot-2.png)
 
 ---
 
