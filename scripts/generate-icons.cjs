@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 /**
- * 从 SVG 源生成真 PNG 图标（icon / apple-touch / og-image / screenshots）。
+ * 从 SVG 源生成 PWA PNG 图标（icon / apple-touch-icon）。
  * 需要 Node.js + sharp（npm i -D sharp）。
  * 绝不生成 SVG 伪装的假 PNG：转换工具不可用时直接报错退出。
+ *
+ * 注意：og-image.png 与 screenshot-*.png 不在本脚本生成范围内——
+ * 它们必须用浏览器打开真实运行的页面截图（SVG 占位图渲染出来与实际界面不符），
+ * 本脚本不会覆盖这些文件。
  */
 
 const fs = require('fs');
@@ -13,21 +17,8 @@ const ASSETS_DIR = path.join(__dirname, '..', 'assets');
 // PWA 图标尺寸（统一从 icon.svg 渲染）
 const ICON_SIZES = [72, 96, 128, 144, 152, 192, 384, 512];
 
-// 截图：[源文件名, 宽, 高]
-const SCREENSHOTS = [
-  ['screenshot-1', 1280, 720],
-  ['screenshot-2', 1280, 720],
-  ['screenshot-mobile', 390, 844],
-];
-
 // 源 SVG 文件（缺失则报错，不自动生成默认占位图）
-const REQUIRED_SOURCES = [
-  'icon.svg',
-  'og-image.svg',
-  'screenshot-1.svg',
-  'screenshot-2.svg',
-  'screenshot-mobile.svg',
-];
+const REQUIRED_SOURCES = ['icon.svg'];
 
 let sharp;
 try {
@@ -60,12 +51,8 @@ async function main() {
     await renderSvg('icon', `icon-${size}.png`, size, size);
   }
   await renderSvg('icon', 'apple-touch-icon.png', 180, 180);
-  await renderSvg('og-image', 'og-image.png', 1200, 630);
-  for (const [name, w, h] of SCREENSHOTS) {
-    await renderSvg(name, `${name}.png`, w, h);
-  }
 
-  console.log('\n[icons] 真 PNG 图标生成完成');
+  console.log('\n[icons] PWA 图标生成完成（og-image / 截图请用浏览器对真实页面截图更新）');
 }
 
 main().catch(err => {
