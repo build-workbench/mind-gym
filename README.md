@@ -57,7 +57,7 @@ This project is a standard offline-first PWA — no download or installation req
 
 ## Running Locally
 
-Implemented in plain native JavaScript with no build dependencies:
+Implemented in plain native JavaScript with no runtime dependencies and no bundler:
 
 ```bash
 git clone https://github.com/build-workbench/mind-gym.git
@@ -138,7 +138,7 @@ Open-sourced under the [MIT License](LICENSE).
 
 ## 本地运行
 
-纯原生 JavaScript 实现，无构建依赖：
+纯原生 JavaScript 实现，零运行时依赖、无打包工具：
 
 ```bash
 git clone https://github.com/build-workbench/mind-gym.git
